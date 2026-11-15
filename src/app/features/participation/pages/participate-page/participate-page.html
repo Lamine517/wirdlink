@@ -5,11 +5,36 @@
   ><img src="assets/icons/back.svg" alt="" width="24" height="24" />Retour</a
 >
 @if (selected(); as wird) {
-  <h1>{{ wird.title }}</h1>
-  <p class="text-secondary">Objectif : {{ wird.target | number }} lectures</p>
-  <p>Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}</p>
+  <header class="participation-header">
+    <h1>Je participe</h1>
+    <p>Une petite part, un effort partagé.</p>
+  </header>
+  <section class="participation-summary" aria-label="Avancement du wird">
+    <app-circular-progress
+      [title]="wird.title"
+      [completed]="store.completed(wird.id)"
+      [target]="wird.target"
+    />
+    <div class="participation-summary__stats">
+      <div class="participation-summary__stat">
+        <span class="participation-summary__dot" aria-hidden="true"></span>
+        <strong>{{ store.available(wird.id) | number }}</strong
+        ><span>disponibles</span>
+      </div>
+      <div class="participation-summary__stat">
+        <span
+          class="participation-summary__dot participation-summary__dot--reserved"
+          aria-hidden="true"
+        ></span>
+        <strong>{{
+          wird.target - store.completed(wird.id) - store.available(wird.id) | number
+        }}</strong
+        ><span>en cours</span>
+      </div>
+    </div>
+  </section>
   <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
-    <label for="quantity">Combien je lis ?</label>
+    <label class="participation-form__label" for="quantity">Ma part</label>
     <app-quantity-picker [control]="quantity" [maximum]="store.available(wird.id)" />
     <fieldset>
       <legend>Mon nom</legend>
