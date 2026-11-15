@@ -35,3 +35,12 @@ La soumission clavier conserve les mêmes contrôles et ne peut contourner ce ma
 Chrome Headless : parcours complet, CTA initialement absent, erreur puis correction,
 clavier/focus du panneau, tailles 320/390/1440, texte à 200 % et mouvement réduit.
 Revue statique du rendu par le profil UI/UX ; aucun Quality Gate distant exécuté.
+
+## Révision — action visible et identité graphique
+
+À la demande suivante de l'utilisateur, Je commence reste visible et désactivé tant que
+les champs sont invalides. L'aide explique comment l'activer ; la soumission reste protégée.
+L'état désactivé utilise le fond atténué de la charte et un texte secondaire lisible.
+Les filtres En cours/Terminés ont un padding de conteneur de 2 px et d'option de 4/8 px,
+sans réduire les cibles sous 48 px. Les rectangles arrondis sont conservés : cohérence
+avec les cartes et les boutons ; les cercles du tasbih et du logo restent distinctifs.

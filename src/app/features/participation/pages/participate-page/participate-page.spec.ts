@@ -25,27 +25,27 @@ describe('Guided participation form', () => {
     return harness.routeNativeElement!.querySelector<HTMLButtonElement>('button[type="submit"]');
   }
 
-  it('starts with guidance and examples instead of an action or error', () => {
+  it('starts with a disabled action, guidance and examples without an error', () => {
     const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
     expect(input.value).toBe('');
     expect(input.placeholder).toBe('Ex. 10');
-    expect(submitButton()).toBeNull();
+    expect(submitButton()?.disabled).toBeTrue();
     expect(harness.routeNativeElement!.querySelector('#quantity-error')).toBeNull();
     expect(harness.routeNativeElement!.textContent).toContain('Choisissez une quantité');
   });
 
-  it('shows the action for valid quantities and removes it for fractional or excessive values', () => {
+  it('enables the action only for valid quantities', () => {
     enterQuantity('10');
-    expect(submitButton()).not.toBeNull();
+    expect(submitButton()?.disabled).toBeFalse();
     enterQuantity('401');
-    expect(submitButton()).toBeNull();
+    expect(submitButton()?.disabled).toBeTrue();
     expect(harness.routeNativeElement!.querySelector('#quantity-error')?.textContent).toContain(
       'Il ne reste que 400',
     );
     enterQuantity('1.5');
-    expect(submitButton()).toBeNull();
+    expect(submitButton()?.disabled).toBeTrue();
     enterQuantity('400');
-    expect(submitButton()).not.toBeNull();
+    expect(submitButton()?.disabled).toBeFalse();
   });
 
   it('requires a meaningful name only when Mon nom is selected', () => {
@@ -55,17 +55,17 @@ describe('Guided participation form', () => {
     ].find((button) => button.textContent?.trim() === 'Mon nom')!;
     nameChoice.click();
     harness.detectChanges();
-    expect(submitButton()).toBeNull();
+    expect(submitButton()?.disabled).toBeTrue();
     const name = harness.routeNativeElement!.querySelector<HTMLInputElement>('#name')!;
     expect(name.placeholder).toBe('Ex. Awa');
     name.value = '   ';
     name.dispatchEvent(new Event('input'));
     harness.detectChanges();
-    expect(submitButton()).toBeNull();
+    expect(submitButton()?.disabled).toBeTrue();
     name.value = 'Awa';
     name.dispatchEvent(new Event('input'));
     harness.detectChanges();
-    expect(submitButton()).not.toBeNull();
+    expect(submitButton()?.disabled).toBeFalse();
   });
 
   it('rejects implicit keyboard submission until valid and then reserves once', async () => {

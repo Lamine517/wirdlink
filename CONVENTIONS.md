@@ -161,4 +161,4 @@ aux appareils avec un pointeur précis ; conserver un focus visible et un état 
 Les erreurs de quantité sont immédiates : bordure rouge, message textuel lié au champ
 et `aria-invalid`, puis retour à l’état normal lorsque la saisie est corrigée.
 
-Le formulaire guide la saisie avec labels, exemples et aides. Son action principale ne s’affiche que lorsque les champs nécessaires sont valides ; une indication explique quoi renseigner pendant son absence. Les mêmes règles sont vérifiées à la soumission clavier.
+Le formulaire guide la saisie avec labels, exemples et aides. Son action principale reste visible mais désactivée lorsque les champs nécessaires sont invalides ; une indication explique quoi renseigner pour l’activer. Les mêmes règles sont vérifiées à la soumission clavier.

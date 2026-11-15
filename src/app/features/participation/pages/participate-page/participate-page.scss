@@ -32,7 +32,10 @@
 }
 
 .participation-form__action {
-  min-height: 72px;
+  display: grid;
+  align-content: start;
+  gap: var(--space-8);
+  min-height: 112px;
   margin-top: var(--space-16);
 }
 .participation-form__hint,
