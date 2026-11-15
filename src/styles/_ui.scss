@@ -1,0 +1,88 @@
+@use 'variables' as tokens;
+@use 'mixins';
+
+button {
+  font-weight: tokens.$font-weight-extrabold;
+  min-height: tokens.$touch-target-min;
+}
+
+:focus-visible {
+  @include mixins.focus-ring;
+}
+
+.button {
+  @include mixins.flex-row(var(--space-12), center);
+  border: 2px solid transparent;
+  border-radius: var(--radius-large);
+  min-height: tokens.$button-height-min;
+  padding: 14px var(--space-16);
+  font-weight: tokens.$font-weight-extrabold;
+  text-align: center;
+  text-decoration: none;
+
+  &--primary {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-color: var(--color-primary);
+  }
+
+  &--accent {
+    background: var(--color-accent);
+    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+  }
+
+  &--outline {
+    background: var(--color-bg-surface);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  &--selected {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-color: var(--color-primary);
+  }
+
+  &--compact {
+    min-height: 52px;
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-medium);
+  }
+}
+
+.surface-card {
+  @include mixins.stack;
+  @include mixins.surface;
+  padding: var(--space-20) var(--space-16);
+  margin: var(--space-16) 0;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  &--finished {
+    background: var(--color-bg-muted);
+    box-shadow: none;
+  }
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-strong {
+  font-weight: tokens.$font-weight-extrabold;
+}
+
+.feedback {
+  padding: var(--space-16);
+  background: var(--color-bg-muted);
+
+  &--error {
+    border-left: 4px solid var(--color-feedback-error);
+    color: var(--color-feedback-error);
+    background: var(--color-bg-surface);
+  }
+}

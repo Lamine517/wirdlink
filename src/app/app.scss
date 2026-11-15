@@ -1,0 +1,63 @@
+@use '../styles/variables' as tokens;
+@use '../styles/mixins';
+
+.app-shell {
+  max-width: tokens.$app-width;
+  margin: auto;
+  min-height: 100dvh;
+  background: var(--color-bg-app);
+
+  @include mixins.desktop {
+    box-shadow: 0 0 80px #0a293312;
+  }
+}
+
+.app-shell__content {
+  padding: var(--space-24) var(--space-16) 140px;
+  min-height: 85dvh;
+}
+
+.demo-banner {
+  padding: max(12px, env(safe-area-inset-top)) var(--space-16) var(--space-12);
+  background: var(--color-bg-muted);
+  text-align: center;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, tokens.$app-width);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: var(--space-12) var(--space-8) max(16px, env(safe-area-inset-bottom));
+  background: var(--color-bg-surface);
+  box-shadow: 0 -4px 24px #0a29330a;
+  z-index: 2;
+
+  &__link {
+    @include mixins.stack(var(--space-4));
+    align-items: center;
+    padding: var(--space-8) 0;
+    text-decoration: none;
+    color: var(--color-text-primary);
+    font-weight: tokens.$font-weight-extrabold;
+
+    &--active {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  z-index: 5;
+  background: var(--color-bg-surface);
+  padding: var(--space-12);
+
+  &:focus {
+    top: 0;
+  }
+}

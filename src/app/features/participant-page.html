@@ -1,0 +1,292 @@
+@if (store.storageWarning()) {
+  <p class="feedback" role="status">{{ store.storageWarning() }}</p>
+}
+@if (message()) {
+  <p class="feedback feedback--error" role="alert">{{ message() }}</p>
+}
+@switch (view()) {
+  @case ('home') {
+    <header class="page-header">
+      <h1>Mes wirds</h1>
+      <button
+        class="help-button"
+        (click)="
+          listen(
+            'Bienvenue sur WirdLink. Choisissez un wird, puis Je participe. Vos parts sont disponibles dans Mes parts.'
+          )
+        "
+      >
+        <img src="assets/icons/help.svg" alt="" width="24" height="24" />Aide
+      </button>
+    </header>
+    <div class="filter-bar">
+      <div class="segmented-control" aria-label="État des wirds">
+        <button
+          class="segmented-control__option"
+          [class.segmented-control__option--active]="status() === 'active'"
+          [attr.aria-pressed]="status() === 'active'"
+          (click)="status.set('active')"
+        >
+          En cours
+        </button>
+        <button
+          class="segmented-control__option"
+          [class.segmented-control__option--active]="status() === 'finished'"
+          [attr.aria-pressed]="status() === 'finished'"
+          (click)="status.set('finished')"
+        >
+          Terminés
+        </button>
+      </div>
+      <button
+        class="button button--outline button--compact"
+        [attr.aria-expanded]="filtersOpen()"
+        aria-controls="filters"
+        (click)="filtersOpen.set(!filtersOpen())"
+      >
+        <img src="assets/icons/filter.svg" alt="" width="24" height="24" />Filtrer
+      </button>
+    </div>
+    @if (filtersOpen()) {
+      <section class="surface-card filters" id="filters" aria-label="Filtres">
+        <label for="state">Voir</label
+        ><select id="state" [value]="status()" (change)="selectFilter($event, 'status')">
+          <option value="active">En cours</option>
+          <option value="finished">Terminés</option>
+          <option value="all">Tous</option>
+        </select>
+        <label for="recurrence">Quand ?</label
+        ><select
+          id="recurrence"
+          [value]="recurrence()"
+          (change)="selectFilter($event, 'recurrence')"
+        >
+          <option value="all">Toutes les récurrences</option>
+          <option>Chaque vendredi</option>
+          <option>Tous les jours</option>
+        </select>
+        <p>Tous les exemples de cette démonstration sont publics.</p>
+        <button class="button button--primary" (click)="filtersOpen.set(false)">
+          Afficher les résultats
+        </button>
+      </section>
+    }
+    <p class="result-count" aria-live="polite">
+      {{ visibleWirds().length }} {{ visibleWirds().length > 1 ? 'wirds' : 'wird' }}
+    </p>
+    @for (wird of visibleWirds(); track wird.id) {
+      <article class="surface-card">
+        <h2>{{ wird.title }}</h2>
+        <p class="text-secondary">{{ wird.recurrence }}</p>
+        <button
+          class="button button--primary"
+          (click)="
+            listen(
+              wird.title +
+                '. ' +
+                wird.recurrence +
+                '. Il reste ' +
+                store.available(wird.id) +
+                ' lectures disponibles.'
+            )
+          "
+        >
+          <img src="assets/icons/speaker.svg" alt="" width="28" height="28" />Écouter
+        </button>
+        <app-bead-progress [completed]="store.completed(wird.id)" [target]="wird.target" />
+        <p class="text-strong">
+          Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}
+        </p>
+        @if (wird.target - store.completed(wird.id) - store.available(wird.id) > 0) {
+          <p class="text-secondary">
+            {{ wird.target - store.completed(wird.id) - store.available(wird.id) }} lectures en
+            cours
+          </p>
+        }
+        @if (store.available(wird.id) > 0) {
+          <a class="button button--accent" [routerLink]="['/wird', wird.id]"
+            ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe</a
+          >
+        } @else {
+          <p>
+            {{
+              store.completed(wird.id) >= wird.target
+                ? 'Ce wird est terminé. Merci !'
+                : 'Toutes les parts sont prises.'
+            }}
+          </p>
+        }
+      </article>
+    } @empty {
+      <section class="surface-card">
+        <h2>Aucun wird ici</h2>
+        <p>Essayez d’autres filtres.</p>
+        <button
+          class="button button--outline"
+          (click)="status.set('active'); recurrence.set('all')"
+        >
+          Voir les wirds en cours
+        </button>
+      </section>
+    }
+  }
+  @case ('participate') {
+    <a class="back-link" routerLink="/"
+      ><img src="assets/icons/back.svg" alt="" width="24" height="24" />Retour</a
+    >
+    @if (selected(); as wird) {
+      <h1>{{ wird.title }}</h1>
+      <p>Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}</p>
+      <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
+        <label for="quantity">Combien je lis ?</label>
+        <div class="quantity-counter">
+          <button
+            type="button"
+            class="quantity-counter__button"
+            aria-label="Diminuer la quantité"
+            (click)="adjust(-1)"
+          >
+            <img src="assets/icons/minus.svg" alt="" width="24" height="24" />
+          </button>
+          <input
+            class="quantity-counter__input"
+            id="quantity"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            [max]="store.available(wird.id)"
+            step="1"
+            [formControl]="quantity"
+            aria-describedby="quantity-hint"
+            required
+          />
+          <button
+            type="button"
+            class="quantity-counter__button"
+            aria-label="Augmenter la quantité"
+            (click)="adjust(1)"
+          >
+            <img src="assets/icons/plus.svg" alt="" width="28" height="28" />
+          </button>
+        </div>
+        <p id="quantity-hint">Touchez le nombre pour l’écrire, ou choisissez :</p>
+        <div class="choice-list">
+          @for (amount of [1, 5, 10]; track amount) {
+            <button
+              type="button"
+              class="button button--outline button--compact"
+              (click)="adjust(amount)"
+            >
+              +{{ amount }}
+            </button>
+          }
+          <button
+            type="button"
+            class="button button--outline button--compact"
+            (click)="setQuantity(store.available(wird.id))"
+          >
+            Tout
+          </button>
+        </div>
+        <fieldset>
+          <legend>Mon nom</legend>
+          <div class="choice-list">
+            <button
+              type="button"
+              class="button button--outline"
+              [class.button--selected]="!useName()"
+              [attr.aria-pressed]="!useName()"
+              (click)="useName.set(false)"
+            >
+              Sans nom</button
+            ><button
+              type="button"
+              class="button button--outline"
+              [class.button--selected]="useName()"
+              [attr.aria-pressed]="useName()"
+              (click)="useName.set(true)"
+            >
+              Mon nom
+            </button>
+          </div>
+        </fieldset>
+        @if (useName()) {
+          <label for="name">Votre nom affiché</label
+          ><input id="name" autocomplete="given-name" maxlength="60" [formControl]="name" />
+        }
+        <button type="submit" class="button button--primary participation-form__submit">
+          Je commence
+        </button>
+      </form>
+    } @else {
+      <h1>Wird introuvable</h1>
+      <p>Ce lien ne correspond à aucun exemple disponible.</p>
+    }
+  }
+  @case ('parts') {
+    <h1>Mes parts</h1>
+    @for (part of store.parts(); track part.id) {
+      <article class="surface-card" [class.surface-card--finished]="part.finished">
+        @for (wird of store.wirds(); track wird.id) {
+          @if (wird.id === part.wirdId) {
+            <h2>{{ wird.title }}</h2>
+          }
+        }
+        <p class="part-count">
+          {{ part.quantity | number }} {{ part.finished ? 'lus, terminé' : 'à lire' }}
+        </p>
+        @if (part.name) {
+          <p>{{ part.name }}</p>
+        }
+        @if (!part.finished) {
+          <button class="button button--primary" (click)="finish(part.id, part.wirdId)">
+            J’ai fini
+          </button>
+        }
+      </article>
+    } @empty {
+      <section class="surface-card">
+        <h2>Votre première part vous attend</h2>
+        <p>Choisissez un wird et prenez une part, sans compte.</p>
+        <a class="button button--accent" routerLink="/">Voir les wirds</a>
+      </section>
+    }
+  }
+  @case ('thanks') {
+    @if (selected(); as wird) {
+      <section class="thank-you">
+        <div class="thank-you__badge">
+          <img src="assets/icons/check.svg" alt="" width="52" height="52" />
+        </div>
+        <h1>Merci !</h1>
+        <p>Qu’Allah accepte votre part.</p>
+        <div class="surface-card">
+          <app-bead-progress [completed]="store.completed(wird.id)" [target]="wird.target" />
+          <p class="text-strong">
+            Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}
+          </p>
+        </div>
+        @if (store.available(wird.id) > 0) {
+          <a class="button button--accent" [routerLink]="['/wird', wird.id]"
+            ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe encore</a
+          >
+        }
+        <a class="button button--outline" routerLink="/mes-parts">Retour à mes parts</a>
+      </section>
+    } @else {
+      <h1>Wird introuvable</h1>
+      <a routerLink="/">Retour à l’accueil</a>
+    }
+  }
+  @case ('create') {
+    <h1>Créer un wird</h1>
+    <section class="surface-card">
+      <h2>Bientôt, votre propre wird</h2>
+      <p>
+        Cette première démonstration permet de participer aux exemples. La création et la
+        publication seront disponibles dans un prochain lot.
+      </p>
+      <a class="button button--accent" routerLink="/">Découvrir les wirds</a>
+    </section>
+  }
+}
