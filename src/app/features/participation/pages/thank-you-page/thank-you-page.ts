@@ -3,11 +3,13 @@ import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { WirdStore } from '../../../../core/wird-store';
-import { BeadProgress } from '../../../../shared/components/bead-progress/bead-progress';
+import { CircularProgress } from '../../../../shared/components/circular-progress/circular-progress';
+import { Icon } from '../../../../shared/components/icon/icon';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'app-thank-you-page',
-  imports: [RouterLink, DecimalPipe, BeadProgress],
+  imports: [RouterLink, DecimalPipe, CircularProgress, Icon, EmptyState],
   templateUrl: './thank-you-page.html',
   styleUrl: './thank-you-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
