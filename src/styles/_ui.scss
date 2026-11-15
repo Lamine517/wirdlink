@@ -45,6 +45,15 @@ button {
     border-color: var(--color-primary);
   }
 
+  &:disabled {
+    opacity: 1;
+    background: var(--color-bg-muted);
+    border-color: var(--color-bg-muted);
+    color: var(--color-text-secondary);
+    box-shadow: none;
+    transform: none;
+  }
+
   &--compact {
     font-size: var(--font-size-small);
     min-height: 48px;

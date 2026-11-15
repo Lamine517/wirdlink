@@ -60,12 +60,16 @@
       </p>
     }
     <div class="participation-form__action" aria-live="polite">
-      @if (canReserve()) {
-        <button type="submit" class="button button--primary participation-form__submit">
-          Je commence
-        </button>
-      } @else {
-        <p class="participation-form__guidance">{{ guidance() }}</p>
+      <button
+        type="submit"
+        class="button button--primary participation-form__submit"
+        [disabled]="!canReserve()"
+        [attr.aria-describedby]="!canReserve() ? 'participation-guidance' : null"
+      >
+        Je commence
+      </button>
+      @if (!canReserve()) {
+        <p id="participation-guidance" class="participation-form__guidance">{{ guidance() }}</p>
       }
     </div>
   </form>

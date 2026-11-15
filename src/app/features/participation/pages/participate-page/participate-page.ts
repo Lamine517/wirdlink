@@ -67,7 +67,7 @@ export class ParticipatePage {
       value < 1 ||
       value > this.store.available(wird.id)
     ) {
-      return 'Choisissez une quantité disponible pour faire apparaître « Je commence ».';
+      return 'Choisissez une quantité disponible pour activer « Je commence ».';
     }
     return 'Écrivez votre nom ou choisissez « Sans nom » pour continuer.';
   });
