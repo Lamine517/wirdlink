@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
+import { WirdStore } from './core/wird-store';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,4 +9,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {}
+export class App {
+  protected readonly store = inject(WirdStore);
+  private readonly content = viewChild<ElementRef<HTMLElement>>('content');
+
+  protected resetScroll(): void {
+    queueMicrotask(() => this.content()?.nativeElement.scrollTo({ top: 0 }));
+  }
+}

@@ -1,0 +1,38 @@
+@if (reader.error()) {
+  <p class="feedback feedback--error" role="alert">{{ reader.error() }}</p>
+}
+<header class="page-header">
+  <a class="brand" routerLink="/" aria-label="WirdLink, accueil"
+    ><img src="assets/brand/wirdlink-logo.svg" alt="" width="52" height="57" /><span
+      >WirdLink</span
+    ></a
+  >
+  <button class="help-button" (click)="readHelp()">
+    <img src="assets/icons/help.svg" alt="" width="24" height="24" />Aide
+  </button>
+</header>
+<h1>Mes wirds</h1>
+<app-wird-filters
+  [(visibility)]="visibility"
+  [resultCount]="visibleWirds().length"
+  [(status)]="status"
+  [(recurrence)]="recurrence"
+/>
+<p class="result-count" aria-live="polite">
+  {{ visibleWirds().length }} {{ visibleWirds().length > 1 ? 'wirds' : 'wird' }}
+</p>
+@for (wird of visibleWirds(); track wird.id) {
+  <app-wird-card
+    [wird]="wird"
+    [available]="store.available(wird.id)"
+    [completed]="store.completed(wird.id)"
+    (listenRequested)="reader.read($event)"
+  />
+} @empty {
+  <app-empty-state
+    title="Aucun wird ici"
+    description="Essayez d’autres filtres pour retrouver un wird."
+    actionLabel="Voir les wirds en cours"
+    (actionRequested)="resetFilters()"
+  />
+}

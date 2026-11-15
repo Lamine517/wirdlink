@@ -20,7 +20,7 @@ body {
   font-family: tokens.$font-family-base;
   font-size: tokens.$font-size-base;
   font-weight: tokens.$font-weight-semibold;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--color-text-primary);
   background: var(--color-bg-page);
 }
@@ -38,12 +38,12 @@ h2 {
 }
 
 h1 {
-  font-size: 32px;
+  font-size: var(--font-size-page-title);
   margin: var(--space-16) 0 var(--space-24);
 }
 
 h2 {
-  font-size: 28px;
+  font-size: var(--font-size-card-title);
 }
 
 a {

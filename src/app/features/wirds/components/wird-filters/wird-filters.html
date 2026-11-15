@@ -1,0 +1,86 @@
+<div class="filter-bar">
+  <div class="segmented-control" aria-label="État des wirds">
+    <button
+      class="segmented-control__option"
+      [class.segmented-control__option--active]="status() === 'active'"
+      [attr.aria-pressed]="status() === 'active'"
+      (click)="status.set('active')"
+    >
+      En cours
+    </button>
+    <button
+      class="segmented-control__option"
+      [class.segmented-control__option--active]="status() === 'finished'"
+      [attr.aria-pressed]="status() === 'finished'"
+      (click)="status.set('finished')"
+    >
+      Terminés
+    </button>
+  </div>
+  <button
+    class="button button--outline button--compact"
+    [attr.aria-expanded]="filterSheet.isOpen()"
+    aria-controls="filters"
+    (click)="filterSheet.open()"
+  >
+    <img src="assets/icons/filter.svg" alt="" width="24" height="24" />Filtrer
+  </button>
+</div>
+<app-bottom-sheet #filterSheet panelId="filters" title="Filtrer">
+  <div class="filter-sheet">
+    <fieldset>
+      <legend>Voir</legend>
+      <div class="filter-sheet__choices">
+        @for (option of statusOptions; track option.value) {
+          <button
+            type="button"
+            class="button button--outline button--compact"
+            [class.button--selected]="status() === option.value"
+            [attr.aria-pressed]="status() === option.value"
+            (click)="status.set(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Quand</legend>
+      <div class="filter-sheet__choices">
+        @for (option of recurrenceOptions; track option.value) {
+          <button
+            type="button"
+            class="button button--outline button--compact"
+            [value]="option.value"
+            [class.button--selected]="recurrence() === option.value"
+            [attr.aria-pressed]="recurrence() === option.value"
+            (click)="recurrence.set(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Qui peut voir</legend>
+      <div class="filter-sheet__choices">
+        @for (option of visibilityOptions; track option.value) {
+          <button
+            type="button"
+            class="button button--outline button--compact"
+            [class.button--selected]="visibility() === option.value"
+            [attr.aria-pressed]="visibility() === option.value"
+            (click)="visibility.set(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+    <p class="text-secondary">Les exemples disponibles sont publics.</p>
+    <button class="button button--primary" (click)="filterSheet.close()">
+      Voir les wirds ({{ resultCount() }})
+    </button>
+    <button class="button button--outline" (click)="clearFilters()">Tout effacer</button>
+  </div>
+</app-bottom-sheet>

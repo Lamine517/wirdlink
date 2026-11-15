@@ -1,7 +1,12 @@
 <a class="skip-link" href="#main">Aller au contenu</a>
 <div class="app-shell">
   <div class="demo-banner">Démonstration · vos parts restent sur cet appareil</div>
-  <main class="app-shell__content" id="main" tabindex="-1"><router-outlet /></main>
+  <main #content class="app-shell__content" id="main" tabindex="-1">
+    @if (store.storageWarning()) {
+      <p class="feedback" role="status">{{ store.storageWarning() }}</p>
+    }
+    <router-outlet (activate)="resetScroll()" />
+  </main>
   <nav class="bottom-nav" aria-label="Navigation principale">
     <a
       routerLink="/"

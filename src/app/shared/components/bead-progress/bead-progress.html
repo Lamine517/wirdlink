@@ -1,0 +1,17 @@
+<div
+  class="beads"
+  role="progressbar"
+  aria-label="Lectures terminées"
+  [attr.aria-valuenow]="completed()"
+  [attr.aria-valuemax]="target()"
+  aria-valuemin="0"
+>
+  @for (bead of beads; track bead) {
+    <img
+      [src]="bead < filled() ? 'assets/icons/filled.svg' : 'assets/icons/empty.svg'"
+      alt=""
+      width="24"
+      height="24"
+    />
+  }
+</div>

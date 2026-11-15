@@ -1,0 +1,58 @@
+@use '../../../../../styles/variables' as tokens;
+@use '../../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+.quantity-counter {
+  @include mixins.flex-row;
+
+  &__input {
+    min-width: 0;
+    width: 100%;
+    height: 72px;
+    text-align: center;
+    font-size: var(--font-size-counter);
+    font-weight: tokens.$font-weight-extrabold;
+    color: var(--color-primary);
+    border: 3px solid var(--color-primary);
+  }
+
+  &__button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--color-primary);
+    background: var(--color-bg-surface);
+  }
+}
+
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+
+  .button {
+    flex: 1;
+  }
+}
+
+.quantity-counter__input--invalid {
+  border-color: var(--color-feedback-error);
+  color: var(--color-feedback-error);
+}
+.quantity-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  color: var(--color-feedback-error);
+  font-size: var(--font-size-small);
+  font-weight: 800;
+}
+.quantity-error img {
+  flex-shrink: 0;
+}

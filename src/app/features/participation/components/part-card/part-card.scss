@@ -1,0 +1,12 @@
+@use '../../../../../styles/variables' as tokens;
+@use '../../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+.part-count {
+  font-size: 2rem;
+  color: var(--color-primary);
+  font-weight: tokens.$font-weight-extrabold;
+}

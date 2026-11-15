@@ -1,0 +1,14 @@
+@if (message()) {
+  <p class="feedback feedback--error" role="alert">{{ message() }}</p>
+}
+<h1>Mes parts</h1>
+@for (entry of entries(); track entry.part.id) {
+  <app-part-card [part]="entry.part" [title]="entry.title" (finishRequested)="finish(entry.part)" />
+} @empty {
+  <app-empty-state
+    title="Vous n’avez pas encore participé"
+    description="Choisissez un wird et touchez « Je participe »."
+    actionLabel="Voir les wirds"
+    actionLink="/"
+  />
+}

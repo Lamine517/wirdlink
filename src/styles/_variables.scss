@@ -1,13 +1,16 @@
 $font-family-base: 'Nunito Sans', 'Trebuchet MS', sans-serif;
 $font-weight-semibold: 600;
 $font-weight-extrabold: 800;
-$font-size-base: 20px;
+$font-size-base: 1.125rem;
 $touch-target-min: 48px;
 $button-height-min: 68px;
-$app-width: 460px;
+$app-width: 390px;
 $breakpoint-desktop: 700px;
 
 @mixin theme-properties {
+  --app-frame-width: 390px;
+  --app-frame-height: 100dvh;
+  --app-frame-radius: 0px;
   --color-primary: #026780;
   --color-accent: #fbc55d;
   --color-text-primary: #1f2a30;
@@ -18,6 +21,11 @@ $breakpoint-desktop: 700px;
   --color-bg-surface: #fff;
   --color-bg-muted: #dce8eb;
   --color-feedback-error: #b3261e;
+  --font-size-small: 1rem;
+  --font-size-body: 1.125rem;
+  --font-size-card-title: 1.5rem;
+  --font-size-page-title: 1.75rem;
+  --font-size-counter: 2.25rem;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;

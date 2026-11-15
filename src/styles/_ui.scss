@@ -17,6 +17,7 @@ button {
   min-height: tokens.$button-height-min;
   padding: 14px var(--space-16);
   font-weight: tokens.$font-weight-extrabold;
+  font-size: var(--font-size-body);
   text-align: center;
   text-decoration: none;
 
@@ -45,6 +46,7 @@ button {
   }
 
   &--compact {
+    font-size: var(--font-size-small);
     min-height: 52px;
     padding: var(--space-8) var(--space-12);
     border-radius: var(--radius-medium);
@@ -52,7 +54,7 @@ button {
 }
 
 .surface-card {
-  @include mixins.stack;
+  @include mixins.stack(var(--space-12));
   @include mixins.surface;
   padding: var(--space-20) var(--space-16);
   margin: var(--space-16) 0;
@@ -69,6 +71,7 @@ button {
 }
 
 .text-secondary {
+  font-size: var(--font-size-small);
   color: var(--color-text-secondary);
 }
 

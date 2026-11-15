@@ -1,0 +1,18 @@
+<dialog
+  #dialog
+  class="bottom-sheet"
+  [id]="panelId()"
+  [attr.aria-labelledby]="panelId() + '-title'"
+  (click)="closeOnBackdrop($event)"
+  (cancel)="close()"
+  (close)="isOpen.set(false)"
+>
+  <section class="bottom-sheet__panel">
+    <div class="bottom-sheet__handle" aria-hidden="true"></div>
+    <header class="bottom-sheet__header">
+      <h2 [id]="panelId() + '-title'">{{ title() }}</h2>
+      <button type="button" class="bottom-sheet__close" (click)="close()">Fermer</button>
+    </header>
+    <ng-content />
+  </section>
+</dialog>
