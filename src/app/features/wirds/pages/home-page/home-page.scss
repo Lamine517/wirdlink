@@ -7,7 +7,7 @@
 
 .page-header {
   @include mixins.flex-row(var(--space-12), space-between);
-  margin-bottom: var(--space-24);
+  margin-bottom: var(--space-12);
 
   h1 {
     margin: 0;
@@ -20,12 +20,12 @@
   background: var(--color-accent);
   border: 0;
   border-radius: var(--radius-medium);
-  padding: var(--space-12);
+  padding: var(--space-8) var(--space-12);
 }
 
 .result-count {
   font-size: var(--font-size-small);
-  margin: var(--space-20) 0 var(--space-16);
+  margin: var(--space-12) 0;
   color: var(--color-text-secondary);
 }
 
@@ -34,7 +34,7 @@
   align-items: center;
   gap: var(--space-8);
   text-decoration: none;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 800;
 }
 .brand img {

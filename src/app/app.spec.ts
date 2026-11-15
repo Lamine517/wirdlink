@@ -4,6 +4,13 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { App } from './app';
 
 describe('WirdLink navigation', () => {
+  async function waitForSheetClose(dialog: HTMLDialogElement): Promise<void> {
+    for (let attempt = 0; attempt < 30 && dialog.open; attempt++) {
+      await new Promise<void>((resolve) => setTimeout(resolve, 16));
+    }
+    expect(dialog.open).toBeFalse();
+  }
+
   beforeEach(() => {
     localStorage.removeItem('wirdlink.demo.v1');
     TestBed.configureTestingModule({ imports: [App], providers: appConfig.providers });
@@ -79,7 +86,7 @@ describe('WirdLink navigation', () => {
     );
     harness.routeNativeElement!.querySelector<HTMLButtonElement>('.bottom-sheet__close')!.click();
     harness.detectChanges();
-    expect(dialog.open).toBeFalse();
+    await waitForSheetClose(dialog);
     await harness.navigateByUrl('/wird/salat-nabi');
     const buttons = [
       ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('.choice-list button'),
@@ -139,6 +146,6 @@ describe('WirdLink navigation', () => {
     const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('dialog')!;
     dialog.click();
     harness.detectChanges();
-    expect(dialog.open).toBeFalse();
+    await waitForSheetClose(dialog);
   });
 });
