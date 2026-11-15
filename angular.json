@@ -89,10 +89,14 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "karmaConfig": "karma.conf.cjs"
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "e52f3e47-2137-47c1-9532-4052dc69380f"
   }
 }

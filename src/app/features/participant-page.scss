@@ -1,0 +1,131 @@
+@use '../../styles/variables' as tokens;
+@use '../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+.page-header {
+  @include mixins.flex-row(var(--space-12), space-between);
+  margin-bottom: var(--space-24);
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.help-button {
+  @include mixins.flex-row(var(--space-8));
+  background: var(--color-accent);
+  border: 0;
+  border-radius: var(--radius-medium);
+  padding: var(--space-12);
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.segmented-control {
+  display: flex;
+  flex: 1;
+  padding: var(--space-4);
+  border-radius: var(--radius-medium);
+  background: var(--color-bg-muted);
+
+  &__option {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    border-radius: var(--radius-small);
+    padding: var(--space-8);
+
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+  }
+}
+
+.result-count {
+  margin: var(--space-20) 0 var(--space-16);
+  color: var(--color-text-secondary);
+}
+
+.back-link {
+  @include mixins.flex-row(var(--space-8));
+  display: inline-flex;
+  min-height: tokens.$touch-target-min;
+  text-decoration: none;
+  font-weight: tokens.$font-weight-extrabold;
+}
+
+.participation-form {
+  @include mixins.stack;
+
+  &__submit {
+    margin-top: var(--space-32);
+  }
+}
+
+.quantity-counter {
+  @include mixins.flex-row;
+
+  &__input {
+    min-width: 0;
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: tokens.$font-weight-extrabold;
+    color: var(--color-primary);
+    border: 3px solid var(--color-primary);
+  }
+
+  &__button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--color-primary);
+    background: var(--color-bg-surface);
+  }
+}
+
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+
+  .button {
+    flex: 1;
+  }
+}
+
+.part-count {
+  font-size: 32px;
+  color: var(--color-primary);
+  font-weight: tokens.$font-weight-extrabold;
+}
+
+.thank-you {
+  text-align: center;
+
+  > .button {
+    margin: var(--space-16) 0;
+  }
+
+  &__badge {
+    display: grid;
+    place-items: center;
+    background: var(--color-primary);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    margin: var(--space-24) auto;
+  }
+}
