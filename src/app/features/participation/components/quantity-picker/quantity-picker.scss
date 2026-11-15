@@ -11,12 +11,12 @@
   &__input {
     min-width: 0;
     width: 100%;
-    height: 72px;
+    height: 64px;
     text-align: center;
     font-size: var(--font-size-counter);
     font-weight: tokens.$font-weight-extrabold;
     color: var(--color-primary);
-    border: 3px solid var(--color-primary);
+    border: 2px solid var(--color-primary);
   }
 
   &__button {
@@ -55,4 +55,11 @@
 }
 .quantity-error img {
   flex-shrink: 0;
+}
+
+#quantity-hint {
+  margin: 8px 0 12px;
+  text-align: center;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
 }

@@ -80,3 +80,16 @@ sont valides. Revue UI/UX effectuée avec le profil dédié.
 
 Dernière vérification : 18 tests réussis, couverture des lignes 88,84 %, build réussi et
 parcours Chrome vérifié. Les chiffres des lots antérieurs ci-dessus restent historiques.
+
+## Participation visuelle
+
+Le résumé textuel objectif/reste est remplacé par un composant partagé `circular-progress` :
+nom du wird, lectures terminées, objectif et pourcentage dans un cercle bleu pétrole,
+repère doré, puis disponibles/en cours. La quantité choisie reste distincte de l'avancement
+collectif ; elle ne modifie le cercle qu'une fois réellement terminée.
+La demande « prix » a été clarifiée par l'utilisateur comme parts prises/progression,
+sans ajout de tarification. Les textes d'accompagnement sont raccourcis.
+
+19 tests réussis, 89,13 % des lignes couvertes, build et parcours Chrome validés.
+Le nouveau cercle a été inspecté visuellement à 390 px ; les tests vérifient aussi que
+le choix d'une quantité ne modifie pas les lectures terminées.

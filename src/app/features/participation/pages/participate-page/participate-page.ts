@@ -1,3 +1,4 @@
+import { CircularProgress } from '../../../../shared/components/circular-progress/circular-progress';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +9,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
 
 @Component({
   selector: 'app-participate-page',
-  imports: [RouterLink, ReactiveFormsModule, DecimalPipe, QuantityPicker],
+  imports: [RouterLink, ReactiveFormsModule, DecimalPipe, QuantityPicker, CircularProgress],
   templateUrl: './participate-page.html',
   styleUrl: './participate-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

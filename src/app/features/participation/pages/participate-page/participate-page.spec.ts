@@ -80,4 +80,16 @@ describe('Guided participation form', () => {
     expect(TestBed.inject(WirdStore).parts().length).toBe(1);
     expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Mes parts');
   });
+  it('keeps collective completion distinct from the chosen quantity', () => {
+    const ring = harness.routeNativeElement!.querySelector<HTMLElement>('[role="progressbar"]')!;
+    expect(ring.getAttribute('aria-label')).toContain('Salat ala Nabi');
+    expect(ring.getAttribute('aria-valuenow')).toBe('600');
+    expect(ring.getAttribute('aria-valuemax')).toBe('1000');
+    enterQuantity('10');
+    expect(ring.getAttribute('aria-valuenow')).toBe('600');
+    expect(
+      harness.routeNativeElement!.querySelector('.participation-summary__stats')?.textContent,
+    ).toContain('400');
+    expect(submitButton()?.disabled).toBeFalse();
+  });
 });
