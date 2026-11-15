@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 import { appConfig } from './app.config';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -115,7 +116,7 @@ describe('WirdLink navigation', () => {
     expect(harness.routeNativeElement!.querySelector('#quantity-error')).toBeNull();
   });
 
-  it('shows a reusable empty state with an action and keeps creation separate', async () => {
+  it('shows a reusable empty state and opens the creation templates', async () => {
     const harness = await RouterTestingHarness.create('/mes-parts');
     expect(harness.routeNativeElement!.querySelector('app-empty-state img')).not.toBeNull();
     expect(
@@ -123,7 +124,7 @@ describe('WirdLink navigation', () => {
     ).toBe('/');
     await harness.navigateByUrl('/creer');
     expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Créer un wird');
-    expect(harness.routeNativeElement!.querySelector('app-empty-state')).not.toBeNull();
+    expect(harness.routeNativeElement!.querySelectorAll('.template-card').length).toBe(5);
   });
 
   it('clears filter choices and closes the sheet on backdrop interaction', async () => {
@@ -147,5 +148,24 @@ describe('WirdLink navigation', () => {
     dialog.click();
     harness.detectChanges();
     await waitForSheetClose(dialog);
+  });
+  it('marks the matching menu section on nested pages', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    fixture.detectChanges();
+    for (const [route, link] of [
+      ['/creer/contenu', '/creer'],
+      ['/mes-parts', '/mes-parts'],
+      ['/wird/salat-nabi', '/'],
+    ]) {
+      await router.navigateByUrl(route);
+      await fixture.whenStable();
+      fixture.detectChanges();
+      const active = (fixture.nativeElement as HTMLElement).querySelector(
+        'nav a[aria-current="page"]',
+      );
+      expect(active?.getAttribute('href')).toBe(link);
+      expect(active?.querySelector('app-icon')).not.toBeNull();
+    }
   });
 });

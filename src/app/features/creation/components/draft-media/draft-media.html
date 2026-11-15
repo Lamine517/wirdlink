@@ -1,0 +1,48 @@
+<div class="draft-media">
+  <button type="button" class="draft-media__picker" (click)="audioFile.click()">
+    <span class="draft-media__icon"
+      ><img src="assets/icons/microphone.svg" width="28" height="28" alt="" /></span
+    ><span>Ma voix <small>facultatif</small></span>
+  </button>
+  <input
+    #audioFile
+    hidden
+    id="draft-audio"
+    type="file"
+    accept="audio/*"
+    capture="user"
+    (change)="select($event, 'audio')"
+  />
+  @if (audio(); as media) {
+    <app-audio-player [source]="media.url" title="Votre note vocale" /><button
+      type="button"
+      class="draft-media__remove"
+      (click)="removeRequested.emit('audio')"
+    >
+      Retirer la voix
+    </button>
+  }
+  <button type="button" class="button button--outline" (click)="imageFile.click()">
+    <img src="assets/icons/image-square.svg" width="24" height="24" alt="" />Ajouter une photo
+  </button>
+  <input
+    #imageFile
+    hidden
+    id="draft-image"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    (change)="select($event, 'image')"
+  />
+  @if (image(); as media) {
+    <img class="draft-media__preview" [src]="media.url" alt="Photo choisie pour le wird" /><button
+      type="button"
+      class="draft-media__remove"
+      (click)="removeRequested.emit('image')"
+    >
+      Retirer la photo
+    </button>
+  }
+  @if (error()) {
+    <p class="field-error" role="alert">{{ error() }}</p>
+  }
+</div>

@@ -16,7 +16,7 @@ app-root {
 }
 @media (min-width: 700px) {
   :root {
-    --app-frame-height: min(844px, calc(100dvh - 48px));
+    --app-frame-height: min(844px, calc(100dvh - 96px));
     --app-frame-radius: 28px;
   }
 }

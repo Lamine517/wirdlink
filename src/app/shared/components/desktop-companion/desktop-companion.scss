@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+.desktop-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  text-align: right;
+  max-width: 280px;
+  margin-left: auto;
+}
+.desktop-intro h2,
+.desktop-intro p,
+.desktop-share h2,
+.desktop-share p {
+  margin: 0;
+}
+.desktop-intro h2 {
+  font-size: 2rem;
+}
+.desktop-intro__qr {
+  width: 154px;
+  min-height: 154px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px dashed var(--color-primary);
+  border-radius: 20px;
+  background: white;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  overflow: hidden;
+}
+.desktop-caption {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+.desktop-share {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+}
+.desktop-share h2 {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+}
+.desktop-share .button {
+  min-height: 52px;
+}
+.button--whatsapp:not(:disabled) {
+  background: #25d366;
+  color: var(--color-text-primary);
+  border-color: #25d366;
+}
+.desktop-link-label {
+  font-size: 0.875rem;
+}
+.desktop-link {
+  min-width: 0;
+  width: 100%;
+  font-size: 0.875rem;
+  min-height: 48px;
+}

@@ -1,0 +1,16 @@
+<a class="back-link" [routerLink]="backLink()"
+  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
+>
+<div class="creation-steps">
+  <span>Étape {{ step() }} sur 3</span>
+  <div
+    class="creation-steps__track"
+    role="progressbar"
+    aria-label="Création du wird"
+    aria-valuemin="0"
+    aria-valuemax="3"
+    [attr.aria-valuenow]="step()"
+  >
+    <span [style.width.%]="(step() / 3) * 100"></span>
+  </div>
+</div>

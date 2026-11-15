@@ -1,0 +1,67 @@
+<app-creation-steps [step]="1" backLink="/creer" />
+<h1>Mon wird</h1>
+@if (store.warning()) {
+  <p class="feedback" role="status">{{ store.warning() }}</p>
+}
+<form class="form-stack" [formGroup]="form" (ngSubmit)="continue()">
+  <div class="field-group">
+    <label for="draft-title">Nom du wird</label
+    ><input
+      id="draft-title"
+      formControlName="title"
+      placeholder="Ex. Salat ala Nabi"
+      maxlength="100"
+      required
+      [attr.aria-describedby]="
+        form.controls.title.dirty && !form.controls.title.value.trim() ? 'title-error' : null
+      "
+      [attr.aria-invalid]="form.controls.title.dirty && !form.controls.title.value.trim()"
+    />
+    @if (form.controls.title.dirty && !form.controls.title.value.trim()) {
+      <p id="title-error" class="field-error" role="alert">Donnez un nom à votre wird.</p>
+    }
+  </div>
+  <div class="field-group">
+    <label for="draft-target">Combien en tout ?</label
+    ><input
+      id="draft-target"
+      formControlName="target"
+      type="number"
+      inputmode="numeric"
+      min="1"
+      step="1"
+      placeholder="Ex. 1 000"
+      required
+      [attr.aria-invalid]="targetInvalid()"
+      [attr.aria-describedby]="targetInvalid() ? 'target-hint target-error' : 'target-hint'"
+    />
+    <p id="target-hint" class="text-secondary">lectures à partager</p>
+    @if (targetInvalid()) {
+      <p id="target-error" class="field-error" role="alert">
+        Choisissez un nombre entier supérieur à zéro.
+      </p>
+    }
+  </div>
+  <app-draft-media
+    [image]="store.image()"
+    [audio]="store.audio()"
+    [error]="store.mediaError()"
+    (fileSelected)="selectMedia($event)"
+    (removeRequested)="store.removeMedia($event)"
+  />
+  <div class="field-group">
+    <label for="draft-description"
+      >Message ou consignes <span class="text-secondary">facultatif</span></label
+    ><textarea
+      id="draft-description"
+      formControlName="description"
+      rows="3"
+      maxlength="1000"
+      placeholder="Ex. Ouverture : Fatiha ×1, Salatoul Fatihi ×7. Puis participer au wird."
+    ></textarea>
+  </div>
+  <button type="submit" class="button button--primary" [disabled]="!canContinue()">Suivant</button>
+  <p class="text-secondary">
+    Le texte du brouillon est conservé ici. Photo et voix restent disponibles pendant cette session.
+  </p>
+</form>

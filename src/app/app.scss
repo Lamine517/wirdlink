@@ -72,3 +72,67 @@
     top: 0;
   }
 }
+
+.desktop-layout {
+  width: 100%;
+}
+.desktop-layout__intro,
+.desktop-layout__share,
+.desktop-footer {
+  display: none;
+}
+@media (min-width: 1000px) {
+  .desktop-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--app-frame-width) minmax(0, 1fr);
+    align-items: center;
+    gap: 64px;
+    max-width: 1360px;
+    padding: 0 24px;
+  }
+  .desktop-layout__intro,
+  .desktop-layout__share {
+    display: block;
+    min-width: 0;
+  }
+  .desktop-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 12px 24px;
+    background: var(--color-bg-surface);
+    font-size: 0.875rem;
+  }
+  .desktop-footer a {
+    text-decoration: none;
+    color: var(--color-text-secondary);
+  }
+  .desktop-footer a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+}
+
+@media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
+  .desktop-layout--entered {
+    .desktop-layout__intro,
+    .app-shell,
+    .desktop-layout__share {
+      animation: content-enter 400ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+    }
+
+    .app-shell {
+      animation-delay: 60ms;
+    }
+
+    .desktop-layout__share {
+      animation-delay: 120ms;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+.parts-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-bg-muted);
+  border-radius: 16px;
+  color: var(--color-primary);
+}
+.parts-search:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.parts-search input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 0.875rem;
+  min-height: 48px;
+  padding: 8px 0;
+}
+.parts-search input:focus-visible {
+  outline: none;
+}
+.parts-count {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 12px 0;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

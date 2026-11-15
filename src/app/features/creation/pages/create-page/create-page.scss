@@ -1,0 +1,68 @@
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.template-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-bg-muted);
+  border-radius: 20px;
+  text-align: left;
+  box-shadow: var(--shadow-card);
+}
+.template-card__icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.template-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.template-card__content strong {
+  overflow-wrap: anywhere;
+}
+.template-card__content > span {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.template-card__arrow {
+  font-size: 24px;
+  color: var(--color-primary);
+}
+@media (hover: hover) {
+  .template-card:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+.draft-delete {
+  min-height: 48px;
+  border: 0;
+  padding: 8px;
+  background: transparent;
+  color: var(--color-feedback-error);
+  font-size: 0.875rem;
+}
+.draft-delete-confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.draft-delete-confirmation p {
+  margin: 0 0 8px;
+}

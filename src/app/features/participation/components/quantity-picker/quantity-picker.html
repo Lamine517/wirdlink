@@ -41,7 +41,7 @@
 }
 <p id="quantity-hint">lectures</p>
 <div class="choice-list">
-  @for (amount of suggestions(); track amount) {
+  @for (amount of suggestions(); track $index) {
     <button
       type="button"
       class="button button--outline button--compact"
