@@ -10,7 +10,6 @@
   <div class="progress-ring__center">
     <span class="progress-ring__title">{{ title() }}</span>
     <strong class="progress-ring__value">{{ completed() | number }}</strong>
-    <span class="progress-ring__caption">sur {{ target() | number }} lectures</span>
-    <span class="progress-ring__badge">{{ progress() | number: '1.0-0' }} % terminé</span>
+    <span class="progress-ring__caption">lus sur {{ target() | number }}</span>
   </div>
 </div>

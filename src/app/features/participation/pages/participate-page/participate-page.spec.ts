@@ -92,4 +92,31 @@ describe('Guided participation form', () => {
     ).toContain('400');
     expect(submitButton()?.disabled).toBeFalse();
   });
+  it('selects a suggested share in one tap and adapts after another reservation', () => {
+    const store = TestBed.inject(WirdStore);
+    const suggestions = () =>
+      [
+        ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>(
+          'app-quantity-picker .choice-list button',
+        ),
+      ].filter((button) => button.value !== 'all');
+    expect(suggestions().map((button) => button.textContent?.trim())).toEqual(['50', '100', '200']);
+    suggestions()[1].click();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!.value).toBe(
+      '100',
+    );
+    suggestions()[1].click();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!.value).toBe(
+      '100',
+    );
+    store.reserve('salat-nabi', 363, '');
+    harness.detectChanges();
+    expect(suggestions().map((button) => button.textContent?.trim())).toEqual(['5', '10', '20']);
+    expect(submitButton()?.disabled).toBeTrue();
+    suggestions()[1].click();
+    harness.detectChanges();
+    expect(submitButton()?.disabled).toBeFalse();
+  });
 });

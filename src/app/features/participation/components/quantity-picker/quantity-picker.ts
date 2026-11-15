@@ -1,3 +1,4 @@
+import { suggestQuantities } from './quantity-suggestions';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,9 +11,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 })
 export class QuantityPicker {
   readonly control = input.required<FormControl<number | null>>();
+  readonly target = input.required<number>();
+  protected readonly suggestions = computed(() => suggestQuantities(this.target(), this.maximum()));
   readonly maximum = input.required<number>();
 
-  private readonly currentValue = signal<number | null>(null);
+  protected readonly currentValue = signal<number | null>(null);
   protected readonly hasInteracted = signal(false);
   protected readonly validationMessage = computed(() => {
     if (!this.hasInteracted()) return '';
