@@ -3,7 +3,8 @@ import { computed, Injectable, signal } from '@angular/core';
 export interface Wird {
   id: string;
   title: string;
-  recurrence: 'Chaque vendredi' | 'Tous les jours';
+  recurrence: 'Chaque vendredi' | 'Tous les jours' | 'Chaque semaine' | 'Une fois';
+  visibility: 'public' | 'private';
   target: number;
   completed: number;
 }
@@ -19,6 +20,7 @@ const INITIAL_WIRDS: Wird[] = [
     id: 'salat-nabi',
     title: 'Salat ala Nabi',
     recurrence: 'Chaque vendredi',
+    visibility: 'public',
     target: 1000,
     completed: 600,
   },
@@ -26,6 +28,7 @@ const INITIAL_WIRDS: Wird[] = [
     id: 'salat-fatihi',
     title: '1 000 Salatoul Fatihi',
     recurrence: 'Tous les jours',
+    visibility: 'public',
     target: 1000,
     completed: 600,
   },

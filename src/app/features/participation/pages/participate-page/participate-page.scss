@@ -1,0 +1,32 @@
+@use '../../../../../styles/variables' as tokens;
+@use '../../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+.back-link {
+  @include mixins.flex-row(var(--space-8));
+  display: inline-flex;
+  min-height: tokens.$touch-target-min;
+  text-decoration: none;
+  font-weight: tokens.$font-weight-extrabold;
+}
+
+.participation-form {
+  @include mixins.stack;
+
+  &__submit {
+    margin-top: var(--space-32);
+  }
+}
+
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+
+  .button {
+    flex: 1;
+  }
+}

@@ -51,29 +51,94 @@ describe('WirdLink navigation', () => {
     const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
     input.value = '401';
     input.dispatchEvent(new Event('input'));
-    harness.routeNativeElement!.querySelector('form')!.dispatchEvent(
-      new Event('submit', { bubbles: true, cancelable: true }),
-    );
+    harness
+      .routeNativeElement!.querySelector('form')!
+      .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     harness.detectChanges();
-    expect(harness.routeNativeElement!.querySelector('[role="alert"]')?.textContent).toContain('entre 1 et 400');
+    expect(harness.routeNativeElement!.querySelector('[role="alert"]')?.textContent).toContain(
+      'entre 1 et 400',
+    );
     expect(localStorage.getItem('wirdlink.demo.v1')).toBeNull();
   });
 
   it('filters recurrence and selects the whole remaining quantity', async () => {
     const harness = await RouterTestingHarness.create('/');
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('[aria-controls="filters"]')!.click();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('[aria-controls="filters"]')!
+      .click();
     harness.detectChanges();
-    const select = harness.routeNativeElement!.querySelector<HTMLSelectElement>('#recurrence')!;
-    select.value = 'Tous les jours';
-    select.dispatchEvent(new Event('change'));
+    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('dialog')!;
+    expect(dialog.open).toBeTrue();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('button[value="Tous les jours"]')!
+      .click();
     harness.detectChanges();
     expect(harness.routeNativeElement!.querySelectorAll('article').length).toBe(1);
-    expect(harness.routeNativeElement!.querySelector('article')?.textContent).toContain('Salatoul Fatihi');
+    expect(harness.routeNativeElement!.querySelector('article')?.textContent).toContain(
+      'Salatoul Fatihi',
+    );
+    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.bottom-sheet__close')!.click();
+    harness.detectChanges();
+    expect(dialog.open).toBeFalse();
     await harness.navigateByUrl('/wird/salat-nabi');
-    const buttons = [...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('.choice-list button')];
+    const buttons = [
+      ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('.choice-list button'),
+    ];
     buttons.find((button) => button.textContent?.trim() === 'Tout')!.click();
     harness.detectChanges();
-    expect(harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!.value).toBe('400');
+    expect(harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!.value).toBe(
+      '400',
+    );
+  });
+  it('marks an excessive quantity immediately and clears the error after correction', async () => {
+    const harness = await RouterTestingHarness.create('/wird/salat-nabi');
+    const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
+    input.value = '1500';
+    input.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.classList.contains('quantity-counter__input--invalid')).toBeTrue();
+    expect(harness.routeNativeElement!.querySelector('#quantity-error')?.textContent).toContain(
+      'Il ne reste que 400',
+    );
+    input.value = '10';
+    input.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+    expect(input.getAttribute('aria-invalid')).toBe('false');
+    expect(harness.routeNativeElement!.querySelector('#quantity-error')).toBeNull();
   });
 
+  it('shows a reusable empty state with an action and keeps creation separate', async () => {
+    const harness = await RouterTestingHarness.create('/mes-parts');
+    expect(harness.routeNativeElement!.querySelector('app-empty-state img')).not.toBeNull();
+    expect(
+      harness.routeNativeElement!.querySelector('app-empty-state a')?.getAttribute('href'),
+    ).toBe('/');
+    await harness.navigateByUrl('/creer');
+    expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Créer un wird');
+    expect(harness.routeNativeElement!.querySelector('app-empty-state')).not.toBeNull();
+  });
+
+  it('clears filter choices and closes the sheet on backdrop interaction', async () => {
+    const harness = await RouterTestingHarness.create('/');
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('[aria-controls="filters"]')!
+      .click();
+    harness.detectChanges();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('button[value="Chaque semaine"]')!
+      .click();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelectorAll('article').length).toBe(0);
+    const clear = [
+      ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('dialog button'),
+    ].find((button) => button.textContent?.trim() === 'Tout effacer')!;
+    clear.click();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelectorAll('article').length).toBe(2);
+    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('dialog')!;
+    dialog.click();
+    harness.detectChanges();
+    expect(dialog.open).toBeFalse();
+  });
 });

@@ -1,0 +1,54 @@
+<div class="quantity-counter">
+  <button
+    type="button"
+    class="quantity-counter__button"
+    aria-label="Diminuer la quantité"
+    (click)="adjust(-1)"
+  >
+    <img src="assets/icons/minus.svg" alt="" width="24" height="24" />
+  </button>
+  <input
+    class="quantity-counter__input"
+    id="quantity"
+    type="number"
+    inputmode="numeric"
+    min="1"
+    [max]="maximum()"
+    step="1"
+    [formControl]="control()"
+    [class.quantity-counter__input--invalid]="!!validationMessage()"
+    [attr.aria-invalid]="!!validationMessage()"
+    [attr.aria-describedby]="validationMessage() ? 'quantity-error quantity-hint' : 'quantity-hint'"
+    required
+  />
+  <button
+    type="button"
+    class="quantity-counter__button"
+    aria-label="Augmenter la quantité"
+    (click)="adjust(1)"
+  >
+    <img src="assets/icons/plus.svg" alt="" width="28" height="28" />
+  </button>
+</div>
+@if (validationMessage()) {
+  <p class="quantity-error" id="quantity-error" role="alert">
+    <img src="assets/icons/quantity-error.svg" alt="" width="24" height="24" />{{
+      validationMessage()
+    }}
+  </p>
+}
+<p id="quantity-hint">Touchez le nombre pour l’écrire, ou choisissez :</p>
+<div class="choice-list">
+  @for (amount of [1, 5, 10]; track amount) {
+    <button type="button" class="button button--outline button--compact" (click)="adjust(amount)">
+      +{{ amount }}
+    </button>
+  }
+  <button
+    type="button"
+    class="button button--outline button--compact"
+    (click)="setQuantity(maximum())"
+  >
+    Tout
+  </button>
+</div>

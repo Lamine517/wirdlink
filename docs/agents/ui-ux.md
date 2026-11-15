@@ -12,7 +12,7 @@ Lire `AGENTS.md`, `CONVENTIONS.md` et `docs/ressources.md` à la racine du dép�
 
 Consulter les nœuds Figma pertinents. Relever composants et tokens sans les inventer. Vérifier français/arabe, mobile, clavier, zoom, erreurs et alternatives audio. Proposer les écarts ; ne modifier Figma que si demandé.
 
-Respecter les minima de 20 px pour le texte et 48 px pour les cibles ; partir des tokens de la remise au développement. Consigner les écarts Figma, le complément de partage privé à créer et les écrans de notification N4–N6 déjà présents et la navigation retenue dans la décision 0001.
+Respecter les tailles en rem de la décision 0002 et le minimum de 48 px pour les cibles ; partir des tokens de la remise au développement. Consigner les écarts Figma, le complément de partage privé à créer et les écrans de notification N4–N6 déjà présents et la navigation retenue dans la décision 0001.
 
 ## Livrable attendu
 

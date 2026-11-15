@@ -1,0 +1,48 @@
+@keyframes content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.button,
+.help-button,
+.segmented-control__option,
+.quantity-counter__button,
+.bottom-nav__link {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:not(:disabled):hover,
+  .help-button:hover,
+  .quantity-counter__button:hover {
+    box-shadow: 0 4px 12px rgb(10 41 51 / 16%);
+    transform: translateY(-1px);
+  }
+  .bottom-nav__link:hover {
+    background: var(--color-bg-muted);
+  }
+}
+.button:not(:disabled):active,
+.quantity-counter__button:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .help-button,
+  .segmented-control__option,
+  .quantity-counter__button,
+  .bottom-nav__link {
+    transition: none;
+  }
+}

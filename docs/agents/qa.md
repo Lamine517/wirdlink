@@ -12,7 +12,7 @@ Lire `AGENTS.md`, `CONVENTIONS.md` et `docs/ressources.md` à la racine du dép�
 
 Dériver les cas depuis les critères confirmés. Couvrir limites des compteurs, doubles actions, erreurs réseau et permissions selon le périmètre. Utiliser Jasmine/Karma existant ; ne pas annoncer de tests E2E sans outillage.
 
-Vérifier le parcours participant sans compte, la baisse du reste à COMMENCER, puis la fin de part distincte. Couvrir texte 20 px, cibles 48 px, concurrence, confidentialité et récurrences ; ne pas inventer les règles d'annulation ou de dépassement. Tester notifications et installation sur iPhone/Android lors de leur implémentation.
+Vérifier le parcours participant sans compte, la baisse du reste à COMMENCER, puis la fin de part distincte. Couvrir hiérarchie typographique de la décision 0002, cibles 48 px, concurrence, confidentialité et récurrences ; ne pas inventer les règles d'annulation ou de dépassement. Tester notifications et installation sur iPhone/Android lors de leur implémentation.
 
 ## Livrable attendu
 

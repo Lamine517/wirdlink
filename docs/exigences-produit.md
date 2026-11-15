@@ -13,7 +13,7 @@ Les arbitrages délégués par l'utilisateur sont désormais consignés dans [la
 
 ## Périmètre spécifié et critères initiaux
 
-Le tableau garde la traçabilité des exports ; les décisions de la section suivante et de la décision 0001 actualisent les points initialement ouverts.
+Le tableau garde la traçabilité des exports ; les décisions de la section suivante et des décisions 0001/0002 actualisent les points initialement ouverts.
 
 | ID | Exigence et critère observable | Source |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Le tableau garde la traçabilité des exports ; les décisions de la section sui
 | PR-09 | Une fois / Tous les jours / Chaque semaine / Chaque vendredi ; remise à zéro automatique des récurrences à l'échéance prévue. Fuseau, heure et parts en cours à préciser. | v2 §3.C, §4 |
 | PR-10 | Responsable : liste des créations, avancement, échéance, relance WhatsApp et indication de remise à zéro. Rappels et écran explicatif avant permission de notification. | v2 §3.E, §4 |
 | PR-11 | Prévoir code erroné, vide, hors ligne, chargement, terminé ; erreur avec icône et texte. Aide, Confidentialité, Conditions avec Écouter ; textes juridiques encore brouillons. Installation expliquée après première utilisation, moment à définir. | v2 §3.F–H |
-| PR-12 | Texte ≥20 px, cibles ≥48 px, un geste principal par écran, safe areas, un h1 par écran, vrais boutons, libellés et focus visible. Nunito SemiBold/ExtraBold et tokens documentés ; vérifier les contrastes réels. | v2 §5 ; remise §3–5 |
+| PR-12 | Texte : hiérarchie révisée 28/24/18/16 px en rem (décision 0002), cibles ≥48 px, un geste principal par écran, safe areas, un h1 par écran, vrais boutons, libellés et focus visible. Nunito SemiBold/ExtraBold et tokens documentés ; vérifier les contrastes réels. | v2 §5 ; remise §3–5 |
 | PR-13 | Supabase prévu : Auth, PostgreSQL, Storage audio/images. Schéma wirds/parts explicitement proposé à valider ; hébergeur frontend non choisi. | v2 §6 ; remise §7 |
 
 ## Arbitrages retenus après vérification Figma
@@ -44,7 +44,7 @@ les décisions déduites par cohérence, les limites de l'inspection et les crit
 - Rappels : écrans N4–N6 présents dans Figma, demande volontaire, réglages et limitation de fréquence.
 - Installation proposée après une première part terminée, sans cumuler les demandes de permissions.
 - Hors ligne : consulter les parts mémorisées ; les écritures exigent une confirmation serveur.
-- Minima : texte 20 px, cibles 48 px, boutons principaux 68 px. Adapter les composants Figma à 56 px.
+- Typographie révisée : 28/24/18/16 px en rem ; cibles 48 px, boutons principaux 68 px. Adapter les composants Figma à 56 px.
 - Authentification : téléphone, Google, Apple ; aucun ajout implicite de Facebook malgré le bouton Figma.
 
 ## Points restant ouverts
@@ -60,3 +60,5 @@ Ces points ne sont pas tranchables par la maquette seule. Voir la décision 0001
 Le dépôt contient Angular 20, SCSS et Jasmine/Karma. Le premier parcours participant est implémenté en démonstration locale : accueil, filtres, réservation, Mes parts, fin et Merci, avec sauvegarde locale validée.
 Choix utilisateur ultérieur : Nunito Sans et icônes Phosphor locales.
 PWA, Supabase, authentification, récurrences et notifications restent à intégrer. La réservation locale ne constitue pas une écriture serveur ni un compteur partagé. Voir [l’avancement](avancement.md).
+
+La demande utilisateur sur la séparation des pages et la réduction des textes est appliquée dans [la décision 0002](decisions/0002-pages-composants-typographie.md), prioritaire sur le minimum universel de 20 px des exports et de la décision 0001.

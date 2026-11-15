@@ -4,6 +4,8 @@
 - Statut : accepté pour la préparation du développement, sur délégation d'arbitrage de l'utilisateur
 - Périmètre : exigences locales ; aucune modification de Figma ni publication GitHub
 
+La [décision 0002](0002-pages-composants-typographie.md) révise ensuite la typographie et précise la séparation des pages, les états et le cadre desktop à la demande de l’utilisateur.
+
 ## Contexte et priorité
 
 L'utilisateur demande de valider les points par cohérence avec Figma.

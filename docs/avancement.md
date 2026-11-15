@@ -13,20 +13,20 @@ La bannière identifie explicitement les données de démonstration. Aucun compt
 entre appareils ; les données initiales sont fictives. La synthèse vocale lit le résumé affiché,
 pas une note vocale du responsable ni une récitation. Créer indique le prochain lot sans simuler une publication.
 Pas encore de PWA installable, Supabase, connexion, wird privé, récurrence ou notification.
-Le filtre de visibilité et les autres fréquences seront ajoutés avec les données correspondantes.
-Le panneau de partage desktop fait partie d'un prochain lot ; l'application est actuellement centrée.
+Le panneau de filtres présente état, récurrence et visibilité ; les jeux de démonstration ne contiennent que des wirds publics quotidiens ou du vendredi. Les autres choix peuvent donc donner un état vide.
+Le panneau de partage desktop fait partie d'un prochain lot ; l'application est centrée dans un cadre de téléphone, avec défilement interne.
 
 Nunito Sans 600/800 est hébergée localement avec sa licence OFL. Les SVG Phosphor sont
 les exports Figma d'origine ; leur licence est conservée dans les assets. Les dimensions
-suivent les arbitrages : texte minimum 20 px et boutons principaux minimum 68 px.
+suivent les arbitrages : hiérarchie 28/24/18/16 px en rem (décision 0002), cibles tactiles 48 px et boutons principaux 68 px.
 Les exports Figma comportent des tailles inférieures : l'écart est intentionnel et documenté.
 
 ## Vérifications du 15 novembre 2026
 
 - Build de production réussi, dans les budgets Angular.
-- 11 tests Jasmine/Karma réussis : navigation, parcours complet, bornes, restauration,
+- 14 tests Jasmine/Karma réussis : navigation, parcours complet, bornes, restauration,
   sauvegarde invalide/indisponible, filtres et absence de double comptage.
-- Couverture LCOV : 85,36 % des lignes, 77,61 % des branches ; ce résultat local ne valide pas le Quality Gate distant.
+- Couverture LCOV : 87,98 % des lignes, 77,33 % des branches ; ce résultat local ne valide pas le Quality Gate distant.
 - Chrome Headless : réservation de 10, Mes parts, J'ai fini, Merci avec reste 390,
   puis rechargement réussi. Aucune exception JavaScript relevée pendant ce parcours.
 - Rendu inspecté à 390 et 1440 px ; contrôle de débordement à 320 px.
@@ -56,3 +56,17 @@ de développement. Ne pas y saisir de données personnelles réelles pour ces es
 Parcours de création avec brouillon, puis contrat de données/permissions Supabase et
 intégration serveur. Les règles de cycle, d'expiration et les fournisseurs/coûts doivent
 être explicités avant les fonctions concernées.
+
+## Refonte des pages et de l’interface
+
+Chaque route charge une page dédiée dans `features/<domaine>/pages/`. Cartes, filtres
+et sélecteur de quantité sont dans les dossiers `components/` de leur domaine.
+La jauge, le panneau inférieur et l’état vide sont dans `shared/components/`.
+Plus de page unique qui branche tous les parcours avec un `@switch`.
+
+Le logo original Figma est intégré. La typographie est rééquilibrée. Le dépassement
+affiche immédiatement une bordure rouge et un message, sans attendre la soumission.
+Le panneau de filtres est un dialogue inférieur avec gestion clavier/focus.
+Le cadre desktop tient dans la fenêtre ; le contenu défile à l’intérieur.
+Effets de survol/appui et animations respectent la préférence de mouvement réduit.
+Voir la décision 0002 pour les contrôles effectués et leurs limites.

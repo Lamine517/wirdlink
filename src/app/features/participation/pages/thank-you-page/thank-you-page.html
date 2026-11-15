@@ -1,0 +1,24 @@
+@if (selected(); as wird) {
+  <section class="thank-you">
+    <div class="thank-you__badge">
+      <img src="assets/icons/check.svg" alt="" width="52" height="52" />
+    </div>
+    <h1>Merci !</h1>
+    <p>Qu’Allah accepte votre part.</p>
+    <div class="surface-card">
+      <app-bead-progress [completed]="store.completed(wird.id)" [target]="wird.target" />
+      <p class="text-strong">
+        Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}
+      </p>
+    </div>
+    @if (store.available(wird.id) > 0) {
+      <a class="button button--accent" [routerLink]="['/wird', wird.id]"
+        ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe encore</a
+      >
+    }
+    <a class="button button--outline" routerLink="/mes-parts">Retour à mes parts</a>
+  </section>
+} @else {
+  <h1>Wird introuvable</h1>
+  <a routerLink="/">Retour à l’accueil</a>
+}

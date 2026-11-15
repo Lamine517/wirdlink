@@ -75,5 +75,4 @@ describe('WirdStore', () => {
     localStorage.setItem('wirdlink.demo.v1', '{broken');
     expect(new WirdStore().storageWarning()).not.toBe('');
   });
-
 });

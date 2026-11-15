@@ -1,0 +1,14 @@
+<section class="empty-state">
+  <div class="empty-state__icon"><img [src]="icon()" alt="" width="60" height="60" /></div>
+  <h2>{{ title() }}</h2>
+  <p>{{ description() }}</p>
+  @if (actionLabel()) {
+    @if (actionLink(); as link) {
+      <a class="button button--primary" [routerLink]="link">{{ actionLabel() }}</a>
+    } @else {
+      <button type="button" class="button button--primary" (click)="actionRequested.emit()">
+        {{ actionLabel() }}
+      </button>
+    }
+  }
+</section>

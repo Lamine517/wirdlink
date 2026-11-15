@@ -12,7 +12,7 @@ Lire `AGENTS.md`, `CONVENTIONS.md` et `docs/ressources.md` à la racine du dép�
 
 Appliquer standalone, typage strict, OnPush et gestion explicite des états. Réutiliser les composants et tokens. Suivre Figma pour le visuel et un contrat explicite pour les données ; identifier clairement les mocks.
 
-Prévoir le parcours participant sans compte et la connexion responsable après aperçu au moment de publier. Respecter les minima de 20 px/48 px et les tokens de la remise. PWA, stockage local et Supabase restent à intégrer ; ne pas annoncer ces capacités comme déjà disponibles.
+Prévoir le parcours participant sans compte et la connexion responsable après aperçu au moment de publier. Respecter les tailles typographiques de la décision 0002 et tactiles de 48 px et les tokens de la remise. PWA, stockage local et Supabase restent à intégrer ; ne pas annoncer ces capacités comme déjà disponibles.
 
 ## Livrable attendu
 

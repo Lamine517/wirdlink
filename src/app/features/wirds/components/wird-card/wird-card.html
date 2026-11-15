@@ -1,0 +1,25 @@
+<article class="surface-card">
+  <h2>{{ wird().title }}</h2>
+  <p class="text-secondary">{{ wird().recurrence }}</p>
+  <button class="button button--primary" (click)="listenRequested.emit(summary())">
+    <img src="assets/icons/speaker.svg" alt="" width="28" height="28" />Écouter
+  </button>
+  <app-bead-progress [completed]="completed()" [target]="wird().target" />
+  <p class="text-strong">Il reste {{ available() | number }} sur {{ wird().target | number }}</p>
+  @if (reserved() > 0) {
+    <p class="text-secondary">{{ reserved() }} lectures en cours</p>
+  }
+  @if (available() > 0) {
+    <a class="button button--accent" [routerLink]="['/wird', wird().id]"
+      ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe</a
+    >
+  } @else {
+    <p>
+      {{
+        completed() >= wird().target
+          ? 'Ce wird est terminé. Merci !'
+          : 'Toutes les parts sont prises.'
+      }}
+    </p>
+  }
+</article>

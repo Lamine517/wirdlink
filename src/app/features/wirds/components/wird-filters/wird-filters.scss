@@ -1,0 +1,48 @@
+@use '../../../../../styles/variables' as tokens;
+@use '../../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.segmented-control {
+  display: flex;
+  flex: 1;
+  padding: var(--space-4);
+  border-radius: var(--radius-medium);
+  background: var(--color-bg-muted);
+
+  &__option {
+    font-size: var(--font-size-small);
+    flex: 1;
+    border: 0;
+    background: transparent;
+    border-radius: var(--radius-small);
+    padding: var(--space-8);
+
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+  }
+}
+
+.filter-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.filter-sheet__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+.filter-sheet p {
+  margin: 0;
+}

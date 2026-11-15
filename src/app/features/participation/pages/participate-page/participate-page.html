@@ -1,0 +1,47 @@
+@if (message()) {
+  <p class="feedback feedback--error" role="alert">{{ message() }}</p>
+}
+<a class="back-link" routerLink="/"
+  ><img src="assets/icons/back.svg" alt="" width="24" height="24" />Retour</a
+>
+@if (selected(); as wird) {
+  <h1>{{ wird.title }}</h1>
+  <p class="text-secondary">Objectif : {{ wird.target | number }} lectures</p>
+  <p>Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}</p>
+  <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
+    <label for="quantity">Combien je lis ?</label>
+    <app-quantity-picker [control]="quantity" [maximum]="store.available(wird.id)" />
+    <fieldset>
+      <legend>Mon nom</legend>
+      <div class="choice-list">
+        <button
+          type="button"
+          class="button button--outline"
+          [class.button--selected]="!useName()"
+          [attr.aria-pressed]="!useName()"
+          (click)="useName.set(false)"
+        >
+          Sans nom</button
+        ><button
+          type="button"
+          class="button button--outline"
+          [class.button--selected]="useName()"
+          [attr.aria-pressed]="useName()"
+          (click)="useName.set(true)"
+        >
+          Mon nom
+        </button>
+      </div>
+    </fieldset>
+    @if (useName()) {
+      <label for="name">Votre nom affiché</label
+      ><input id="name" autocomplete="given-name" maxlength="60" [formControl]="name" />
+    }
+    <button type="submit" class="button button--primary participation-form__submit">
+      Je commence
+    </button>
+  </form>
+} @else {
+  <h1>Wird introuvable</h1>
+  <p>Ce lien ne correspond à aucun exemple disponible.</p>
+}

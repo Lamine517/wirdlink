@@ -1,0 +1,12 @@
+<article class="surface-card" [class.surface-card--finished]="part().finished">
+  <h2>{{ title() }}</h2>
+  <p class="part-count">
+    {{ part().quantity | number }} {{ part().finished ? 'lus, terminé' : 'à lire' }}
+  </p>
+  @if (part().name) {
+    <p>{{ part().name }}</p>
+  }
+  @if (!part().finished) {
+    <button class="button button--primary" (click)="finishRequested.emit()">J’ai fini</button>
+  }
+</article>

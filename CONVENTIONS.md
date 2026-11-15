@@ -8,7 +8,7 @@ sert de référence visuelle. En cas de divergence, la signaler et documenter la
 Voir `docs/ressources.md`. Ne pas choisir un backend ou une plateforme sur la seule base
 du fichier d'exemple archivé.
 
-Les arbitrages de `docs/decisions/0001-arbitrages-produit-figma.md` priment pour les divergences connues.
+Les arbitrages de `docs/decisions/0001-arbitrages-produit-figma.md` puis `docs/decisions/0002-pages-composants-typographie.md` priment pour les divergences connues ; la décision 0002 révise la typographie.
 Navigation : Accueil / Mes parts / Créer ; libellés participant : Je participe / Je commence / J'ai fini.
 
 ## Frontend
@@ -55,10 +55,10 @@ Cet exemple ne définit aucune règle de réservation ou de comptage collectif.
 
 Interface en français selon les maquettes consultées ; code en anglais et documentation en français.
 La v2 ne prévoit que le français ; préserver les passages arabes présents dans les contenus, sans ajouter de parcours multilingue.
-Concevoir d'abord pour mobile ; sur ordinateur, garder la même application en colonne centrée avec panneau de partage. Vérifier zoom et textes longs.
-Exigences v2 : textes de 20 px minimum, zones tactiles de 48 px minimum, un geste principal par écran, Écouter en premier sur chaque carte.
+Concevoir d'abord pour mobile ; sur ordinateur, afficher la même application dans un cadre de téléphone centré et entièrement contenu dans la fenêtre, avec défilement interne. Le panneau de partage reste à intégrer dans un prochain lot. Vérifier zoom et textes longs.
+Exigences v2 : hiérarchie 28/24/18/16 px (en rem), zones tactiles de 48 px minimum, un geste principal par écran, Écouter en premier sur chaque carte.
 Choix utilisateur : Nunito Sans, graisses 600/800, hébergée localement ; icônes Phosphor. La remise au développement prévoyait Nunito SemiBold/ExtraBold, boutons principaux de 68 à 100 px, tokens et safe areas ; consulter `docs/sources/remise-au-developpement.md` (§3–5).
-Appliquer `docs/decisions/0001-arbitrages-produit-figma.md` : boutons principaux de 68 px minimum malgré les composants Figma de 56 px ; texte 20 px minimum.
+Appliquer `docs/decisions/0001-arbitrages-produit-figma.md` : boutons principaux de 68 px minimum malgré les composants Figma de 56 px ; typographie révisée par la décision 0002.
 Employer des boutons et liens sémantiques, des labels associés aux champs et un focus visible.
 Vérifier navigation clavier, contrastes et restitution des erreurs. Cible de qualité proposée : WCAG 2.2 AA.
 Ne pas dépendre uniquement de la couleur ou de l'audio. Prévoir une alternative textuelle.
@@ -111,7 +111,7 @@ une donnée (`savedName`, `visibleWirds`). Préférer des noms explicites et des
 Les booléens expriment un état (`finished`, `filtersOpen`) ou une question (`isSavedState`).
 
 Styles partagés dans `src/styles/` : `_variables.scss` (tokens), `_mixins.scss`
-(composition), `_reset.scss`, `_typography.scss`, `_forms.scss`, `_ui.scss`.
+(composition), `_reset.scss`, `_typography.scss`, `_forms.scss`, `_ui.scss` et `_motion.scss`.
 Le fichier `src/styles.scss` assemble ces modules avec `@use`. Les styles de composant
 chargent uniquement variables et mixins ; ne pas y importer les modules qui émettent le CSS global.
 Ne pas employer `@import`, `!important` ou `::ng-deep` pour résoudre un problème de structure.
@@ -142,3 +142,21 @@ Les tests sont classés séparément des sources ; aucun fichier métier n'est e
 Le scanner utilise le serveur, la clé de projet et les identifiants fournis par l'environnement,
 jamais un jeton versionné. Ne pas ajouter de suppression Sonar pour masquer un défaut.
 Une compilation ou un test réussi n'équivaut pas à un Quality Gate SonarQube validé.
+
+## Pages et composants
+
+Organiser les fonctionnalités par domaine (`features/wirds`, `features/participation`,
+`features/creation`), puis `pages/` et `components/`. Une route charge une page dédiée.
+Les pages composent les vues et orchestrent store/navigation. Les composants de présentation
+reçoivent des entrées typées et émettent des événements ; ne pas leur injecter le store métier.
+`shared/components/` accueille les composants réellement transversaux. Ne pas créer de
+superclasse ou de service générique pour éviter quelques lignes de composition explicite.
+Voir la décision 0002 pour la nouvelle hiérarchie typographique et les règles de zoom.
+
+Les états vides passent par `shared/components/empty-state` : icône décorative, titre,
+explication et action facultative. Les panneaux inférieurs passent par `bottom-sheet`
+avec dialogue natif, fermeture Échap/fond et retour du focus au déclencheur.
+Toute animation respecte `prefers-reduced-motion`. Les effets de survol restent réservés
+aux appareils avec un pointeur précis ; conserver un focus visible et un état appuyé.
+Les erreurs de quantité sont immédiates : bordure rouge, message textuel lié au champ
+et `aria-invalid`, puis retour à l’état normal lorsque la saisie est corrigée.
