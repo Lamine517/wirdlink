@@ -2,13 +2,31 @@
   <p class="feedback feedback--error" role="alert">{{ message() }}</p>
 }
 <h1>Mes parts</h1>
-@for (entry of entries(); track entry.part.id) {
-  <app-part-card [part]="entry.part" [title]="entry.title" (finishRequested)="finish(entry.part)" />
+@if (groups().length) {
+  <label class="parts-search" for="parts-search"
+    ><app-icon name="search" [size]="20" /><span class="visually-hidden">Rechercher mes parts</span
+    ><input id="parts-search" type="search" [formControl]="search" placeholder="Un wird, un nom…"
+  /></label>
+  <p class="parts-count" aria-live="polite">
+    {{ visibleGroups().length }} {{ visibleGroups().length > 1 ? 'wirds' : 'wird' }}
+  </p>
+}
+@for (group of visibleGroups(); track group.wirdId) {
+  <app-part-card [group]="group" (finishRequested)="finish($event)" />
 } @empty {
-  <app-empty-state
-    title="Vous n’avez pas encore participé"
-    description="Choisissez un wird et touchez « Je participe »."
-    actionLabel="Voir les wirds"
-    actionLink="/"
-  />
+  @if (groups().length) {
+    <app-empty-state
+      title="Aucun résultat"
+      description="Essayez un autre nom ou un autre wird."
+      actionLabel="Effacer la recherche"
+      (actionRequested)="search.setValue('')"
+    />
+  } @else {
+    <app-empty-state
+      title="Vous n’avez pas encore participé"
+      description="Choisissez un wird et touchez « Je participe »."
+      actionLabel="Voir les wirds"
+      actionLink="/"
+    />
+  }
 }

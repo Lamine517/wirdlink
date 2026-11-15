@@ -26,7 +26,6 @@
     [wird]="wird"
     [available]="store.available(wird.id)"
     [completed]="store.completed(wird.id)"
-    (listenRequested)="reader.read($event)"
   />
 } @empty {
   <app-empty-state

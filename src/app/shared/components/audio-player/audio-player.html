@@ -1,0 +1,30 @@
+<audio
+  #audio
+  [src]="source()"
+  preload="metadata"
+  (play)="playing.set(true)"
+  (pause)="playing.set(false)"
+  (ended)="playing.set(false)"
+  (timeupdate)="updateTime()"
+  (loadedmetadata)="updateTime()"
+  (error)="reportError()"
+></audio>
+<button
+  type="button"
+  class="audio-player"
+  [class.audio-player--playing]="playing()"
+  [attr.aria-label]="(playing() ? 'Mettre en pause : ' : 'Écouter : ') + title()"
+  (click)="toggle()"
+>
+  <app-icon [name]="playing() ? 'pause' : 'play'" [size]="24" />
+  <span>{{ playing() ? 'Pause' : 'Écouter' }}</span>
+  <span class="audio-player__wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+  @if (duration() > 0) {
+    <span class="audio-player__time"
+      >{{ formatTime(elapsed()) }} / {{ formatTime(duration()) }}</span
+    >
+  }
+</button>
+@if (error()) {
+  <p class="audio-player__error" role="alert">{{ error() }}</p>
+}

@@ -1,0 +1,33 @@
+.preview-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+}
+.preview-card audio {
+  width: 100%;
+}
+.publication-notice {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 20px 0 12px;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+.publication-notice img {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.publication-notice p {
+  margin: 0;
+}
+.preview-publish {
+  width: 100%;
+}
+
+.preview-card__instructions {
+  white-space: pre-line;
+  font-size: 0.875rem;
+}

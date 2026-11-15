@@ -5,13 +5,6 @@
   display: block;
 }
 
-.back-link {
-  @include mixins.flex-row(var(--space-8));
-  display: inline-flex;
-  min-height: tokens.$touch-target-min;
-  text-decoration: none;
-  font-weight: tokens.$font-weight-extrabold;
-}
 
 .participation-form {
   @include mixins.stack;

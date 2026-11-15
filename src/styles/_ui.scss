@@ -33,6 +33,12 @@ button {
     border-color: var(--color-accent);
   }
 
+  &--danger {
+    background: var(--color-feedback-error);
+    border-color: var(--color-feedback-error);
+    color: var(--color-text-inverse);
+  }
+
   &--outline {
     background: var(--color-bg-surface);
     color: var(--color-primary);
@@ -97,4 +103,12 @@ button {
     color: var(--color-feedback-error);
     background: var(--color-bg-surface);
   }
+}
+
+.back-link {
+  @include mixins.flex-row(var(--space-8));
+  display: inline-flex;
+  min-height: tokens.$touch-target-min;
+  text-decoration: none;
+  font-weight: tokens.$font-weight-extrabold;
 }

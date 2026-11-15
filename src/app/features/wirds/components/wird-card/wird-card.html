@@ -1,9 +1,9 @@
 <article class="surface-card">
   <h2>{{ wird().title }}</h2>
   <p class="text-secondary">{{ wird().recurrence }}</p>
-  <button class="button button--primary" (click)="listenRequested.emit(summary())">
-    <img src="assets/icons/speaker.svg" alt="" width="28" height="28" />Écouter
-  </button>
+  @if (wird().audioUrl; as source) {
+    <app-audio-player [source]="source" [title]="wird().title" />
+  }
   <app-bead-progress [completed]="completed()" [target]="wird().target" />
   <p class="text-strong">Il reste {{ available() | number }} sur {{ wird().target | number }}</p>
   @if (reserved() > 0) {

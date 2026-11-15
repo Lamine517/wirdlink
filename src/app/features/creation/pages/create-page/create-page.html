@@ -1,8 +1,54 @@
 <h1>Créer un wird</h1>
-<app-empty-state
-  title="Bientôt, votre propre wird"
-  description="La création et la publication seront disponibles dans un prochain lot. Vous pouvez déjà participer aux exemples."
-  icon="assets/icons/plus.svg"
-  actionLabel="Découvrir les wirds"
-  actionLink="/"
-/>
+@if (store.warning()) {
+  <p class="feedback" role="status">{{ store.warning() }}</p>
+}
+@if (store.hasDraft()) {
+  <section class="surface-card draft-resume">
+    <h2>Votre brouillon</h2>
+    <p>{{ store.draft().title || 'Mon wird' }}</p>
+    <a class="button button--primary" routerLink="/creer/contenu">Reprendre</a>
+    <button type="button" class="draft-delete" (click)="deleteSheet.open()">
+      Supprimer le brouillon
+    </button>
+  </section>
+}
+<p class="text-secondary">Choisissez un modèle, puis adaptez-le.</p>
+<div class="template-list">
+  @for (template of templates; track template.id) {
+    <button type="button" class="template-card" (click)="choose(template)">
+      <span class="template-card__icon" aria-hidden="true">
+        <app-icon [name]="templateIcons[template.id]" [size]="24" />
+      </span>
+      <span class="template-card__content"
+        ><strong>{{ template.title }}</strong
+        ><span>
+          @if (template.target) {
+            {{ template.target | number }} lectures
+          } @else {
+            À votre façon
+          }
+        </span></span
+      >
+      <app-icon class="template-card__arrow" name="next" [size]="20" />
+    </button>
+  }
+</div>
+@if (store.hasDraft()) {
+  <p class="text-secondary">Choisir un modèle remplace le brouillon actuel.</p>
+}
+
+<app-bottom-sheet #deleteSheet panelId="delete-draft" title="Supprimer le brouillon ?">
+  <div class="draft-delete-confirmation">
+    <p>Le texte, la photo et la voix de ce brouillon seront retirés de cet appareil.</p>
+    <button type="button" class="button button--outline" (click)="deleteSheet.close()">
+      Garder le brouillon
+    </button>
+    <button
+      type="button"
+      class="button button--danger"
+      (click)="store.discard(); deleteSheet.close()"
+    >
+      Supprimer
+    </button>
+  </div>
+</app-bottom-sheet>

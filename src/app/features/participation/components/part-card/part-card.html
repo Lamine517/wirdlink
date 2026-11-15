@@ -1,12 +1,58 @@
-<article class="surface-card" [class.surface-card--finished]="part().finished">
-  <h2>{{ title() }}</h2>
-  <p class="part-count">
-    {{ part().quantity | number }} {{ part().finished ? 'lus, terminé' : 'à lire' }}
-  </p>
-  @if (part().name) {
-    <p>{{ part().name }}</p>
+<article
+  class="surface-card part-group"
+  [class.part-group--finished]="group().pending.length === 0"
+>
+  <header class="part-group__header">
+    <h2>{{ group().title }}</h2>
+    @if (!group().pending.length) {
+      <app-icon name="check" [size]="20" />
+    }
+  </header>
+  <div class="part-group__totals">
+    @if (group().pendingQuantity) {
+      <span
+        ><strong>{{ group().pendingQuantity | number }}</strong> à lire</span
+      >
+    }
+    @if (group().finishedQuantity) {
+      <span class="part-group__completed"
+        ><app-icon name="check" [size]="16" /><strong>{{
+          group().finishedQuantity | number
+        }}</strong>
+        lus</span
+      >
+    }
+  </div>
+  @for (part of group().pending; track part.id) {
+    <div class="part-group__pending">
+      <span
+        >{{ part.quantity | number }} lectures<span class="part-group__name">{{
+          part.name || 'Sans nom'
+        }}</span></span
+      >
+      <button
+        type="button"
+        class="button button--primary button--compact"
+        (click)="finishRequested.emit(part)"
+      >
+        J’ai fini
+      </button>
+    </div>
   }
-  @if (!part().finished) {
-    <button class="button button--primary" (click)="finishRequested.emit()">J’ai fini</button>
+  @if (group().finished.length) {
+    <details class="part-group__details">
+      <summary>
+        <app-icon name="next" [size]="16" />{{ group().finished.length }}
+        {{ group().finished.length > 1 ? 'participations terminées' : 'participation terminée' }}
+      </summary>
+      <ul>
+        @for (part of group().finished; track part.id) {
+          <li>
+            <span>{{ part.name || 'Sans nom' }}</span
+            ><strong>{{ part.quantity | number }} lus</strong>
+          </li>
+        }
+      </ul>
+    </details>
   }
 </article>

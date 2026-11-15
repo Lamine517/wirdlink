@@ -1,37 +1,47 @@
 <a class="skip-link" href="#main">Aller au contenu</a>
-<div class="app-shell">
-  <div class="demo-banner">Démonstration · vos parts restent sur cet appareil</div>
-  <main #content class="app-shell__content" id="main" tabindex="-1">
-    @if (store.storageWarning()) {
-      <p class="feedback" role="status">{{ store.storageWarning() }}</p>
-    }
-    <router-outlet (activate)="resetScroll()" />
-  </main>
-  <nav class="bottom-nav" aria-label="Navigation principale">
-    <a
-      routerLink="/"
-      class="bottom-nav__link"
-      routerLinkActive="bottom-nav__link--active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      ariaCurrentWhenActive="page"
-    >
-      <img src="assets/icons/home.svg" alt="" width="28" height="28" />Accueil
-    </a>
-    <a
-      routerLink="/mes-parts"
-      class="bottom-nav__link"
-      routerLinkActive="bottom-nav__link--active"
-      ariaCurrentWhenActive="page"
-    >
-      <img src="assets/icons/hand.svg" alt="" width="28" height="28" />Mes parts
-    </a>
-    <a
-      routerLink="/creer"
-      class="bottom-nav__link"
-      routerLinkActive="bottom-nav__link--active"
-      ariaCurrentWhenActive="page"
-    >
-      <img src="assets/icons/plus.svg" alt="" width="28" height="28" />Créer
-    </a>
-  </nav>
+<div class="desktop-layout" [class.desktop-layout--entered]="homeEntered()">
+  <aside class="desktop-layout__intro"><app-desktop-intro [url]="shareUrl()" /></aside>
+  <div class="app-shell">
+    <div class="demo-banner">Démonstration · vos parts restent sur cet appareil</div>
+    <main #content class="app-shell__content" id="main" tabindex="-1">
+      @if (store.storageWarning()) {
+        <p class="feedback" role="status">{{ store.storageWarning() }}</p>
+      }
+      <router-outlet (activate)="resetScroll()" />
+    </main>
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <a
+        routerLink="/"
+        class="bottom-nav__link"
+        [class.bottom-nav__link--active]="section() === 'home'"
+        [attr.aria-current]="section() === 'home' ? 'page' : null"
+      >
+        <app-icon name="home" [size]="28" />Accueil
+      </a>
+      <a
+        routerLink="/mes-parts"
+        class="bottom-nav__link"
+        [class.bottom-nav__link--active]="section() === 'parts'"
+        [attr.aria-current]="section() === 'parts' ? 'page' : null"
+      >
+        <app-icon name="hand" [size]="28" />Mes parts
+      </a>
+      <a
+        routerLink="/creer"
+        class="bottom-nav__link"
+        [class.bottom-nav__link--active]="section() === 'create'"
+        [attr.aria-current]="section() === 'create' ? 'page' : null"
+      >
+        <app-icon name="plus" [size]="28" />Créer
+      </a>
+    </nav>
+  </div>
+
+  <aside class="desktop-layout__share">
+    <app-desktop-share [url]="shareUrl()" [isWird]="sharePath() !== '/'" />
+  </aside>
 </div>
+<footer class="desktop-footer">
+  <a routerLink="/aide">Aide</a><a routerLink="/confidentialite">Vos informations</a
+  ><a routerLink="/conditions">Règles d’utilisation</a><span>© 2026 WirdLink</span>
+</footer>
