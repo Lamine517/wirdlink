@@ -1,9 +1,9 @@
 $font-family-base: 'Nunito Sans', 'Trebuchet MS', sans-serif;
 $font-weight-semibold: 600;
 $font-weight-extrabold: 800;
-$font-size-base: 1.125rem;
+$font-size-base: 1rem;
 $touch-target-min: 48px;
-$button-height-min: 68px;
+$button-height-min: 56px;
 $app-width: 390px;
 $breakpoint-desktop: 700px;
 
@@ -21,11 +21,11 @@ $breakpoint-desktop: 700px;
   --color-bg-surface: #fff;
   --color-bg-muted: #dce8eb;
   --color-feedback-error: #b3261e;
-  --font-size-small: 1rem;
-  --font-size-body: 1.125rem;
-  --font-size-card-title: 1.5rem;
-  --font-size-page-title: 1.75rem;
-  --font-size-counter: 2.25rem;
+  --font-size-small: 0.875rem;
+  --font-size-body: 1rem;
+  --font-size-card-title: 1.25rem;
+  --font-size-page-title: 1.5rem;
+  --font-size-counter: 2rem;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;

@@ -12,6 +12,8 @@
     id="quantity"
     type="number"
     inputmode="numeric"
+    placeholder="Ex. 10"
+    (blur)="hasInteracted.set(true)"
     min="1"
     [max]="maximum()"
     step="1"
@@ -37,7 +39,7 @@
     }}
   </p>
 }
-<p id="quantity-hint">Touchez le nombre pour l’écrire, ou choisissez :</p>
+<p id="quantity-hint">Saisissez le nombre de lectures, ou utilisez les raccourcis ci-dessous.</p>
 <div class="choice-list">
   @for (amount of [1, 5, 10]; track amount) {
     <button type="button" class="button button--outline button--compact" (click)="adjust(amount)">

@@ -8,7 +8,7 @@ sert de référence visuelle. En cas de divergence, la signaler et documenter la
 Voir `docs/ressources.md`. Ne pas choisir un backend ou une plateforme sur la seule base
 du fichier d'exemple archivé.
 
-Les arbitrages de `docs/decisions/0001-arbitrages-produit-figma.md` puis `docs/decisions/0002-pages-composants-typographie.md` priment pour les divergences connues ; la décision 0002 révise la typographie.
+Les arbitrages de `docs/decisions/0001-arbitrages-produit-figma.md` puis `docs/decisions/0002-pages-composants-typographie.md` priment pour les divergences connues ; les décisions 0002 puis 0003 révisent la typographie et les boutons.
 Navigation : Accueil / Mes parts / Créer ; libellés participant : Je participe / Je commence / J'ai fini.
 
 ## Frontend
@@ -56,9 +56,9 @@ Cet exemple ne définit aucune règle de réservation ou de comptage collectif.
 Interface en français selon les maquettes consultées ; code en anglais et documentation en français.
 La v2 ne prévoit que le français ; préserver les passages arabes présents dans les contenus, sans ajouter de parcours multilingue.
 Concevoir d'abord pour mobile ; sur ordinateur, afficher la même application dans un cadre de téléphone centré et entièrement contenu dans la fenêtre, avec défilement interne. Le panneau de partage reste à intégrer dans un prochain lot. Vérifier zoom et textes longs.
-Exigences v2 : hiérarchie 28/24/18/16 px (en rem), zones tactiles de 48 px minimum, un geste principal par écran, Écouter en premier sur chaque carte.
+Exigences v2 : hiérarchie compacte 24/20/16/14 px (en rem), décision 0003, zones tactiles de 48 px minimum, un geste principal par écran, Écouter en premier sur chaque carte.
 Choix utilisateur : Nunito Sans, graisses 600/800, hébergée localement ; icônes Phosphor. La remise au développement prévoyait Nunito SemiBold/ExtraBold, boutons principaux de 68 à 100 px, tokens et safe areas ; consulter `docs/sources/remise-au-developpement.md` (§3–5).
-Appliquer `docs/decisions/0001-arbitrages-produit-figma.md` : boutons principaux de 68 px minimum malgré les composants Figma de 56 px ; typographie révisée par la décision 0002.
+Appliquer `docs/decisions/0003-interface-compacte-formulaires.md` : boutons principaux 56 px, cibles secondaires 48 px minimum ; tailles en rem et zoom conservés.
 Employer des boutons et liens sémantiques, des labels associés aux champs et un focus visible.
 Vérifier navigation clavier, contrastes et restitution des erreurs. Cible de qualité proposée : WCAG 2.2 AA.
 Ne pas dépendre uniquement de la couleur ou de l'audio. Prévoir une alternative textuelle.
@@ -151,7 +151,7 @@ Les pages composent les vues et orchestrent store/navigation. Les composants de 
 reçoivent des entrées typées et émettent des événements ; ne pas leur injecter le store métier.
 `shared/components/` accueille les composants réellement transversaux. Ne pas créer de
 superclasse ou de service générique pour éviter quelques lignes de composition explicite.
-Voir la décision 0002 pour la nouvelle hiérarchie typographique et les règles de zoom.
+Voir les décisions 0002/0003 pour la structure, la hiérarchie compacte et les règles de zoom.
 
 Les états vides passent par `shared/components/empty-state` : icône décorative, titre,
 explication et action facultative. Les panneaux inférieurs passent par `bottom-sheet`
@@ -160,3 +160,5 @@ Toute animation respecte `prefers-reduced-motion`. Les effets de survol restent 
 aux appareils avec un pointeur précis ; conserver un focus visible et un état appuyé.
 Les erreurs de quantité sont immédiates : bordure rouge, message textuel lié au champ
 et `aria-invalid`, puis retour à l’état normal lorsque la saisie est corrigée.
+
+Le formulaire guide la saisie avec labels, exemples et aides. Son action principale ne s’affiche que lorsque les champs nécessaires sont valides ; une indication explique quoi renseigner pendant son absence. Les mêmes règles sont vérifiées à la soumission clavier.

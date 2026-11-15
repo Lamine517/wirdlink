@@ -12,8 +12,10 @@ export class QuantityPicker {
   readonly control = input.required<FormControl<number | null>>();
   readonly maximum = input.required<number>();
 
-  private readonly currentValue = signal<number | null>(1);
+  private readonly currentValue = signal<number | null>(null);
+  protected readonly hasInteracted = signal(false);
   protected readonly validationMessage = computed(() => {
+    if (!this.hasInteracted()) return '';
     const value = this.currentValue();
     if (value === null || !Number.isSafeInteger(value) || value < 1) {
       return 'Écrivez un nombre entier supérieur ou égal à 1.';
@@ -28,7 +30,10 @@ export class QuantityPicker {
     effect((onCleanup) => {
       const control = this.control();
       this.currentValue.set(control.value);
-      const subscription = control.valueChanges.subscribe((value) => this.currentValue.set(value));
+      const subscription = control.valueChanges.subscribe((value) => {
+        this.currentValue.set(value);
+        this.hasInteracted.set(true);
+      });
       onCleanup(() => subscription.unsubscribe());
     });
   }

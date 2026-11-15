@@ -70,3 +70,13 @@ Le panneau de filtres est un dialogue inférieur avec gestion clavier/focus.
 Le cadre desktop tient dans la fenêtre ; le contenu défile à l’intérieur.
 Effets de survol/appui et animations respectent la préférence de mouvement réduit.
 Voir la décision 0002 pour les contrôles effectués et leurs limites.
+
+## Ajustements de densité et de guidage
+
+La décision 0003 remplace les tailles précédentes : 24/20/16/14 px, boutons principaux 56 px.
+Panneau de filtres avec fond progressif et fermeture animée. Quantité initiale vide,
+placeholders, erreurs après interaction et action visible uniquement lorsque les champs
+sont valides. Revue UI/UX effectuée avec le profil dédié.
+
+Dernière vérification : 18 tests réussis, couverture des lignes 88,84 %, build réussi et
+parcours Chrome vérifié. Les chiffres des lots antérieurs ci-dessus restent historiques.

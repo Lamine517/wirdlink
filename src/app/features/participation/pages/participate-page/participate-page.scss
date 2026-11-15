@@ -17,7 +17,7 @@
   @include mixins.stack;
 
   &__submit {
-    margin-top: var(--space-32);
+    width: 100%;
   }
 }
 
@@ -29,4 +29,21 @@
   .button {
     flex: 1;
   }
+}
+
+.participation-form__action {
+  min-height: 72px;
+  margin-top: var(--space-16);
+}
+.participation-form__hint,
+.participation-form__guidance {
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+.participation-form__hint--error {
+  color: var(--color-feedback-error);
+}
+input[aria-invalid='true'] {
+  border-color: var(--color-feedback-error);
 }

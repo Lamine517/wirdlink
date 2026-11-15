@@ -35,11 +35,39 @@
     </fieldset>
     @if (useName()) {
       <label for="name">Votre nom affiché</label
-      ><input id="name" autocomplete="given-name" maxlength="60" [formControl]="name" />
+      ><input
+        id="name"
+        autocomplete="given-name"
+        maxlength="60"
+        placeholder="Ex. Awa"
+        [formControl]="name"
+        aria-describedby="name-hint"
+        [attr.aria-invalid]="nameError()"
+        (blur)="nameTouched.set(true)"
+      />
     }
-    <button type="submit" class="button button--primary participation-form__submit">
-      Je commence
-    </button>
+    @if (useName()) {
+      <p
+        id="name-hint"
+        class="participation-form__hint"
+        [class.participation-form__hint--error]="nameError()"
+      >
+        {{
+          nameError()
+            ? 'Écrivez votre nom, ou choisissez « Sans nom ».'
+            : 'Ce nom sera visible avec votre part. Vous pouvez rester sans nom.'
+        }}
+      </p>
+    }
+    <div class="participation-form__action" aria-live="polite">
+      @if (canReserve()) {
+        <button type="submit" class="button button--primary participation-form__submit">
+          Je commence
+        </button>
+      } @else {
+        <p class="participation-form__guidance">{{ guidance() }}</p>
+      }
+    </div>
   </form>
 } @else {
   <h1>Wird introuvable</h1>
