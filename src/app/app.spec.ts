@@ -91,7 +91,7 @@ describe('WirdLink navigation', () => {
     const buttons = [
       ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('.choice-list button'),
     ];
-    buttons.find((button) => button.textContent?.trim() === 'Tout')!.click();
+    buttons.find((button) => button.value === 'all')!.click();
     harness.detectChanges();
     expect(harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!.value).toBe(
       '400',

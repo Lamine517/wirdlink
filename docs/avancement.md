@@ -93,3 +93,19 @@ sans ajout de tarification. Les textes d'accompagnement sont raccourcis.
 19 tests réussis, 89,13 % des lignes couvertes, build et parcours Chrome validés.
 Le nouveau cercle a été inspecté visuellement à 390 px ; les tests vérifient aussi que
 le choix d'une quantité ne modifie pas les lectures terminées.
+
+## Suggestions adaptées au reste
+
+La quantité propose trois valeurs simples, calculées à partir de 10/20/50 % du minimum
+entre objectif et disponible, arrondies vers le palier 1/2/5 suivant. Les valeurs sont
+uniques et strictement inférieures au disponible ; Tout couvre le reste complet.
+Exemples : 1000 → 100/200/500 ; 400 → 50/100/200 ; 37 → 5/10/20.
+Un appui sélectionne directement la quantité sans additionner à la saisie précédente.
+Les propositions se recalculent quand le disponible du store change ; aucune synchronisation
+serveur n'est encore en place. Une saisie devenue trop grande reste visible avec erreur
+et action désactivée jusqu'à correction, sans modification silencieuse.
+
+Le cercle conserve nom et nombre « lus sur objectif ». Pourcentage et phrase décorative
+retirés ; parts en cours masquées si nulles ; reste indiqué par « à prendre ».
+Cette clarification visuelle reste à évaluer auprès de vrais utilisateurs du public cible.
+22 tests réussis, build réussi, 89,60 % des lignes couvertes, parcours Chrome vérifié.

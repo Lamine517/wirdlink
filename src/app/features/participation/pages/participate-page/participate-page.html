@@ -7,7 +7,6 @@
 @if (selected(); as wird) {
   <header class="participation-header">
     <h1>Je participe</h1>
-    <p>Une petite part, un effort partagé.</p>
   </header>
   <section class="participation-summary" aria-label="Avancement du wird">
     <app-circular-progress
@@ -19,23 +18,29 @@
       <div class="participation-summary__stat">
         <span class="participation-summary__dot" aria-hidden="true"></span>
         <strong>{{ store.available(wird.id) | number }}</strong
-        ><span>disponibles</span>
+        ><span>à prendre</span>
       </div>
-      <div class="participation-summary__stat">
-        <span
-          class="participation-summary__dot participation-summary__dot--reserved"
-          aria-hidden="true"
-        ></span>
-        <strong>{{
-          wird.target - store.completed(wird.id) - store.available(wird.id) | number
-        }}</strong
-        ><span>en cours</span>
-      </div>
+      @if (wird.target - store.completed(wird.id) - store.available(wird.id) > 0) {
+        <div class="participation-summary__stat">
+          <span
+            class="participation-summary__dot participation-summary__dot--reserved"
+            aria-hidden="true"
+          ></span>
+          <strong>{{
+            wird.target - store.completed(wird.id) - store.available(wird.id) | number
+          }}</strong
+          ><span>en cours</span>
+        </div>
+      }
     </div>
   </section>
   <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
     <label class="participation-form__label" for="quantity">Ma part</label>
-    <app-quantity-picker [control]="quantity" [maximum]="store.available(wird.id)" />
+    <app-quantity-picker
+      [target]="wird.target"
+      [control]="quantity"
+      [maximum]="store.available(wird.id)"
+    />
     <fieldset>
       <legend>Mon nom</legend>
       <div class="choice-list">

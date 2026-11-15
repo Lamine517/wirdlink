@@ -39,16 +39,25 @@
     }}
   </p>
 }
-<p id="quantity-hint">lectures · touchez le nombre pour le modifier</p>
+<p id="quantity-hint">lectures</p>
 <div class="choice-list">
-  @for (amount of [1, 5, 10]; track amount) {
-    <button type="button" class="button button--outline button--compact" (click)="adjust(amount)">
-      +{{ amount }}
+  @for (amount of suggestions(); track amount) {
+    <button
+      type="button"
+      class="button button--outline button--compact"
+      [class.button--selected]="currentValue() === amount"
+      [attr.aria-pressed]="currentValue() === amount"
+      (click)="setQuantity(amount)"
+    >
+      {{ amount }}
     </button>
   }
   <button
     type="button"
     class="button button--outline button--compact"
+    value="all"
+    [disabled]="maximum() < 1"
+    [attr.aria-label]="'Prendre les ' + maximum() + ' lectures disponibles'"
     (click)="setQuantity(maximum())"
   >
     Tout
