@@ -1,24 +1,40 @@
 @if (selected(); as wird) {
   <section class="thank-you">
-    <div class="thank-you__badge">
-      <img src="assets/icons/check.svg" alt="" width="52" height="52" />
+    <div class="thank-you__badge" aria-hidden="true">
+      <app-icon name="check" [size]="28" />
     </div>
     <h1>Merci !</h1>
-    <p>Qu’Allah accepte votre part.</p>
-    <div class="surface-card">
-      <app-bead-progress [completed]="store.completed(wird.id)" [target]="wird.target" />
-      <p class="text-strong">
-        Il reste {{ store.available(wird.id) | number }} sur {{ wird.target | number }}
-      </p>
+    <p class="thank-you__message">Qu’Allah accepte votre part.</p>
+    <div class="thank-you__progress">
+      <app-circular-progress
+        [title]="wird.title"
+        [completed]="store.completed(wird.id)"
+        [target]="wird.target"
+      />
     </div>
-    @if (store.available(wird.id) > 0) {
-      <a class="button button--accent" [routerLink]="['/wird', wird.id]"
-        ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe encore</a
-      >
+    @if (store.completed(wird.id) >= wird.target) {
+      <p class="thank-you__status">Objectif atteint !</p>
+    } @else if (store.available(wird.id) > 0) {
+      <p class="thank-you__status">{{ store.available(wird.id) | number }} lectures à prendre</p>
+    } @else {
+      <p class="thank-you__status">Toutes les parts sont prises.</p>
     }
-    <a class="button button--outline" routerLink="/mes-parts">Retour à mes parts</a>
+    <div class="thank-you__actions">
+      @if (store.available(wird.id) > 0) {
+        <a class="button button--accent" [routerLink]="['/wird', wird.id]">
+          <app-icon name="hand" [size]="24" />Je participe encore
+        </a>
+      } @else {
+        <a class="button button--accent" routerLink="/">Voir les autres wirds</a>
+      }
+      <a class="button button--outline" routerLink="/mes-parts">Mes parts</a>
+    </div>
   </section>
 } @else {
-  <h1>Wird introuvable</h1>
-  <a routerLink="/">Retour à l’accueil</a>
+  <app-empty-state
+    title="Wird introuvable"
+    description="Ce wird n’est pas disponible sur cet appareil."
+    actionLabel="Retour à l’accueil"
+    actionLink="/"
+  />
 }
