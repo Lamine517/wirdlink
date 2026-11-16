@@ -7,7 +7,7 @@ docs/
 AGENTS.md
 CLAUDE.md
 CONVENTIONS.md
-supabase/
+/supabase/
 coverage/
 node_modules/
 dist/
