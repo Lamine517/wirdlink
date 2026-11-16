@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-wird-tabs',
   imports: [Translate, RouterLink],
-  template: `<nav class="wird-tabs" aria-label="Vues du wird">
+  template: `<nav class="wird-tabs" [attr.aria-label]="'Vues du wird' | t">
     <a
       [routerLink]="['/wird', wirdId()]"
       [class.wird-tabs__active]="active() === 'wird'"

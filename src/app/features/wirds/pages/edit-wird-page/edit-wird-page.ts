@@ -17,7 +17,7 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
       <form class="form-stack" [formGroup]="form" (ngSubmit)="save()">
         <label for="edit-title">{{ 'Nom du wird' | t }}</label>
         <input id="edit-title" formControlName="title" maxlength="100" required />
-        <label for="edit-target">Objectif</label>
+        <label for="edit-target">{{ 'Objectif' | t }}</label>
         <input
           id="edit-target"
           type="number"
@@ -29,16 +29,16 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
           aria-describedby="edit-target-hint"
         />
         <p id="edit-target-hint" class="text-secondary">
-          Au moins {{ minimum }} : les parts déjà prises sont conservées.
+          {{ 'Au moins {minimum} : les parts déjà prises sont conservées.' | t: {minimum: minimum} }}
         </p>
-        <label for="edit-description">Description (facultatif)</label>
+        <label for="edit-description">{{ 'Description (facultatif)' | t }}</label>
         <textarea
           id="edit-description"
           formControlName="description"
           maxlength="1000"
           rows="3"
         ></textarea>
-        <label for="edit-instructions">Consignes (facultatif)</label>
+        <label for="edit-instructions">{{ 'Consignes (facultatif)' | t }}</label>
         <textarea
           id="edit-instructions"
           formControlName="instructions"
@@ -46,9 +46,9 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
           rows="4"
         ></textarea>
         <p class="text-secondary">
-          Le calendrier, les fichiers et l’accès restent identiques pour les participants.
+          {{ 'Le calendrier, les fichiers et l’accès restent identiques pour les participants.' | t }}
         </p>
-        <app-request-state [error]="error()" [loading]="busy()" loadingLabel="Enregistrement…" />
+        <app-request-state [error]="error()" [loading]="busy()" [loadingLabel]="'Enregistrement…' | t" />
         <button
           class="button button--primary"
           type="submit"
@@ -59,8 +59,8 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
       </form>
     } @else {
       <app-empty-state
-        title="Modification indisponible"
-        description="Seul l’auteur peut modifier ce wird."
+        [title]="'Modification indisponible' | t"
+        [description]="'Seul l’auteur peut modifier ce wird.' | t"
         [actionLabel]="'Retour à l’accueil' | t"
         actionLink="/"
       />

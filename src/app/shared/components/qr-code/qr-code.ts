@@ -9,10 +9,10 @@ import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angu
         [src]="source"
         width="150"
         height="150"
-        alt="QR code pour ouvrir WirdLink sur le téléphone"
+        [alt]="'QR code pour ouvrir WirdLink sur le téléphone' | t"
       />
     } @else {
-      <p role="status">{{ error() ? 'QR indisponible' : ('Préparation du QR…' | t) }}</p>
+      <p role="status">{{ (error() ? 'QR indisponible' : 'Préparation du QR…') | t }}</p>
     }`,
   styles: `
     :host {
