@@ -1,0 +1,45 @@
+@use '../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+.share-actions {
+  @include mixins.stack(var(--space-12));
+}
+.share-actions h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+}
+.share-actions__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
+.share-actions__row .button {
+  flex: 1 1 130px;
+  padding-inline: var(--space-8);
+  font-size: var(--font-size-small);
+}
+.share-actions__caption,
+.share-actions__url,
+.share-actions__feedback {
+  margin: 0;
+  font-size: var(--font-size-small);
+}
+.share-actions__caption {
+  color: var(--color-text-secondary);
+}
+.share-actions__url {
+  min-width: 0;
+  width: 100%;
+}
+.share-actions__feedback {
+  min-height: 1.5em;
+  color: var(--color-primary);
+}
+.button--whatsapp:not(:disabled) {
+  background: #25d366;
+  color: var(--color-text-primary);
+  border-color: #25d366;
+}

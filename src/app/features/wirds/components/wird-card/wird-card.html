@@ -1,5 +1,7 @@
 <article class="surface-card">
-  <h2>{{ wird().title }}</h2>
+  <h2>
+    <a class="wird-card__title" [routerLink]="['/wird', wird().id]">{{ wird().title }}</a>
+  </h2>
   <p class="text-secondary">{{ wird().recurrence }}</p>
   @if (wird().audioUrl; as source) {
     <app-audio-player [source]="source" [title]="wird().title" />

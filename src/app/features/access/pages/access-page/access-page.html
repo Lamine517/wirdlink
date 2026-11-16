@@ -1,0 +1,38 @@
+<a class="back-link" routerLink="/"
+  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
+>
+<header class="access-header">
+  <span class="access-header__icon"><app-icon name="lock" [size]="32" /></span>
+  <h1>Ce wird est privé</h1>
+  <p>Saisissez le code transmis par le responsable.</p>
+</header>
+<form class="form-stack" (submit)="$event.preventDefault(); unlock()" [attr.aria-busy]="busy()">
+  <label for="access-code">Code d’accès à 4 chiffres</label>
+  <input
+    id="access-code"
+    class="access-code"
+    type="text"
+    inputmode="numeric"
+    maxlength="4"
+    autocomplete="off"
+    placeholder="0000"
+    [formControl]="code"
+    [attr.aria-invalid]="code.touched && code.invalid"
+    aria-describedby="access-hint"
+  />
+  <p id="access-hint" class="text-secondary">
+    {{
+      code.touched && code.invalid
+        ? 'Saisissez les 4 chiffres du code d’accès.'
+        : 'Ce code est différent du code de connexion à 6 chiffres.'
+    }}
+  </p>
+  <button
+    class="button button--primary"
+    type="submit"
+    [disabled]="busy() || code.invalid || cooldown() > 0 || !network.online()"
+  >
+    {{ cooldown() > 0 ? 'Réessayer dans ' + cooldown() + ' s' : 'Ouvrir le wird' }}
+  </button>
+</form>
+<app-request-state [loading]="busy()" loadingLabel="Vérification du code…" [error]="error()" />

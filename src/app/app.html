@@ -4,6 +4,11 @@
   <div class="app-shell">
     <div class="demo-banner">Démonstration · vos parts restent sur cet appareil</div>
     <main #content class="app-shell__content" id="main" tabindex="-1">
+      @if (!network.online()) {
+        <p class="feedback offline-status" role="status">
+          <app-icon name="offline" [size]="24" />Hors ligne · vos parts restent consultables.
+        </p>
+      }
       @if (store.storageWarning()) {
         <p class="feedback" role="status">{{ store.storageWarning() }}</p>
       }
@@ -16,7 +21,7 @@
         [class.bottom-nav__link--active]="section() === 'home'"
         [attr.aria-current]="section() === 'home' ? 'page' : null"
       >
-        <app-icon name="home" [size]="28" />Accueil
+        <span class="bottom-nav__icon"><app-icon name="home" [size]="28" /></span>Accueil
       </a>
       <a
         routerLink="/mes-parts"
@@ -24,7 +29,7 @@
         [class.bottom-nav__link--active]="section() === 'parts'"
         [attr.aria-current]="section() === 'parts' ? 'page' : null"
       >
-        <app-icon name="hand" [size]="28" />Mes parts
+        <span class="bottom-nav__icon"><app-icon name="hand" [size]="28" /></span>Mes parts
       </a>
       <a
         routerLink="/creer"
@@ -32,7 +37,7 @@
         [class.bottom-nav__link--active]="section() === 'create'"
         [attr.aria-current]="section() === 'create' ? 'page' : null"
       >
-        <app-icon name="plus" [size]="28" />Créer
+        <span class="bottom-nav__icon"><app-icon name="plus" [size]="28" /></span>Créer
       </a>
     </nav>
   </div>

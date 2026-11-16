@@ -99,3 +99,74 @@ describe('Creation draft', () => {
     expect(localStorage.getItem('wirdlink.creation.v1')).toBeNull();
   });
 });
+
+describe('Optional creation texts', () => {
+  beforeEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  it('preserves distinct description and opening instructions, and accepts both empty', () => {
+    const store = TestBed.inject(CreationDraftStore);
+    store.updateContent({
+      title: 'Notre wird',
+      target: 12000,
+      description: 'Pour notre famille',
+      instructions: 'Fatiha ×1\nSalatoul Fatihi ×7\nAstaghfiroullah ×100',
+    });
+    TestBed.resetTestingModule();
+    const restored = TestBed.inject(CreationDraftStore);
+    expect(restored.draft().description).toBe('Pour notre famille');
+    expect(restored.draft().instructions).toContain('Fatiha ×1\n');
+    expect(restored.draft().target).toBe(12000);
+    expect(
+      isContentValid({ title: 'Notre wird', target: 12000, description: '', instructions: '' }),
+    ).toBeTrue();
+    expect(
+      isContentValid({
+        title: 'Notre wird',
+        target: 12000,
+        description: '',
+        instructions: 'x'.repeat(1001),
+      }),
+    ).toBeFalse();
+  });
+  it('restores old drafts with no instructions field', () => {
+    localStorage.setItem(
+      'wirdlink.creation.v1',
+      JSON.stringify({
+        title: 'Ancien brouillon',
+        target: 1000,
+        description: 'Message existant',
+        recurrence: 'Une fois',
+        startDate: todayDate(),
+        endDate: '',
+        visibility: 'public',
+      }),
+    );
+    const store = TestBed.inject(CreationDraftStore);
+    expect(store.draft().instructions).toBe('');
+    expect(store.draft().description).toBe('Message existant');
+    expect(store.warning()).toBe('');
+  });
+});
+
+describe('Attachment boundaries', () => {
+  beforeEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  it('rejects an empty audio file instead of displaying a player that cannot play', () => {
+    const store = TestBed.inject(CreationDraftStore);
+    expect(store.setMedia('audio', new File([], 'empty.wav', { type: 'audio/wav' }))).toBeFalse();
+    expect(store.audio()).toBeNull();
+    expect(store.mediaError()).not.toBe('');
+  });
+});
+
+describe('An unfinished draft with optional text', () => {
+  beforeEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  it('can be resumed even when it only contains opening instructions', () => {
+    const draft = TestBed.inject(CreationDraftStore);
+    draft.updateContent({ title: '', target: null, description: '', instructions: 'Fatiha ×1' });
+    expect(draft.hasDraft()).toBeTrue();
+    TestBed.resetTestingModule();
+    expect(TestBed.inject(CreationDraftStore).hasDraft()).toBeTrue();
+  });
+});

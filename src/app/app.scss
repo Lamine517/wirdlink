@@ -136,3 +136,22 @@
     }
   }
 }
+
+.offline-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-small);
+}
+
+.bottom-nav__icon {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  height: 36px;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.bottom-nav__link--active .bottom-nav__icon {
+  background: var(--color-bg-muted);
+}

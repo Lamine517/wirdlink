@@ -4,6 +4,7 @@ export function isShareableAddress(value: string): boolean {
     return (
       ['https:', 'http:'].includes(url.protocol) &&
       !['localhost', '127.0.0.1', '[::1]', '0.0.0.0'].includes(url.hostname) &&
+      !/^127\./.test(url.hostname) &&
       !url.hostname.endsWith('.localhost') &&
       !url.username &&
       !url.password

@@ -7,6 +7,7 @@
 
 .page-header {
   @include mixins.flex-row(var(--space-12), space-between);
+  flex-wrap: wrap;
   margin-bottom: var(--space-12);
 
   h1 {
@@ -14,13 +15,18 @@
   }
 }
 
-.help-button {
-  font-size: var(--font-size-small);
+.settings-link {
   @include mixins.flex-row(var(--space-8));
-  background: var(--color-accent);
-  border: 0;
-  border-radius: var(--radius-medium);
+  min-height: 48px;
+  min-width: 48px;
+  justify-content: center;
   padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-medium);
+  color: var(--color-primary);
+  background: var(--color-bg-muted);
+  text-decoration: none;
+  font-size: var(--font-size-small);
+  font-weight: 800;
 }
 
 .result-count {

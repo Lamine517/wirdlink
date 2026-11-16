@@ -24,6 +24,10 @@ export class ContentPage {
       nonNullable: true,
       validators: [Validators.maxLength(1000)],
     }),
+    instructions: new FormControl(this.store.draft().instructions ?? '', {
+      nonNullable: true,
+      validators: [Validators.maxLength(1000)],
+    }),
     target: new FormControl<number | null>(this.store.draft().target, [
       Validators.required,
       Validators.min(1),
@@ -37,6 +41,7 @@ export class ContentPage {
     return isContentValid({
       title: value.title ?? '',
       description: value.description ?? '',
+      instructions: value.instructions ?? '',
       target: value.target ?? null,
     });
   });

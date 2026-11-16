@@ -1,0 +1,43 @@
+<a class="back-link" routerLink="/"
+  ><img src="assets/icons/back.svg" alt="" width="24" height="24" />Retour</a
+>
+@if (title()) {
+  @if (receipt()) {
+    <header class="share-page__header">
+      <span class="share-page__success"><app-icon name="check" [size]="32" /></span>
+      <h1>C’est fait !</h1>
+    </header>
+  } @else {
+    <h1>Partager ce wird</h1>
+  }
+  <p class="share-page__title">{{ title() }}</p>
+  @if (receipt()?.visibility === 'private') {
+    <section class="surface-card share-page__private" aria-label="Accès privé">
+      <app-icon name="lock" [size]="24" />
+      <h2>Votre code d’accès</h2>
+      <strong class="share-page__code">{{ receipt()?.accessCode }}</strong>
+      <button type="button" class="button button--outline button--compact" (click)="copyCode()">
+        <app-icon name="copy" [size]="20" />Copier le code
+      </button>
+      <p role="status">{{ copyMessage() }}</p>
+      <p>Envoyez le lien et ce code uniquement aux personnes invitées.</p>
+    </section>
+  }
+  <app-share-actions
+    panelId="mobile-share"
+    [url]="shareUrl()"
+    title="Invitez vos proches"
+    [mobileOptions]="true"
+  />
+  @if (receipt()) {
+    <a class="button button--outline share-page__home" routerLink="/">Revenir à l’accueil</a>
+  }
+} @else {
+  <h1>Partager un wird</h1>
+  <app-empty-state
+    title="Lien indisponible"
+    description="Retrouvez le wird depuis l’accueil pour le partager."
+    actionLabel="Retour à l’accueil"
+    actionLink="/"
+  />
+}

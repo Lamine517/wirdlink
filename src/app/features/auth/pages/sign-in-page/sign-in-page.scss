@@ -1,0 +1,49 @@
+@use '../../../../../styles/mixins';
+
+:host {
+  display: block;
+}
+.auth-hint {
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+.auth-form,
+.auth-actions {
+  @include mixins.stack(var(--space-12));
+  margin: var(--space-24) 0;
+}
+.auth-form__phone {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-12);
+}
+.auth-form__phone input {
+  min-width: 0;
+  flex: 1;
+}
+.auth-form__prefix {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-large);
+  padding: var(--space-12);
+  font-weight: 800;
+  background: var(--color-bg-surface);
+}
+.auth-form__code {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.3em;
+}
+.auth-text-button {
+  background: transparent;
+  border: 0;
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.auth-divider {
+  text-align: center;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}

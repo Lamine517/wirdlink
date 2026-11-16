@@ -9,6 +9,19 @@ import { BeadProgress } from '../../../../shared/components/bead-progress/bead-p
   selector: 'app-wird-card',
   imports: [RouterLink, DecimalPipe, BeadProgress, AudioPlayer],
   templateUrl: './wird-card.html',
+  styles: `
+    .wird-card__title {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      color: var(--color-text-primary);
+      text-decoration: none;
+    }
+    .wird-card__title:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WirdCard {

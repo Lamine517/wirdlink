@@ -5,7 +5,6 @@
   display: block;
 }
 
-
 .participation-form {
   @include mixins.stack;
 
@@ -92,4 +91,23 @@ input[aria-invalid='true'] {
 }
 .participation-form__label {
   font-size: 1rem;
+}
+
+.wird-text {
+  margin: 16px 0;
+}
+.wird-text h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+.wird-text p {
+  white-space: pre-line;
+  font-size: var(--font-size-small);
+}
+.participation-share {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 800;
+  margin-bottom: 12px;
 }

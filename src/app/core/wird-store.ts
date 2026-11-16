@@ -2,6 +2,8 @@ import { computed, Injectable, signal } from '@angular/core';
 
 export interface Wird {
   audioUrl?: string;
+  description?: string;
+  instructions?: string;
   id: string;
   title: string;
   recurrence: 'Chaque vendredi' | 'Tous les jours' | 'Chaque semaine' | 'Une fois';

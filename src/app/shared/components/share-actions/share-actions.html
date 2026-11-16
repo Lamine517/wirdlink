@@ -1,0 +1,69 @@
+<section class="share-actions" [attr.aria-labelledby]="panelId() + '-title'">
+  <h2 [id]="panelId() + '-title'">{{ title() }}</h2>
+  <button
+    type="button"
+    class="button button--whatsapp"
+    [disabled]="!shareable()"
+    (click)="open('whatsapp')"
+  >
+    <app-icon name="whatsapp" [size]="24" />Envoyer sur WhatsApp
+  </button>
+  <div class="share-actions__row">
+    <button
+      type="button"
+      class="button button--outline"
+      [disabled]="!shareable()"
+      (click)="open('facebook')"
+    >
+      <app-icon name="facebook" [size]="22" />Facebook
+    </button>
+    <button
+      type="button"
+      class="button button--outline"
+      [disabled]="!shareable()"
+      (click)="open('telegram')"
+    >
+      <app-icon name="telegram" [size]="22" />Telegram
+    </button>
+  </div>
+  @if (mobileOptions()) {
+    <div class="share-actions__row">
+      <button
+        type="button"
+        class="button button--outline"
+        [disabled]="!shareable()"
+        (click)="open('sms')"
+      >
+        <app-icon name="sms" [size]="22" />SMS
+      </button>
+      @if (nativeShareAvailable) {
+        <button
+          type="button"
+          class="button button--outline"
+          [disabled]="!shareable() || sharing()"
+          (click)="share()"
+        >
+          <app-icon name="share" [size]="22" />Autre
+        </button>
+      }
+    </div>
+  }
+  <button type="button" class="button button--outline" (click)="copy()">
+    <app-icon name="copy" [size]="20" />Copier le lien
+  </button>
+  <label class="share-actions__caption" [for]="panelId() + '-url'">Lien à partager</label>
+  <input
+    #shareInput
+    [id]="panelId() + '-url'"
+    class="share-actions__url"
+    readonly
+    [value]="url()"
+    (focus)="shareInput.select()"
+  />
+  @if (!shareable()) {
+    <p class="share-actions__caption">
+      Ce lien est local. Ouvrez WirdLink depuis une adresse accessible pour le partager.
+    </p>
+  }
+  <p class="share-actions__feedback" role="status">{{ message() }}</p>
+</section>
