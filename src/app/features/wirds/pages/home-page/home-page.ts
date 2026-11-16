@@ -1,4 +1,6 @@
 import { WirdAccess } from '../../../access/data-access/wird-access';
+import { AuthFlow } from '../../../auth/data-access/auth-flow';
+import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
 import { RouterLink } from '@angular/router';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -14,12 +16,13 @@ import {
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon],
+  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon, UserAvatar],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
+  protected readonly auth = inject(AuthFlow);
   protected readonly store = inject(WirdStore);
   private readonly access = inject(WirdAccess);
   protected readonly visibility = signal<VisibilityFilter>('all');

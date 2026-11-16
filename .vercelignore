@@ -1,0 +1,14 @@
+docs/
+.github/
+.claude/
+.agents/
+.codex/
+.aws/
+AGENTS.md
+CLAUDE.md
+CONVENTIONS.md
+supabase/
+coverage/
+node_modules/
+dist/
+.env*

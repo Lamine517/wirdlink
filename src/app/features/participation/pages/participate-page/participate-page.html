@@ -7,6 +7,14 @@
     [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
   />
   <app-wird-tabs [wirdId]="wird.id" />
+  @if (author(); as author) {
+    <p class="text-secondary">
+      Publié par {{ author.displayName }}
+      @if (author.organization) {
+        · {{ author.organization }}
+      }
+    </p>
+  }
   <section class="participation-summary" aria-label="Avancement du wird">
     <app-circular-progress
       [title]="wird.title"

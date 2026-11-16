@@ -5,6 +5,7 @@ import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Device preferences frontend', () => {
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('keeps reminders off when the service is unavailable and leaves help reachable', async () => {
     const gateway = gatewayStub();
     TestBed.configureTestingModule({

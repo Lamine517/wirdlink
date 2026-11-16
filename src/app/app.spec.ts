@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { appConfig } from './app.config';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { App } from './app';
+import { FRONTEND_GATEWAY } from './core/services/frontend-gateway';
+import { gatewayStub } from './testing/frontend-gateway.spec';
 
 describe('WirdLink navigation', () => {
   async function waitForSheetClose(dialog: HTMLDialogElement): Promise<void> {
@@ -14,16 +16,19 @@ describe('WirdLink navigation', () => {
 
   beforeEach(() => {
     localStorage.removeItem('wirdlink.demo.v1');
-    TestBed.configureTestingModule({ imports: [App], providers: appConfig.providers });
+    TestBed.configureTestingModule({ imports: [App], providers: [
+      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
+    ] });
   });
   afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
 
-  it('offers the three main destinations and identifies demo data', () => {
+  it('offers the three main destinations', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelectorAll('nav a').length).toBe(3);
-    expect(element.textContent).toContain('Démonstration');
+    expect([...element.querySelectorAll('nav a')].map((link) => link.textContent?.trim()))
+      .toEqual(['Accueil', 'Mes parts', 'Créer']);
   });
 
   it('takes a part and completes it through the participant screens', async () => {

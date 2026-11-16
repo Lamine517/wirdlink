@@ -4,9 +4,23 @@
       >WirdLink</span
     ></a
   >
-  <a class="settings-link" routerLink="/preferences" aria-label="Réglages" title="Réglages"
-    ><app-icon name="settings" [size]="24"
-  /></a>
+  <div class="page-header__actions">
+    @if (auth.session(); as session) {
+      <a
+        class="account-link"
+        routerLink="/profil"
+        [attr.aria-label]="
+          session.displayName ? 'Compte de ' + session.displayName : 'Votre compte'
+        "
+        title="Votre compte"
+      >
+        <app-user-avatar [name]="session.displayName ?? ''" />
+      </a>
+    }
+    <a class="settings-link" routerLink="/preferences" aria-label="Réglages" title="Réglages"
+      ><app-icon name="settings" [size]="24"
+    /></a>
+  </div>
 </header>
 <h1>Mes wirds</h1>
 <app-wird-filters

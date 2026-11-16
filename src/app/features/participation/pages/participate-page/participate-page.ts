@@ -5,7 +5,15 @@ import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
 import { NetworkStatus } from '../../../../core/services/network-status';
 import { WirdAccess } from '../../../access/data-access/wird-access';
 import { CircularProgress } from '../../../../shared/components/circular-progress/circular-progress';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { FRONTEND_GATEWAY, WirdAuthor } from '../../../../core/services/frontend-gateway';
 import { DecimalPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,6 +38,8 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipatePage {
+  private readonly gateway = inject(FRONTEND_GATEWAY);
+  protected readonly author = signal<WirdAuthor | null>(null);
   protected readonly store = inject(WirdStore);
   protected readonly network = inject(NetworkStatus);
   private readonly access = inject(WirdAccess);
@@ -95,6 +105,24 @@ export class ParticipatePage {
     }
     return 'Écrivez votre nom ou choisissez « Sans nom » pour continuer.';
   });
+
+  constructor() {
+    effect((onCleanup) => {
+      const id = this.selected()?.id;
+      this.author.set(null);
+      if (!id || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)) return;
+      let active = true;
+      onCleanup(() => {
+        active = false;
+      });
+      void this.gateway
+        .loadWirdAuthor(id)
+        .then((author) => {
+          if (active) this.author.set(author);
+        })
+        .catch(() => undefined);
+    });
+  }
 
   protected reserve(): void {
     const wird = this.selected();

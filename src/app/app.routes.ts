@@ -65,6 +65,12 @@ export const routes: Routes = [
     title: 'Accès privé · WirdLink',
   },
   {
+    path: 'profil',
+    loadComponent: () =>
+      import('./features/profile/pages/profile-page/profile-page').then((m) => m.ProfilePage),
+    title: 'Mon profil · WirdLink',
+  },
+  {
     path: 'connexion',
     canActivate: [contentReady, scheduleReady],
     loadComponent: () =>
@@ -139,6 +145,9 @@ export const routes: Routes = [
       title: 'Vos informations',
       paragraphs: [
         'Cette démonstration conserve les parts, le nom choisi et le texte du brouillon dans le stockage de ce navigateur.',
+        'La connexion Google et votre profil sont gérés par Supabase. Les informations du profil restent facultatives.',
+        'Votre prénom, votre nom et votre organisation peuvent apparaître comme auteur de vos wirds. Votre adresse reste privée.',
+        'Depuis Mon profil, vous pouvez modifier vos informations, vous déconnecter ou supprimer votre compte et vos wirds.',
         'Les photos et fichiers audio choisis restent dans la session et ne sont pas envoyés à un serveur.',
         'Le partage ouvre le service choisi. Les textes de confidentialité définitifs seront relus avant la publication du service.',
       ],

@@ -2,11 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
 import { CreationDraftStore } from '../../data-access/creation-draft';
+import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
+import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Creation flow', () => {
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: appConfig.providers });
+    TestBed.configureTestingModule({ providers: [
+      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
+    ] });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
 
@@ -96,7 +100,9 @@ describe('Creation flow', () => {
 describe('Optional creation content in preview', () => {
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: appConfig.providers });
+    TestBed.configureTestingModule({ providers: [
+      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
+    ] });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('shows description and opening instructions separately without changing the goal', async () => {
@@ -127,7 +133,9 @@ describe('Optional creation content in preview', () => {
 describe('Draft replacement confirmation', () => {
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: appConfig.providers });
+    TestBed.configureTestingModule({ providers: [
+      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
+    ] });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('keeps optional instructions until replacing a draft is explicitly confirmed', async () => {

@@ -33,7 +33,8 @@ export class PreviewPage {
       !this.store.contentValid() ||
       !this.store.scheduleValid() ||
       !this.network.online() ||
-      this.publication.busy()
+      this.publication.busy() ||
+      this.auth.restoring()
     )
       return;
     this.error.set('');

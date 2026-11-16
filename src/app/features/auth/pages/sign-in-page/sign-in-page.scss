@@ -48,6 +48,15 @@
   color: var(--color-text-secondary);
 }
 
-.auth-actions img[src$='/apple.svg'] {
-  filter: var(--apple-logo-filter);
+.auth-google {
+  width: 100%;
+  margin: var(--space-24) 0;
+}
+.auth-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.auth-coming-soon {
+  text-align: center;
+  margin-top: var(--space-12);
 }
