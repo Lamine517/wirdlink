@@ -1,3 +1,4 @@
+import { BackButton } from '../../../../shared/components/back-button/back-button';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthFlow, normalizePhone } from '../../data-access/auth-flow';
 import {
   InvalidCodeError,
@@ -21,7 +22,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
 
 @Component({
   selector: 'app-sign-in-page',
-  imports: [RouterLink, ReactiveFormsModule, RequestState],
+  imports: [BackButton, ReactiveFormsModule, RequestState],
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

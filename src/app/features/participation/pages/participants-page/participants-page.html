@@ -1,6 +1,4 @@
-<a class="back-link" routerLink="/"
-  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
->
+<app-back-button />
 @if (selected(); as wird) {
   <h1>{{ wird.title }}</h1>
   <app-wird-tabs [wirdId]="wird.id" active="participants" />

@@ -1,3 +1,4 @@
+import { NavigationHistory } from './core/services/navigation-history';
 import { DeviceInstall } from './core/services/device-install';
 import { NetworkStatus } from './core/services/network-status';
 import { NavigationEnd, Router } from '@angular/router';
@@ -27,6 +28,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly homeEntered = signal(false);
+  protected readonly navigation = inject(NavigationHistory);
   private readonly router = inject(Router);
   private readonly url = toSignal(
     this.router.events.pipe(

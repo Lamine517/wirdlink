@@ -1,9 +1,7 @@
 @if (message()) {
   <p class="feedback feedback--error" role="alert">{{ message() }}</p>
 }
-<a class="back-link" routerLink="/"
-  ><img src="assets/icons/back.svg" alt="" width="24" height="24" />Retour</a
->
+<app-back-button />
 @if (selected(); as wird) {
   <header class="participation-header">
     <h1>Je participe</h1>

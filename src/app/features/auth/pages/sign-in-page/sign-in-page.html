@@ -1,6 +1,4 @@
-<a class="back-link" routerLink="/creer/apercu"
-  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
->
+<app-back-button fallback="/creer/apercu" />
 @if (callbackMode) {
   <h1>Votre connexion</h1>
   <app-request-state

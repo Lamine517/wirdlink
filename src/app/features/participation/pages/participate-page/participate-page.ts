@@ -1,3 +1,4 @@
+import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
 import { NetworkStatus } from '../../../../core/services/network-status';
@@ -14,6 +15,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
 @Component({
   selector: 'app-participate-page',
   imports: [
+    BackButton,
     RouterLink,
     ReactiveFormsModule,
     DecimalPipe,

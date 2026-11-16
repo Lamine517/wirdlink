@@ -1,3 +1,4 @@
+import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -11,7 +12,7 @@ import { WirdAccess } from '../../../access/data-access/wird-access';
 
 @Component({
   selector: 'app-participants-page',
-  imports: [RouterLink, DecimalPipe, WirdTabs, Icon, EmptyState],
+  imports: [BackButton, RouterLink, DecimalPipe, WirdTabs, Icon, EmptyState],
   templateUrl: './participants-page.html',
   styleUrl: './participants-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
