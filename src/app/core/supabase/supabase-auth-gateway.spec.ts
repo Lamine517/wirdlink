@@ -44,6 +44,8 @@ describe('Supabase authentication adapter', () => {
       'signInWithOtp',
       'verifyOtp',
       'signInWithOAuth',
+      'linkIdentity',
+      'updateUser',
       'exchangeCodeForSession',
       'signOut',
       'onAuthStateChange',
@@ -63,6 +65,7 @@ describe('Supabase authentication adapter', () => {
         { provide: SupabaseWirdRepository, useValue: repository },
       ],
     });
+    auth.getSession.and.resolveTo({ data: { session: null }, error: null });
     gateway = TestBed.inject(SupabaseAuthGateway);
   });
 
@@ -115,6 +118,37 @@ describe('Supabase authentication adapter', () => {
     await expectAsync(gateway.verifyCode('+221771234567', '123456')).toBeRejectedWithError(
       ServiceUnavailableError,
     );
+  });
+
+  it('links a guest session instead of replacing it', async () => {
+    const guest = session();
+    guest.user = user(true);
+    auth.getSession.and.resolveTo({ data: { session: guest }, error: null });
+    auth.linkIdentity.and.resolveTo({
+      data: { provider: 'google', url: 'https://example.com' },
+      error: null,
+    } as never);
+    await gateway.signInWithProvider('google');
+    expect(auth.linkIdentity).toHaveBeenCalledOnceWith({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/connexion/retour' },
+    } as never);
+    expect(auth.signInWithOAuth).not.toHaveBeenCalled();
+    auth.updateUser.and.resolveTo({ data: { user: user(true) }, error: null });
+    await gateway.signInWithEmail('awa@example.com');
+    expect(auth.updateUser).toHaveBeenCalledOnceWith(
+      { email: 'awa@example.com' },
+      { emailRedirectTo: window.location.origin + '/connexion/retour' },
+    );
+    expect(auth.signInWithOtp).not.toHaveBeenCalled();
+    auth.linkIdentity.calls.reset();
+    auth.signInWithOAuth.and.resolveTo({
+      data: { provider: 'google', url: 'https://example.com' },
+      error: null,
+    });
+    await gateway.signInWithProvider('google', true);
+    expect(auth.signInWithOAuth).toHaveBeenCalled();
+    expect(auth.linkIdentity).not.toHaveBeenCalled();
   });
 
   it('uses a fixed same-origin OAuth callback and exchanges the PKCE code', async () => {

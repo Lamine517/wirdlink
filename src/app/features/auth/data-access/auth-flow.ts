@@ -5,6 +5,20 @@ import {
   SignInProvider,
 } from '../../../core/services/frontend-gateway';
 
+const AUTH_RETURN_KEY = 'wirdlink.auth.return';
+
+export function rememberAuthReturn(path: '/' | '/creer/apercu' | '/preferences'): void {
+  sessionStorage.setItem(AUTH_RETURN_KEY, path);
+}
+
+export function takeAuthReturn(draftReady: boolean): string {
+  const stored = sessionStorage.getItem(AUTH_RETURN_KEY);
+  sessionStorage.removeItem(AUTH_RETURN_KEY);
+  if (stored === '/preferences') return draftReady ? '/creer/apercu' : '/preferences';
+  if (stored === '/' || (stored === '/creer/apercu' && draftReady)) return stored;
+  return draftReady ? '/creer/apercu' : '/';
+}
+
 export function normalizePhone(value: string): string | null {
   const digits = value.replace(/[\s().-]/g, '').replace(/^00221/, '+221');
   const national = digits.startsWith('+221') ? digits.slice(4) : digits;
@@ -63,12 +77,12 @@ export class AuthFlow {
     this.pendingPhone.set('');
   }
 
-  async email(email: string): Promise<void> {
-    await this.gateway.signInWithEmail(email);
+  async email(email: string, replaceGuest = false): Promise<void> {
+    await this.gateway.signInWithEmail(email, replaceGuest);
   }
 
-  async oauth(provider: SignInProvider): Promise<void> {
-    await this.gateway.signInWithProvider(provider);
+  async oauth(provider: SignInProvider, replaceGuest = false): Promise<void> {
+    await this.gateway.signInWithProvider(provider, replaceGuest);
   }
 
   async completeOAuth(code: string): Promise<void> {

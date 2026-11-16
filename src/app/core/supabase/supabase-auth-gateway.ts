@@ -7,6 +7,7 @@ import {
   ResponsibleSession,
   PublicationRequest,
   PublicationReceipt,
+  AccountAlreadyExistsError,
   ServiceUnavailableError,
   SignInProvider,
   UserProfile,
@@ -131,28 +132,60 @@ export class SupabaseAuthGateway implements FrontendGateway {
     return (await this.sessionWithProfile(data.user)) ?? session;
   }
 
-  async signInWithEmail(email: string): Promise<void> {
+  async signInWithEmail(email: string, replaceGuest = false): Promise<void> {
     const normalized = email.trim().toLowerCase();
     if (normalized.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized))
       throw new Error('Invalid email');
-    const { error } = await (
-      await this.client()
-    ).auth.signInWithOtp({
+    const redirectTo = window.location.origin + '/connexion/retour';
+    const client = await this.client();
+    if (!replaceGuest && (await this.guestSession())) {
+      const { error } = await client.auth.updateUser(
+        { email: normalized },
+        { emailRedirectTo: redirectTo },
+      );
+      if (error) throw this.accountConflict(error);
+      return;
+    }
+    const { error } = await client.auth.signInWithOtp({
       email: normalized,
-      options: { emailRedirectTo: window.location.origin + '/connexion/retour' },
+      options: { emailRedirectTo: redirectTo },
     });
     if (error) throw translateAuthError(error);
   }
 
-  async signInWithProvider(provider: SignInProvider): Promise<void> {
+  async signInWithProvider(provider: SignInProvider, replaceGuest = false): Promise<void> {
     if (!(await this.methods())[provider]) throw new ServiceUnavailableError();
-    const { error } = await (
-      await this.client()
-    ).auth.signInWithOAuth({
+    const redirectTo = window.location.origin + '/connexion/retour';
+    const client = await this.client();
+    if (!replaceGuest && (await this.guestSession())) {
+      const { error } = await client.auth.linkIdentity({
+        provider,
+        options: { redirectTo },
+      });
+      if (error) throw this.accountConflict(error);
+      return;
+    }
+    const { error } = await client.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: window.location.origin + '/connexion/retour' },
+      options: { redirectTo },
     });
     if (error) throw translateAuthError(error);
+  }
+
+  private async guestSession(): Promise<boolean> {
+    const { data, error } = await (await this.client()).auth.getSession();
+    if (error) throw translateAuthError(error);
+    return data.session?.user.is_anonymous === true;
+  }
+
+  private accountConflict(error: AuthError): Error {
+    if (
+      error.code === 'email_exists' ||
+      error.code === 'user_already_exists' ||
+      error.code === 'identity_already_exists'
+    )
+      return new AccountAlreadyExistsError();
+    return translateAuthError(error);
   }
 
   async completeSignIn(code: string): Promise<ResponsibleSession> {

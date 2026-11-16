@@ -6,6 +6,8 @@ import { BackButton } from '../../../../shared/components/back-button/back-butto
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeviceInstall } from '../../../../core/services/device-install';
+import { AuthFlow, rememberAuthReturn } from '../../../auth/data-access/auth-flow';
+import { CycleReminders } from '../../../../core/services/cycle-reminders';
 
 @Component({
   selector: 'app-preferences-page',
@@ -47,11 +49,16 @@ import { DeviceInstall } from '../../../../core/services/device-install';
       color: var(--color-primary);
       font-weight: 800;
     }
+    .publish-banner .button {
+      width: 100%;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreferencesPage {
   protected readonly i18n = inject(I18nService);
+  protected readonly auth = inject(AuthFlow);
+  protected readonly reminders = inject(CycleReminders);
   protected readonly appearance = inject(Appearance);
   protected readonly themes: { value: ThemePreference; label: string }[] = [
     { value: 'auto', label: 'Automatique' },
@@ -62,4 +69,8 @@ export class PreferencesPage {
   protected readonly ios =
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+
+  protected preparePublish(): void {
+    rememberAuthReturn('/preferences');
+  }
 }

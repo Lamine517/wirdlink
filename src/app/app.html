@@ -14,6 +14,7 @@
         <p class="feedback" role="status">{{ store.storageWarning() | t }}</p>
       }
       <app-update-notice />
+      <app-cycle-reminder />
       <div #pageView class="app-page-view"><router-outlet (activate)="resetScroll()" /></div>
     </main>
     <nav class="bottom-nav" [attr.aria-label]="'Navigation principale' | t">

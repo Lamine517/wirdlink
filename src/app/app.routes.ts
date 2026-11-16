@@ -93,7 +93,6 @@ export const routes: Routes = [
   },
   {
     path: 'connexion',
-    canActivate: [contentReady, scheduleReady],
     loadComponent: () =>
       import('./features/auth/pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
     title: 'Connexion · WirdLink',

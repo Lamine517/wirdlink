@@ -32,7 +32,7 @@ export interface PublicationRequest {
 
 /** Frontend boundary: the server verifies authentication, permissions and counts.
  * appConfig connects Supabase authentication, profiles and publication.
- * Reminder delivery remains unavailable until a delivery service is configured.
+ * Cycle reminders use a browser notification the day before a weekly or Friday restart.
  * Tests replace this port; no successful sign-in/publication is simulated in the app.
  */
 export interface FrontendGateway {
@@ -45,8 +45,8 @@ export interface FrontendGateway {
   loadWirdAuthor(wirdId: string): Promise<WirdAuthor | null>;
   requestCode(phone: string): Promise<void>;
   verifyCode(phone: string, code: string): Promise<ResponsibleSession>;
-  signInWithEmail(email: string): Promise<void>;
-  signInWithProvider(provider: SignInProvider): Promise<void>;
+  signInWithEmail(email: string, replaceGuest?: boolean): Promise<void>;
+  signInWithProvider(provider: SignInProvider, replaceGuest?: boolean): Promise<void>;
   completeSignIn(code: string): Promise<ResponsibleSession>;
   publish(request: PublicationRequest): Promise<PublicationReceipt>;
   setReminders(enabled: boolean): Promise<void>;
@@ -57,6 +57,12 @@ export class ServiceUnavailableError extends Error {
   constructor() {
     super('Service unavailable');
     this.name = 'ServiceUnavailableError';
+  }
+}
+export class AccountAlreadyExistsError extends Error {
+  constructor() {
+    super('Account already exists');
+    this.name = 'AccountAlreadyExistsError';
   }
 }
 export class GuestAccessError extends Error {

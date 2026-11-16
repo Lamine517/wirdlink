@@ -1,7 +1,7 @@
 import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthFlow } from '../../../auth/data-access/auth-flow';
+import { AuthFlow, rememberAuthReturn } from '../../../auth/data-access/auth-flow';
 import { PublicationFlow } from '../../../publication/data-access/publication-flow';
 import { NetworkStatus } from '../../../../core/services/network-status';
 import { RequestState } from '../../../../shared/components/request-state/request-state';
@@ -67,6 +67,7 @@ export class PreviewPage {
     }
     this.error.set('');
     if (!this.auth.session()) {
+      rememberAuthReturn('/creer/apercu');
       await this.router.navigateByUrl('/connexion');
       return;
     }

@@ -40,6 +40,7 @@ const ICON_FILES = {
   filter: 'funnel-simple',
   minus: 'minus',
   clock: 'clock',
+  close: 'x',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

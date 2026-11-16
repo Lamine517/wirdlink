@@ -57,6 +57,18 @@ export class SchedulePage {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.store.updateSchedule(this.form.getRawValue()));
   }
+  protected rhythmHint(): string {
+    switch (this.value().recurrence) {
+      case 'Tous les jours':
+        return 'L’objectif recommence chaque jour.';
+      case 'Chaque semaine':
+        return 'L’objectif recommence chaque semaine. Un rappel part la veille.';
+      case 'Chaque vendredi':
+        return 'L’objectif recommence chaque vendredi. Un rappel part la veille.';
+      default:
+        return 'L’objectif reste le même jusqu’à la fin du wird.';
+    }
+  }
   protected continue(): void {
     if (this.canContinue()) void this.router.navigate(['/creer/apercu']);
   }

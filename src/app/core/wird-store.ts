@@ -1,4 +1,5 @@
 import { WIRD_REPOSITORY, WirdRepository, WirdChanges } from './services/wird-repository';
+import { countsInCurrentCycle, dakarToday } from './wird-cycle';
 import {
   computed,
   Inject,
@@ -31,6 +32,7 @@ export interface Part {
   quantity: number;
   name: string;
   finished: boolean;
+  createdAt?: string;
 }
 export const WIRD_SEED = new InjectionToken<Wird[]>('WIRD_SEED', {
   providedIn: 'root',
@@ -176,8 +178,18 @@ export class WirdStore {
           revision !== this.revision
         )
           return;
-        this.wirds.set([...wirds, ...missing.filter((wird): wird is Wird => !!wird)]);
-        this.parts.set(parts);
+        const loaded = [...wirds, ...missing.filter((wird): wird is Wird => !!wird)];
+        const today = dakarToday();
+        this.wirds.set(loaded);
+        this.parts.set(
+          parts.filter((part) =>
+            countsInCurrentCycle(
+              loaded.find((wird) => wird.id === part.wirdId),
+              part.createdAt,
+              today,
+            ),
+          ),
+        );
       } catch {
         if (generation === this.generation)
           this.error.set('Impossible de charger les wirds. Réessayez.');

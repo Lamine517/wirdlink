@@ -1,5 +1,13 @@
 <app-back-button />
 <h1>{{ 'Réglages' | t }}</h1>
+@if (!auth.restoring() && !auth.session()) {
+  <section class="surface-card preferences-card publish-banner">
+    <p>{{ 'Connectez-vous pour publier votre wird.' | t }}</p>
+    <a class="button button--accent" routerLink="/connexion" (click)="preparePublish()">{{
+      'Continuer pour publier' | t
+    }}</a>
+  </section>
+}
 <section class="surface-card preferences-card">
   <h2><app-icon name="world" />{{ 'Langue' | t }}</h2>
   <fieldset>
@@ -49,8 +57,26 @@
 </section>
 <section class="surface-card preferences-card">
   <h2><app-icon name="calendar" />{{ 'Les rappels' | t }}</h2>
-  <p>{{ 'Recevez un rappel pour vos lectures. Ce choix reste facultatif.' | t }}</p>
-  <p>{{ 'Bientôt' | t }}</p>
+  <p>
+    {{ 'La veille d’un nouveau cycle, une notification rappelle que l’objectif recommence.' | t }}
+  </p>
+  @if (reminders.permission() === 'granted') {
+    <p>{{ 'Rappels activés sur cet appareil.' | t }}</p>
+  } @else if (reminders.permission() === 'denied') {
+    <p>
+      {{
+        'Les notifications sont bloquées. Vous pouvez modifier ce choix dans les réglages du navigateur.'
+          | t
+      }}
+    </p>
+    <p>{{ 'Le rappel reste affiché dans WirdLink la veille.' | t }}</p>
+  } @else if (reminders.permission() === 'unsupported') {
+    <p>{{ 'Le rappel reste affiché dans WirdLink la veille.' | t }}</p>
+  } @else {
+    <button class="button button--accent" type="button" (click)="reminders.enable()">
+      {{ 'Activer les rappels' | t }}
+    </button>
+  }
 </section>
 <section class="surface-card preferences-card">
   <h2><app-icon name="phone" />{{ 'Retrouver WirdLink facilement' | t }}</h2>

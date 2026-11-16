@@ -63,7 +63,7 @@ describe('Responsible session lifecycle', () => {
     const flow = TestBed.inject(AuthFlow);
     await flow.ready;
     await flow.email('awa@example.com');
-    expect(gateway.signInWithEmail).toHaveBeenCalledOnceWith('awa@example.com');
+    expect(gateway.signInWithEmail).toHaveBeenCalledOnceWith('awa@example.com', false);
     expect(flow.session()).toBeNull();
   });
 });

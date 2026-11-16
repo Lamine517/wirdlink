@@ -4,7 +4,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-access/creation-draft';
-import { AuthFlow } from '../../data-access/auth-flow';
+import { AuthFlow, rememberAuthReturn } from '../../data-access/auth-flow';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Responsible sign-in screens', () => {
@@ -18,7 +18,10 @@ describe('Responsible sign-in screens', () => {
     });
     TestBed.inject(CreationDraftStore).chooseTemplate(WIRD_TEMPLATES[0]);
   });
-  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  afterEach(() => {
+    localStorage.removeItem('wirdlink.creation.v1');
+    sessionStorage.removeItem('wirdlink.auth.return');
+  });
 
   it('offers Google and email while keeping telephone unavailable', async () => {
     const harness = await RouterTestingHarness.create('/connexion');
@@ -38,7 +41,7 @@ describe('Responsible sign-in screens', () => {
     harness.routeNativeElement!.querySelector<HTMLButtonElement>('.auth-google')!.click();
     await harness.fixture.whenStable();
     harness.detectChanges();
-    expect(gateway.signInWithProvider).toHaveBeenCalledOnceWith('google');
+    expect(gateway.signInWithProvider).toHaveBeenCalledOnceWith('google', false);
     expect(gateway.requestCode).not.toHaveBeenCalled();
     expect(harness.routeNativeElement!.textContent).toContain('votre brouillon est conservé');
   });
@@ -61,7 +64,7 @@ describe('Responsible sign-in screens', () => {
     submit.click();
     await harness.fixture.whenStable();
     harness.detectChanges();
-    expect(gateway.signInWithEmail).toHaveBeenCalledOnceWith('awa@example.com');
+    expect(gateway.signInWithEmail).toHaveBeenCalledOnceWith('awa@example.com', false);
     expect(TestBed.inject(AuthFlow).session()).toBeNull();
     expect(harness.routeNativeElement!.textContent).toContain('Consultez votre boîte mail');
     expect(TestBed.inject(CreationDraftStore).hasDraft()).toBeTrue();
@@ -94,5 +97,17 @@ describe('Responsible sign-in screens', () => {
     expect(history.calls.argsFor(0).slice(1)).toEqual(['', '/connexion/retour']);
     expect(gateway.completeSignIn).toHaveBeenCalledOnceWith('test-callback');
     expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Votre aperçu');
+  });
+
+  it('opens sign-in without a draft and returns home afterwards', async () => {
+    TestBed.inject(CreationDraftStore).discard();
+    rememberAuthReturn('/');
+    const harness = await RouterTestingHarness.create('/connexion');
+    expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Votre connexion');
+    gateway.completeSignIn.and.resolveTo({ id: 'responsible' });
+    await harness.navigateByUrl('/connexion/retour?code=home-return');
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Mes wirds');
   });
 });

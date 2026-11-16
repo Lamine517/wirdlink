@@ -1,4 +1,5 @@
 import { AppUpdateNotice } from './shared/components/app-update-notice/app-update-notice';
+import { CycleReminder } from './shared/components/cycle-reminder/cycle-reminder';
 import { I18nService } from './core/services/i18n';
 import { Translate } from './shared/pipes/translate';
 import { Appearance } from './core/services/appearance';
@@ -26,7 +27,16 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [AppUpdateNotice, Translate, RouterOutlet, RouterLink, Icon, DesktopIntro, DesktopShare],
+  imports: [
+    AppUpdateNotice,
+    CycleReminder,
+    Translate,
+    RouterOutlet,
+    RouterLink,
+    Icon,
+    DesktopIntro,
+    DesktopShare,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

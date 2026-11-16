@@ -1,6 +1,6 @@
 # 0015 — Participation sans compte et publication fiable
 
-Date : 16 novembre 2026. Statut : le client et la migration `stabilize_publication` sont appliqués sur le projet hébergé. L’activation des sessions anonymes reste à confirmer dans le tableau de bord.
+Date : 16 novembre 2026. Statut : le client relie une session invitée au même compte, et la migration `stabilize_publication` est appliquée. Les sessions anonymes et la liaison manuelle restent à confirmer dans le tableau de bord.
 
 ## Contexte
 
@@ -20,8 +20,11 @@ Authentication → Sign In / Providers → Anonymous Sign-Ins. Tant qu’il est
 désactivé, le client explique l’indisponibilité au lieu d’un simple message de
 connexion.
 
-Une validation Auth interrompue n’annule pas une session permanente déjà
-présente. Un rafraîchissement de jeton sans session ne vide pas l’identité en
+Une session invitée qui se connecte ensuite avec Google ou un email reste le
+même compte, donc ses parts suivent. Si ce compte existe déjà, l’application
+le dit et n’échange la session qu’après un choix explicite. Cette liaison
+exige Anonymous Sign-Ins et Manual Linking dans Auth. Une validation Auth
+interrompue n’annule pas une session permanente déjà présente. Un rafraîchissement de jeton sans session ne vide pas l’identité en
 cours. Les types `image/jpg` et `audio/x-m4a` sont publiés comme JPEG et MP4,
 formats déjà acceptés par le bucket. Une date de début locale d’un jour avant
 la date UTC reste acceptée par la fonction de publication. Le client propose
@@ -35,5 +38,5 @@ lorsque les sessions anonymes sont désactivées. La migration
 `unhcqgwexwmxkwkwvgbl` : une date de début locale d’un jour avant la date UTC
 est acceptée, et l’envoi d’un fichier exige un compte permanent lu dans
 `auth.users`, plus le jeton. Le rôle anonyme ne peut pas appeler cette
-vérification. Le réglage Anonymous Sign-Ins du tableau de bord n’est pas
-confirmé depuis cet environnement.
+vérification. L’utilisateur a confirmé avoir activé Anonymous Sign-Ins et Manual Linking
+dans le tableau de bord. Cet environnement ne relit pas ce réglage Auth.

@@ -145,6 +145,43 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'Sign in to publish your wird.',
     'سجّل الدخول لنشر وردك.',
   ],
+  'Ce compte existe déjà. Vos parts prises sans compte restent sur cet appareil.': [
+    'This account already exists. Shares taken without an account stay on this device.',
+    'هذا الحساب موجود بالفعل. الحصص المأخوذة دون حساب تبقى على هذا الجهاز.',
+  ],
+  'L’objectif reste le même jusqu’à la fin du wird.': [
+    'The goal stays the same until the wird ends.',
+    'يبقى الهدف كما هو حتى نهاية الورد.',
+  ],
+  'L’objectif recommence chaque jour.': [
+    'The goal restarts every day.',
+    'يبدأ الهدف من جديد كل يوم.',
+  ],
+  'L’objectif recommence chaque semaine. Un rappel part la veille.': [
+    'The goal restarts every week. A reminder is sent the day before.',
+    'يبدأ الهدف من جديد كل أسبوع. يصل تذكير في اليوم السابق.',
+  ],
+  'L’objectif recommence chaque vendredi. Un rappel part la veille.': [
+    'The goal restarts every Friday. A reminder is sent the day before.',
+    'يبدأ الهدف من جديد كل جمعة. يصل تذكير في اليوم السابق.',
+  ],
+  'Demain, l’objectif de « {title} » recommence.': [
+    'Tomorrow, the goal for “{title}” restarts.',
+    'غدًا يبدأ هدف «{title}» من جديد.',
+  ],
+  'Demain, certains objectifs recommencent.': [
+    'Tomorrow, some goals restart.',
+    'غدًا تبدأ بعض الأهداف من جديد.',
+  ],
+  'Le rappel reste affiché dans WirdLink la veille.': [
+    'The reminder still appears in WirdLink the day before.',
+    'يبقى التذكير ظاهرًا في WirdLink في اليوم السابق.',
+  ],
+  'La veille d’un nouveau cycle, une notification rappelle que l’objectif recommence.': [
+    'The day before a new cycle, a notification says the goal is restarting.',
+    'في اليوم السابق لدورة جديدة، يذكّر إشعار بأن الهدف سيبدأ من جديد.',
+  ],
+  'Ouvrir ce compte': ['Open this account', 'فتح هذا الحساب'],
   'Connexion en cours…': ['Signing in…', 'جارٍ تسجيل الدخول…'],
   'Consultez votre boîte mail et ouvrez le lien pour vous connecter. Pensez aussi aux courriers indésirables.':
     [
@@ -177,6 +214,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'مثال: ورد لعائلتنا نشارك فيه يوم الجمعة.',
   ],
   Fermer: ['Close', 'إغلاق'],
+  'Fermer l’invitation à installer': ['Close the install invitation', 'إغلاق دعوة التثبيت'],
   'Garder ce wird': ['Keep this wird', 'الاحتفاظ بهذا الورد'],
   'Garder le brouillon': ['Keep draft', 'الاحتفاظ بالمسودة'],
   'Garder le compteur': ['Keep counter', 'الاحتفاظ بالعداد'],

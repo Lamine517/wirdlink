@@ -48,12 +48,15 @@ function optionalDate(value: unknown): string | undefined {
 function part(value: unknown, snakeCase = false): Part {
   const row = record(value);
   if (typeof row['finished'] !== 'boolean') throw new ServiceUnavailableError();
+  const createdAt = row[snakeCase ? 'created_at' : 'createdAt'];
   return {
     id: string(row['id']),
     wirdId: string(row[snakeCase ? 'wird_id' : 'wirdId']),
     quantity: integer(row['quantity'], 1),
     name: string(row['name']),
     finished: row['finished'],
+    createdAt:
+      typeof createdAt === 'string' && !Number.isNaN(Date.parse(createdAt)) ? createdAt : undefined,
   };
 }
 function array(value: unknown): unknown[] {
@@ -232,7 +235,7 @@ export class SupabaseWirdRepository implements WirdRepository {
       if (!session.session) return [];
       const { data, error } = await client
         .from('parts')
-        .select('id,wird_id,quantity,name,finished');
+        .select('id,wird_id,quantity,name,finished,created_at');
       if (error) throw new ServiceUnavailableError();
       return array(data).map((value) => part(value, true));
     });

@@ -1,4 +1,4 @@
-<app-back-button fallback="/creer/apercu" />
+<app-back-button [fallback]="returnFallback()" />
 @if (callbackMode) {
   <h1>{{ 'Votre connexion' | t }}</h1>
   <app-request-state
@@ -110,6 +110,14 @@
       </section>
     }
   </div>
+  @if (existingAccount()) {
+    <p class="feedback feedback--error" role="alert">
+      {{ 'Ce compte existe déjà. Vos parts prises sans compte restent sur cet appareil.' | t }}
+    </p>
+    <button type="button" class="button button--primary" [disabled]="busy()" (click)="replaceGuest()">
+      {{ 'Ouvrir ce compte' | t }}
+    </button>
+  }
   <app-request-state
     [loading]="busy()"
     [loadingLabel]="'Connexion en cours…' | t"
