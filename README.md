@@ -5,7 +5,7 @@ participation, tasbih lié à chaque part, Mes parts, création, aperçu, connex
 et partage mobile. Apparence automatique, claire ou sombre dans Réglages.
 Les réservations et brouillons utilisent encore des données locales de démonstration.
 La connexion Google utilise Supabase Auth avec reprise de session et retour OAuth PKCE.
-L’avatar ouvre le profil : prénom, nom, adresse privée et organisation facultative,
+L’avatar ouvre le profil : prénom, nom et organisation facultative,
 déconnexion et suppression du compte avec ses wirds. Les onglets Téléphone et Email
 affichent « Bientôt ». Réglages conserve apparence, rappels et aide.
 La publication reste indisponible jusqu’au raccordement complet
