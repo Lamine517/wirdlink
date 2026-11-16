@@ -3,7 +3,7 @@
 <form class="form-stack" [formGroup]="form" (ngSubmit)="continue()">
   <fieldset>
     <legend>À quelle fréquence ?</legend>
-    <div class="option-grid">
+    <div class="option-grid segmented-choice">
       @for (recurrence of recurrences; track recurrence) {
         <label class="option-choice"
           ><input type="radio" formControlName="recurrence" [value]="recurrence" /><span
@@ -44,7 +44,7 @@
   }
   <fieldset>
     <legend>Qui peut voir ?</legend>
-    <div class="option-grid">
+    <div class="option-grid segmented-choice">
       @for (option of visibilityOptions; track option.value) {
         <label class="option-choice"
           ><input type="radio" formControlName="visibility" [value]="option.value" /><span
