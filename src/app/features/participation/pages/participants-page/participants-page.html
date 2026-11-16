@@ -2,6 +2,7 @@
   <app-wird-header
     [title]="wird.title"
     [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
+    [shareUrl]="shareOrigin + '/wird/' + wird.id"
   />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />
   <p class="text-strong">
