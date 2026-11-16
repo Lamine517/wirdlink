@@ -322,7 +322,7 @@ try {
   await enter('#access-code', '1234');
   await submit();
   await wait(
-    "document.querySelector('app-request-state')?.textContent.includes('pas encore disponible')",
+    "document.querySelector('app-request-state')?.textContent.includes('Impossible d’ouvrir')",
   );
   await navigate('/preferences', 'app-preferences-page');
   await checkLayout('Settings');

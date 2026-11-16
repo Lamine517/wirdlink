@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 const ICON_FILES = {
+  world: 'globe',
   more: 'dots-three',
   edit: 'pencil-simple',
   trash: 'trash',
