@@ -141,3 +141,24 @@ describe('Repeated participation submissions', () => {
     expect(TestBed.inject(WirdStore).available('salat-nabi')).toBe(390);
   });
 });
+
+describe('Stable wird header', () => {
+  beforeEach(() => {
+    localStorage.removeItem('wirdlink.demo.v1');
+    TestBed.configureTestingModule({ providers: appConfig.providers });
+  });
+  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  it('keeps the same title on both views and exposes an icon-only share action in the toolbar', async () => {
+    const harness = await RouterTestingHarness.create('/wird/salat-nabi');
+    expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
+    const share = harness.routeNativeElement!.querySelector<HTMLAnchorElement>(
+      'app-wird-header a[aria-label="Partager ce wird"]',
+    )!;
+    expect(share.getAttribute('href')).toBe('/partage/salat-nabi');
+    expect(share.textContent!.trim()).toBe('');
+    expect(share.querySelector('app-icon')).not.toBeNull();
+    expect(harness.routeNativeElement!.querySelector('.participation-share')).toBeNull();
+    await harness.navigateByUrl('/wird/salat-nabi/participants');
+    expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
+  });
+});

@@ -5,7 +5,7 @@
     aria-label="Diminuer la quantité"
     (click)="adjust(-1)"
   >
-    <img src="assets/icons/minus.svg" alt="" width="24" height="24" />
+    <app-icon name="minus" [size]="24" />
   </button>
   <input
     class="quantity-counter__input"
@@ -29,14 +29,12 @@
     aria-label="Augmenter la quantité"
     (click)="adjust(1)"
   >
-    <img src="assets/icons/plus.svg" alt="" width="28" height="28" />
+    <app-icon name="plus" [size]="28" />
   </button>
 </div>
 @if (validationMessage()) {
   <p class="quantity-error" id="quantity-error" role="alert">
-    <img src="assets/icons/quantity-error.svg" alt="" width="24" height="24" />{{
-      validationMessage()
-    }}
+    <app-icon name="warning" [size]="24" />{{ validationMessage() }}
   </p>
 }
 <p id="quantity-hint">lectures</p>

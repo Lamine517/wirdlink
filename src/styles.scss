@@ -9,6 +9,10 @@
   @include tokens.theme-properties;
 }
 
+:root[data-theme='dark'] {
+  @include tokens.dark-theme-properties;
+}
+
 app-root {
   display: grid;
   place-items: center;
@@ -19,4 +23,10 @@ app-root {
     --app-frame-height: min(844px, calc(100dvh - 96px));
     --app-frame-radius: 28px;
   }
+}
+
+:root[data-theme='dark'] .brand img,
+:root[data-theme='dark'] .desktop-intro > img {
+  background: #f4f8f9;
+  border-radius: 12px;
 }

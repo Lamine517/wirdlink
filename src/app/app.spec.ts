@@ -118,7 +118,9 @@ describe('WirdLink navigation', () => {
 
   it('shows a reusable empty state and opens the creation templates', async () => {
     const harness = await RouterTestingHarness.create('/mes-parts');
-    expect(harness.routeNativeElement!.querySelector('app-empty-state img')).not.toBeNull();
+    expect(harness.routeNativeElement!.querySelector('app-empty-state h2')?.textContent).toContain(
+      'pas encore participé',
+    );
     expect(
       harness.routeNativeElement!.querySelector('app-empty-state a')?.getAttribute('href'),
     ).toBe('/');

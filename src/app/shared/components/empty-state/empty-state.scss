@@ -36,3 +36,13 @@
     animation: none;
   }
 }
+
+.empty-state__glyph {
+  display: block;
+  width: 60px;
+  height: 60px;
+  background: var(--color-primary);
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+}

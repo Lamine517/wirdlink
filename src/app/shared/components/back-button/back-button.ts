@@ -1,15 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { Icon } from '../icon/icon';
 import { NavigationHistory } from '../../../core/services/navigation-history';
 
 @Component({
   selector: 'app-back-button',
+  imports: [Icon],
   template: `<button
     type="button"
     class="back-link"
     [disabled]="navigation.goingBack()"
     (click)="navigation.back(fallback())"
   >
-    <img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour
+    <app-icon name="back" [size]="24" />Retour
   </button>`,
   styles: ':host { display:block; }',
   changeDetection: ChangeDetectionStrategy.OnPush,

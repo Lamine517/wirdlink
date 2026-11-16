@@ -28,6 +28,7 @@
     border-radius: 50%;
     border: 2px solid var(--color-primary);
     background: var(--color-bg-surface);
+    color: var(--color-primary);
   }
 }
 
@@ -53,7 +54,7 @@
   font-size: var(--font-size-small);
   font-weight: 800;
 }
-.quantity-error img {
+.quantity-error app-icon {
   flex-shrink: 0;
 }
 

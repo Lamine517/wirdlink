@@ -1,3 +1,4 @@
+import { Icon } from '../../../../shared/components/icon/icon';
 import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
@@ -7,7 +8,7 @@ import { BeadProgress } from '../../../../shared/components/bead-progress/bead-p
 
 @Component({
   selector: 'app-wird-card',
-  imports: [RouterLink, DecimalPipe, BeadProgress, AudioPlayer],
+  imports: [Icon, RouterLink, DecimalPipe, BeadProgress, AudioPlayer],
   templateUrl: './wird-card.html',
   styles: `
     .wird-card__title {

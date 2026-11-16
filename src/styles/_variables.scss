@@ -13,6 +13,10 @@ $breakpoint-desktop: 700px;
   --app-frame-radius: 0px;
   --color-primary: #026780;
   --color-accent: #fbc55d;
+  --color-text-on-accent: #1f2a30;
+  --color-text-on-danger: #fff;
+  --color-progress-empty: #bbd0d6;
+  --apple-logo-filter: none;
   --color-text-primary: #1f2a30;
   --color-text-secondary: #3c4a52;
   --color-text-inverse: #fff;
@@ -38,4 +42,20 @@ $breakpoint-desktop: 700px;
   --radius-medium: 16px;
   --radius-large: 20px;
   --shadow-card: 0 4px 16px #0a29331a;
+}
+
+@mixin dark-theme-properties {
+  --color-primary: #71cfe2;
+  --color-text-primary: #edf5f7;
+  --color-text-secondary: #bed0d7;
+  --color-text-inverse: #0e252d;
+  --color-bg-app: #101f25;
+  --color-bg-page: #0a151a;
+  --color-bg-surface: #1c3038;
+  --color-bg-muted: #29434e;
+  --color-feedback-error: #ffb4ab;
+  --color-text-on-danger: #491710;
+  --color-progress-empty: #577d8c;
+  --shadow-card: 0 4px 20px #00000040;
+  --apple-logo-filter: invert(1);
 }

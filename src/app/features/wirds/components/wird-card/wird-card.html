@@ -13,7 +13,7 @@
   }
   @if (available() > 0) {
     <a class="button button--accent" [routerLink]="['/wird', wird().id]"
-      ><img src="assets/icons/hand.svg" alt="" width="28" height="28" />Je participe</a
+      ><app-icon name="hand" [size]="28" />Je participe</a
     >
   } @else {
     <p>

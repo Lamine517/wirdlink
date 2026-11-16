@@ -1,6 +1,31 @@
 <app-back-button />
 <h1>Réglages</h1>
 <section class="surface-card preferences-card">
+  <h2>Apparence</h2>
+  <fieldset>
+    <legend class="visually-hidden">Choisir le thème</legend>
+    <div class="appearance-options">
+      @for (theme of themes; track theme.value) {
+        <label class="option-choice"
+          ><input
+            type="radio"
+            name="appearance"
+            [value]="theme.value"
+            [checked]="appearance.preference() === theme.value"
+            (change)="appearance.setPreference(theme.value)"
+          /><span class="button button--outline">{{ theme.label }}</span></label
+        >
+      }
+    </div>
+  </fieldset>
+  @if (appearance.preference() === 'auto') {
+    <p>Suit le thème de votre appareil.</p>
+  }
+  @if (appearance.warning()) {
+    <p role="status">{{ appearance.warning() }}</p>
+  }
+</section>
+<section class="surface-card preferences-card">
   <h2>Les rappels</h2>
   <p>Recevez un rappel pour vos lectures. Ce choix reste facultatif.</p>
   @if (!notificationSupport) {

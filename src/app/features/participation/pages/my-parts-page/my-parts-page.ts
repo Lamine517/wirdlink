@@ -1,3 +1,4 @@
+import { TasbihStore } from '../../../tasbih/data-access/tasbih-store';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Icon } from '../../../../shared/components/icon/icon';
@@ -20,6 +21,7 @@ export class MyPartsPage {
   private readonly store = inject(WirdStore);
   private readonly router = inject(Router);
   protected readonly network = inject(NetworkStatus);
+  protected readonly counter = inject(TasbihStore);
   protected readonly message = signal('');
   protected readonly search = new FormControl('', { nonNullable: true });
   private readonly query = toSignal(this.search.valueChanges, { initialValue: '' });
@@ -33,6 +35,9 @@ export class MyPartsPage {
       this.message.set('Reconnectez-vous pour confirmer votre lecture terminée.');
       return;
     }
-    if (this.store.finish(part.id)) void this.router.navigate(['/merci', part.wirdId]);
+    if (this.store.finish(part.id)) {
+      this.counter.forget(part.id);
+      void this.router.navigate(['/merci', part.wirdId]);
+    }
   }
 }

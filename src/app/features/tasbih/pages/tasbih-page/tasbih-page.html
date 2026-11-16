@@ -1,0 +1,166 @@
+<div class="tasbih-toolbar">
+  <app-back-button fallback="/mes-parts" />
+  @if (part() && wird() && !part()?.finished) {
+    <button
+      class="tasbih-options"
+      type="button"
+      aria-label="Options du compteur"
+      title="Options du compteur"
+      (click)="confirmReset.set(false); options.open()"
+    >
+      <app-icon name="settings" [size]="24" />
+    </button>
+  }
+</div>
+@if (part(); as part) {
+  @if (wird(); as wird) {
+    <header class="tasbih-header">
+      <p>Mon tasbih</p>
+      <h1>{{ wird.title }}</h1>
+      @if (part.name) {
+        <span>{{ part.name }}</span>
+      }
+    </header>
+    @if (!part.finished) {
+      @if (counter.warning()) {
+        <p class="feedback" role="status">{{ counter.warning() }}</p>
+      }
+      <section class="tasbih" aria-label="Compter ma part">
+        <button
+          class="tasbih__circle"
+          [class.tasbih__circle--complete]="reached()"
+          [style.--counter-progress]="progress() + '%'"
+          type="button"
+          [disabled]="reached() || finishing()"
+          [attr.aria-label]="
+            'Ajouter une lecture. ' + count() + ' sur ' + part.quantity + ' comptées.'
+          "
+          (click)="increment()"
+          (keydown)="preventRepeat($event)"
+        >
+          <span class="tasbih__center" aria-hidden="true">
+            <strong class="tasbih__value">{{ count() | number }}</strong>
+            <span class="tasbih__target">sur {{ part.quantity | number }}</span>
+            <span class="tasbih__tap">
+              @if (reached()) {
+                <app-icon name="check" [size]="24" />
+              } @else {
+                <app-icon name="tap" [size]="24" /><span>+1</span>
+              }
+            </span>
+          </span>
+        </button>
+        <p class="tasbih__guidance" role="status">
+          {{ reached() ? 'Objectif atteint !' : 'Touchez le cercle pour compter' }}
+        </p>
+        <button
+          type="button"
+          class="tasbih__undo"
+          [disabled]="count() === 0 || finishing()"
+          (click)="undo()"
+        >
+          <app-icon name="undo" [size]="20" />Annuler le dernier appui
+        </button>
+        <button
+          type="button"
+          class="button button--primary tasbih__finish"
+          [disabled]="!reached() || !network.online() || finishing()"
+          (click)="finish()"
+        >
+          <app-icon name="check" [size]="24" />J’ai fini
+        </button>
+        @if (reached()) {
+          <p class="tasbih__hint">
+            {{
+              network.online()
+                ? 'Confirmez pour terminer votre part.'
+                : 'Votre compteur est conservé. Reconnectez-vous pour confirmer.'
+            }}
+          </p>
+        }
+      </section>
+    } @else {
+      <app-empty-state
+        title="Cette part est terminée"
+        description="Votre lecture a déjà été confirmée. Merci !"
+        actionLabel="Mes parts"
+        actionLink="/mes-parts"
+      />
+    }
+  } @else {
+    <h1>Compteur indisponible</h1>
+    <app-empty-state
+      title="Ouvrez d’abord le wird"
+      description="Utilisez le lien d’accès du responsable pour retrouver cette lecture."
+      actionLabel="Mes parts"
+      actionLink="/mes-parts"
+    />
+  }
+} @else {
+  <h1>Part introuvable</h1>
+  <app-empty-state
+    title="Retrouvez vos lectures"
+    description="Ce compteur n’est pas disponible sur cet appareil."
+    actionLabel="Mes parts"
+    actionLink="/mes-parts"
+  />
+}
+@if (error()) {
+  <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+}
+<app-bottom-sheet
+  #options
+  panelId="tasbih-options"
+  [title]="confirmReset() ? 'Recommencer le compteur ?' : 'Options du compteur'"
+>
+  @if (confirmReset()) {
+    <div class="tasbih-settings">
+      <p>Seul ce compteur revient à zéro. Votre part reste réservée.</p>
+      <button type="button" class="button button--outline" (click)="confirmReset.set(false)">
+        Garder le compteur
+      </button>
+      <button type="button" class="button button--danger" (click)="reset(options)">
+        Recommencer à zéro
+      </button>
+    </div>
+  } @else {
+    <div class="tasbih-settings">
+      @if (vibration.supported) {
+        <label class="tasbih-switch"
+          ><span>Vibrer à l’objectif</span
+          ><input
+            type="checkbox"
+            role="switch"
+            [checked]="counter.haptics().atGoal"
+            (change)="changeVibration('atGoal', $event)"
+        /></label>
+        <label class="tasbih-switch"
+          ><span>Vibrer à chaque appui</span
+          ><input
+            type="checkbox"
+            role="switch"
+            [checked]="counter.haptics().onTap"
+            (change)="changeVibration('onTap', $event)"
+        /></label>
+        <p class="text-secondary">La vibration dépend de votre appareil et de ses réglages.</p>
+      } @else {
+        <p class="text-secondary">
+          Ce navigateur ne propose pas la vibration. L’objectif est toujours signalé à l’écran.
+        </p>
+      }
+      @if (vibration.unavailable()) {
+        <p class="text-secondary">
+          La vibration n’a pas pu démarrer. Le compteur reste utilisable.
+        </p>
+      }
+      <button
+        type="button"
+        class="button button--outline"
+        [disabled]="count() === 0"
+        (click)="confirmReset.set(true)"
+      >
+        Remettre à zéro
+      </button>
+    </div>
+  }
+</app-bottom-sheet>

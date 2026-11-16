@@ -1,5 +1,11 @@
 <section class="empty-state">
-  <div class="empty-state__icon"><img [src]="icon()" alt="" width="60" height="60" /></div>
+  <div class="empty-state__icon">
+    <span
+      class="empty-state__glyph"
+      [style.mask-image]="'url(' + icon() + ')'"
+      aria-hidden="true"
+    ></span>
+  </div>
   <h2>{{ title() }}</h2>
   <p>{{ description() }}</p>
   @if (actionLabel()) {

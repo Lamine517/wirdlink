@@ -1,7 +1,6 @@
 <div class="draft-media">
   <button type="button" class="draft-media__picker" (click)="audioFile.click()">
-    <span class="draft-media__icon"
-      ><img src="assets/icons/microphone.svg" width="28" height="28" alt="" /></span
+    <span class="draft-media__icon"><app-icon name="microphone" [size]="28" /></span
     ><span>Ma voix <small>facultatif</small></span>
   </button>
   <input
@@ -23,7 +22,7 @@
     </button>
   }
   <button type="button" class="button button--outline" (click)="imageFile.click()">
-    <img src="assets/icons/image-square.svg" width="24" height="24" alt="" />Ajouter une photo
+    <app-icon name="image" [size]="24" />Ajouter une photo
   </button>
   <input
     #imageFile

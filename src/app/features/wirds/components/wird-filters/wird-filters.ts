@@ -1,3 +1,4 @@
+import { Icon } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Wird } from '../../../../core/wird-store';
@@ -8,7 +9,7 @@ export type VisibilityFilter = 'all' | 'public' | 'private';
 
 @Component({
   selector: 'app-wird-filters',
-  imports: [BottomSheet],
+  imports: [Icon, BottomSheet],
   templateUrl: './wird-filters.html',
   styleUrl: './wird-filters.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

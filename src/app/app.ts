@@ -1,3 +1,4 @@
+import { Appearance } from './core/services/appearance';
 import { NavigationHistory } from './core/services/navigation-history';
 import { DeviceInstall } from './core/services/device-install';
 import { NetworkStatus } from './core/services/network-status';
@@ -11,6 +12,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  DestroyRef,
   computed,
   inject,
   signal,
@@ -57,13 +59,29 @@ export class App {
   protected readonly store = inject(WirdStore);
   protected readonly network = inject(NetworkStatus);
   protected readonly installation = inject(DeviceInstall);
+  protected readonly appearance = inject(Appearance);
+  private readonly destroyRef = inject(DestroyRef);
+  private routeActivated = false;
+  private pageAnimation?: Animation;
+  private readonly pageView = viewChild<ElementRef<HTMLElement>>('pageView');
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
 
   protected resetScroll(): void {
+    const animate = this.routeActivated;
+    this.routeActivated = true;
     queueMicrotask(() => {
+      if (this.destroyRef.destroyed) return;
       const content = this.content()?.nativeElement;
       content?.scrollTo({ top: 0 });
       content?.focus({ preventScroll: true });
+      this.pageAnimation?.cancel();
+      const page = this.pageView()?.nativeElement;
+      if (animate && page && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.pageAnimation = page.animate([{ opacity: 0.55 }, { opacity: 1 }], {
+          duration: 180,
+          easing: 'ease-out',
+        });
+      }
     });
   }
 }

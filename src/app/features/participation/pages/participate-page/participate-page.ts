@@ -1,3 +1,4 @@
+import { WirdHeader } from '../../components/wird-header/wird-header';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
@@ -7,7 +8,7 @@ import { CircularProgress } from '../../../../shared/components/circular-progres
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { WirdStore } from '../../../../core/wird-store';
 import { QuantityPicker } from '../../components/quantity-picker/quantity-picker';
@@ -16,7 +17,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
   selector: 'app-participate-page',
   imports: [
     BackButton,
-    RouterLink,
+    WirdHeader,
     ReactiveFormsModule,
     DecimalPipe,
     QuantityPicker,

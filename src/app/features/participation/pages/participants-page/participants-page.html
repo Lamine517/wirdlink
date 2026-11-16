@@ -1,6 +1,8 @@
-<app-back-button />
 @if (selected(); as wird) {
-  <h1>{{ wird.title }}</h1>
+  <app-wird-header
+    [title]="wird.title"
+    [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
+  />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />
   <p class="text-strong">
     {{ store.completed(wird.id) | number }} lus sur {{ wird.target | number }}
@@ -46,6 +48,7 @@
     >
   }
 } @else {
+  <app-back-button />
   <h1>Participants</h1>
   <app-empty-state
     title="Wird indisponible"

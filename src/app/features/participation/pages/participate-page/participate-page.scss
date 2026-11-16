@@ -43,20 +43,6 @@ input[aria-invalid='true'] {
   border-color: var(--color-feedback-error);
 }
 
-.participation-header {
-  text-align: center;
-  margin: 4px 0 20px;
-
-  h1 {
-    margin: 0 0 4px;
-  }
-  p {
-    margin: 0;
-    font-size: var(--font-size-small);
-    color: var(--color-text-secondary);
-  }
-}
-
 .participation-summary {
   margin-bottom: 24px;
 
@@ -103,11 +89,4 @@ input[aria-invalid='true'] {
 .wird-text p {
   white-space: pre-line;
   font-size: var(--font-size-small);
-}
-.participation-share {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  font-weight: 800;
-  margin-bottom: 12px;
 }

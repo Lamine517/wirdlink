@@ -155,3 +155,8 @@
 .bottom-nav__link--active .bottom-nav__icon {
   background: var(--color-bg-muted);
 }
+
+.app-page-view {
+  min-width: 0;
+  display: flow-root;
+}
