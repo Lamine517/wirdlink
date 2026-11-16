@@ -397,12 +397,13 @@ try {
   assert.equal(await run("!!document.querySelector('audio')"), false);
   await screenshot('preview-text');
   await run("document.querySelector('.preview-publish').click();true");
-  await wait("document.querySelector('#auth-phone')!==null");
+  await wait("document.querySelector('.auth-google')!==null");
   await checkLayout('Sign in');
   await wait('[...document.images].every(image=>image.complete&&image.naturalWidth>0)');
   await screenshot('sign-in');
-  await enter('#auth-phone', '77 123 45 67');
-  await submit();
+  assert.equal(await run("!!document.querySelector('#auth-phone')"), false);
+  assert.equal(await run("document.querySelector('[role=tabpanel]').textContent.includes('Bientôt')"), true);
+  await run("document.querySelector('.auth-google').click();true");
   await wait(
     "document.querySelector('app-request-state')?.textContent.includes('brouillon est conservé')",
   );

@@ -9,101 +9,50 @@
     (retry)="retryCallback()"
   />
 } @else {
-  <h1>{{ verifying() ? 'Votre code' : 'Votre numéro' }}</h1>
-  <p class="auth-hint">
-    {{
-      verifying()
-        ? 'Saisissez les 6 chiffres reçus au ' + auth.phone() + '.'
-        : 'Connectez-vous pour publier votre wird. Votre numéro reste privé.'
-    }}
-  </p>
-  @if (!verifying()) {
-    <form
-      class="auth-form"
-      (submit)="$event.preventDefault(); sendCode()"
-      [attr.aria-busy]="busy()"
+  <h1>Votre connexion</h1>
+  <p class="auth-hint">Connectez-vous pour publier votre wird.</p>
+  <button
+    class="button button--outline auth-google"
+    type="button"
+    [disabled]="busy() || !network.online()"
+    (click)="oauth('google')"
+  >
+    <img src="assets/icons/providers/google.svg" width="20" height="20" alt="" />
+    Continuer avec Google
+  </button>
+  <div class="segmented-choice auth-methods" role="tablist" aria-label="Autres moyens de connexion">
+    <button
+      type="button"
+      role="tab"
+      id="auth-phone-tab"
+      aria-controls="auth-coming-soon"
+      [attr.aria-selected]="method() === 'phone'"
+      [class.button--selected]="method() === 'phone'"
+      class="button button--outline"
+      (click)="method.set('phone')"
     >
-      <label for="auth-phone">Téléphone</label>
-      <div class="auth-form__phone">
-        <span class="auth-form__prefix" aria-hidden="true">+221</span>
-        <input
-          id="auth-phone"
-          type="tel"
-          autocomplete="tel-national"
-          inputmode="tel"
-          placeholder="77 123 45 67"
-          [formControl]="phone"
-          [attr.aria-invalid]="phone.touched && phone.invalid"
-          aria-describedby="phone-hint"
-        />
-      </div>
-      <p id="phone-hint" class="auth-hint">
-        {{
-          phone.touched && phone.invalid
-            ? 'Saisissez un numéro mobile sénégalais de 9 chiffres.'
-            : 'Numéro mobile sénégalais (+221).'
-        }}
-      </p>
-      <button
-        class="button button--primary"
-        type="submit"
-        [disabled]="busy() || phone.invalid || cooldown() > 0 || !network.online()"
-      >
-        {{ cooldown() > 0 ? 'Réessayer dans ' + cooldown() + ' s' : 'Recevoir le code' }}
-      </button>
-    </form>
-    <p class="auth-divider">ou avec</p>
-    <div class="auth-actions">
-      <button
-        class="button button--outline"
-        type="button"
-        [disabled]="busy() || !network.online()"
-        (click)="oauth('google')"
-      >
-        <img src="assets/icons/providers/google.svg" width="20" height="20" alt="" />Google
-      </button>
-    </div>
-  } @else {
-    <form class="auth-form" (submit)="$event.preventDefault(); verify()" [attr.aria-busy]="busy()">
-      <label for="auth-code">Code à 6 chiffres</label>
-      <input
-        id="auth-code"
-        class="auth-form__code"
-        type="text"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        maxlength="6"
-        placeholder="000000"
-        [formControl]="code"
-        [attr.aria-invalid]="code.touched && code.invalid"
-        aria-describedby="code-hint"
-      />
-      <p id="code-hint" class="auth-hint">
-        {{
-          code.touched && code.invalid
-            ? 'Vérifiez les 6 chiffres du code reçu.'
-            : 'Ne partagez pas ce code.'
-        }}
-      </p>
-      <button
-        class="button button--primary"
-        type="submit"
-        [disabled]="busy() || code.invalid || verifyCooldown() > 0 || !network.online()"
-      >
-        {{ verifyCooldown() > 0 ? 'Réessayer dans ' + verifyCooldown() + ' s' : 'Continuer' }}
-      </button>
-      <button
-        class="button button--outline"
-        type="button"
-        (click)="sendCode()"
-        [disabled]="busy() || cooldown() > 0 || !network.online()"
-      >
-        {{ cooldown() > 0 ? 'Renvoyer dans ' + cooldown() + ' s' : 'Renvoyer le code' }}
-      </button>
-      <button class="auth-text-button" type="button" (click)="changePhone()" [disabled]="busy()">
-        Changer le numéro
-      </button>
-    </form>
-  }
+      Téléphone
+    </button>
+    <button
+      type="button"
+      role="tab"
+      id="auth-email-tab"
+      aria-controls="auth-coming-soon"
+      [attr.aria-selected]="method() === 'email'"
+      [class.button--selected]="method() === 'email'"
+      class="button button--outline"
+      (click)="method.set('email')"
+    >
+      Email
+    </button>
+  </div>
+  <p
+    id="auth-coming-soon"
+    class="auth-hint auth-coming-soon"
+    role="tabpanel"
+    [attr.aria-labelledby]="method() === 'phone' ? 'auth-phone-tab' : 'auth-email-tab'"
+  >
+    {{ method() === 'phone' ? 'Téléphone' : 'Email' }} · Bientôt disponible
+  </p>
   <app-request-state [loading]="busy()" loadingLabel="Connexion en cours…" [error]="error()" />
 }

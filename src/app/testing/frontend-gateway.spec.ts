@@ -5,6 +5,10 @@ export function gatewayStub(): jasmine.SpyObj<FrontendGateway> {
     'restoreSession',
     'watchSession',
     'signOut',
+    'deleteAccount',
+    'loadProfile',
+    'saveProfile',
+    'loadWirdAuthor',
     'requestCode',
     'verifyCode',
     'signInWithProvider',
@@ -24,6 +28,10 @@ export function gatewayStub(): jasmine.SpyObj<FrontendGateway> {
     stub.unlock,
     stub.setReminders,
     stub.signOut,
+    stub.deleteAccount,
+    stub.loadProfile,
+    stub.saveProfile,
+    stub.loadWirdAuthor,
   ]) {
     method.and.callFake((): Promise<never> => Promise.reject(new ServiceUnavailableError()));
   }

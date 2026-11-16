@@ -5,6 +5,17 @@ import { Wird } from '../wird-store';
 export type SignInProvider = 'google' | 'apple';
 export interface ResponsibleSession {
   id: string;
+  displayName?: string;
+}
+export interface UserProfile {
+  firstName: string;
+  lastName: string;
+  address: string;
+  organization: string;
+}
+export interface WirdAuthor {
+  displayName: string;
+  organization: string;
 }
 export interface PublicationReceipt {
   id: string;
@@ -28,6 +39,10 @@ export interface FrontendGateway {
   restoreSession(): Promise<ResponsibleSession | null>;
   watchSession(listener: (session: ResponsibleSession | null) => void): () => void;
   signOut(): Promise<void>;
+  deleteAccount(): Promise<void>;
+  loadProfile(): Promise<UserProfile>;
+  saveProfile(profile: UserProfile): Promise<void>;
+  loadWirdAuthor(wirdId: string): Promise<WirdAuthor | null>;
   requestCode(phone: string): Promise<void>;
   verifyCode(phone: string, code: string): Promise<ResponsibleSession>;
   signInWithProvider(provider: SignInProvider): Promise<void>;
@@ -63,6 +78,10 @@ export const FRONTEND_GATEWAY = new InjectionToken<FrontendGateway>('FRONTEND_GA
     restoreSession: () => Promise.resolve(null),
     watchSession: () => () => undefined,
     signOut: unavailable,
+    deleteAccount: unavailable,
+    loadProfile: unavailable,
+    saveProfile: unavailable,
+    loadWirdAuthor: unavailable,
     requestCode: unavailable,
     verifyCode: unavailable,
     signInWithProvider: unavailable,

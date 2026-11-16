@@ -42,7 +42,10 @@ dédié, avec l’historique distant comme référence de version.
 
 L’application conserve sa démonstration locale pour les wirds et réservations.
 L’adaptateur `SupabaseAuthGateway` raccorde maintenant téléphone et OAuth PKCE,
-valide la reprise de session auprès d’Auth et propose la déconnexion dans Réglages.
+valide la reprise de session auprès d’Auth. L’avatar ouvre `/profil`, qui contient
+les données facultatives, la déconnexion et la suppression. Le bouton Réglages
+reste distinct. Téléphone et Email sont masqués derrière les onglets « Bientôt » ;
+Google est le seul moyen de connexion proposé dans cette version.
 Le SDK est chargé à la demande. Seuls l’URL et la clé publiable sont dans le client.
 Les paramètres publics Auth sont vérifiés avant l’envoi d’un code ou une redirection :
 un fournisseur désactivé reste indisponible, sans simuler de connexion.
@@ -67,8 +70,8 @@ n’est activé par cette migration.
 
 ## Connexion : configuration du projet hébergé
 
-Contrôle du 16 novembre 2026 : l’API Auth répond, mais téléphone, Google et Apple
-sont désactivés. Le connecteur disponible gère SQL et Storage ; il ne propose pas
+Contrôle du 16 novembre 2026 : Google est activé et la connexion a été confirmée
+par l’utilisateur. Le connecteur disponible gère SQL et Storage ; il ne propose pas
 de modification des fournisseurs Auth. Le fichier `config.toml` configure le
 développement local et ne modifie pas les paramètres du projet hébergé.
 
@@ -89,3 +92,33 @@ Dans le tableau de bord du projet :
 Les tests unitaires remplacent le client Auth et les tests navigateur bloquent
 les requêtes Supabase. La validation réelle OTP/OAuth reste à effectuer après
 configuration ; aucun envoi de code n’a été effectué pendant ces contrôles.
+
+## Profil, auteur et suppression
+
+La table `profiles` est lisible et modifiable uniquement par son propriétaire.
+`wird_author` expose le nom choisi et l’organisation d’un wird public, ou d’un wird
+privé appartenant au demandeur. L’adresse et l’identifiant de compte ne sont pas
+retournés par cette fonction. Les droits privés par code restent à raccorder.
+
+La fonction Edge `delete-account` est déployée avec vérification JWT et vérifie
+aussi l’identité auprès d’Auth. Elle n’accepte aucun identifiant cible du client.
+Après confirmation : état de suppression, retrait des médias via Storage,
+suppression des wirds et parts concernés, révocation des sessions et suppression
+Auth Admin. Les opérations sont reprises en cas d’échec partiel. Les anciennes
+identités supprimées ne peuvent plus réserver ni téléverser avec un JWT restant.
+
+Tests supplémentaires :
+
+```sh
+node --experimental-strip-types --test supabase/functions/delete-account/handler.test.mts
+```
+
+Les scripts SQL `tests/profiles.sql` et `tests/account-deletion.sql` valident les
+permissions et annulent leurs fixtures. Aucun compte réel n’a été supprimé par
+les contrôles. L’appel non authentifié à l’Edge Function a retourné 401.
+
+L’analyse Supabase indique le verrou de suppression privé sans politique client
+(refus implicite voulu), ainsi que la protection des mots de passe compromis
+désactivée dans Auth. La connexion par mot de passe n’est pas proposée par l’app.
+Voir les [politiques RLS](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)
+et la [configuration des mots de passe](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).

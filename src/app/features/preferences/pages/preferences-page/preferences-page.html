@@ -1,15 +1,5 @@
 <app-back-button />
 <h1>Réglages</h1>
-@if (auth.session()) {
-  <section class="surface-card preferences-card">
-    <h2>Votre connexion</h2>
-    <button class="button button--outline" type="button"
-      [disabled]="signingOut() || !network.online()" (click)="signOut()">
-      Se déconnecter
-    </button>
-    <app-request-state [loading]="signingOut()" loadingLabel="Déconnexion en cours…" [error]="signOutError()" />
-  </section>
-}
 <section class="surface-card preferences-card">
   <h2>Apparence</h2>
   <fieldset>

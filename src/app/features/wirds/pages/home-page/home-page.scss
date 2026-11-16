@@ -29,6 +29,18 @@
   font-weight: 800;
 }
 
+.page-header__actions {
+  @include mixins.flex-row(var(--space-4));
+}
+.account-link {
+  display: inline-grid;
+  place-items: center;
+  min-width: 48px;
+  min-height: 48px;
+  text-decoration: none;
+  border-radius: 50%;
+}
+
 .result-count {
   font-size: var(--font-size-small);
   margin: var(--space-12) 0;

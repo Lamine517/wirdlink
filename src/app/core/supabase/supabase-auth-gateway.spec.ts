@@ -17,6 +17,7 @@ describe('Supabase authentication adapter', () => {
   let auth: jasmine.SpyObj<SupabaseClient['auth']>;
   let gateway: SupabaseAuthGateway;
   let methods: jasmine.Spy;
+  let invoke: jasmine.Spy;
 
   beforeEach(() => {
     auth = jasmine.createSpyObj<SupabaseClient['auth']>('auth', [
@@ -24,8 +25,9 @@ describe('Supabase authentication adapter', () => {
       'exchangeCodeForSession', 'signOut', 'onAuthStateChange',
     ]);
     methods = jasmine.createSpy('methods').and.resolveTo({ phone: true, google: true, apple: true });
+    invoke = jasmine.createSpy('invoke');
     TestBed.configureTestingModule({ providers: [
-      { provide: SUPABASE_CLIENT, useValue: () => Promise.resolve({ auth }) },
+      { provide: SUPABASE_CLIENT, useValue: () => Promise.resolve({ auth, functions: { invoke } }) },
       { provide: SUPABASE_AUTH_METHODS, useValue: methods },
     ] });
     gateway = TestBed.inject(SupabaseAuthGateway);
@@ -112,5 +114,16 @@ describe('Supabase authentication adapter', () => {
     await expectAsync(gateway.publish()).toBeRejectedWithError(ServiceUnavailableError);
     await expectAsync(gateway.unlock()).toBeRejectedWithError(ServiceUnavailableError);
     await expectAsync(gateway.setReminders()).toBeRejectedWithError(ServiceUnavailableError);
+  });
+
+  it('clears the local session only after confirmed server-side account deletion', async () => {
+    invoke.and.resolveTo({ data: { deleted: false }, error: null });
+    await expectAsync(gateway.deleteAccount()).toBeRejectedWithError(ServiceUnavailableError);
+    expect(auth.signOut).not.toHaveBeenCalled();
+    invoke.and.resolveTo({ data: { deleted: true }, error: null });
+    auth.signOut.and.resolveTo({ error: null });
+    await gateway.deleteAccount();
+    expect(invoke).toHaveBeenCalledWith('delete-account', { body: { confirmation: 'DELETE_ACCOUNT' } });
+    expect(auth.signOut).toHaveBeenCalledOnceWith({ scope: 'local' });
   });
 });

@@ -4,9 +4,11 @@ Application Angular pour créer et partager des wirds. Parcours frontend : accue
 participation, tasbih lié à chaque part, Mes parts, création, aperçu, connexion, accès privé
 et partage mobile. Apparence automatique, claire ou sombre dans Réglages.
 Les réservations et brouillons utilisent encore des données locales de démonstration.
-La connexion utilise Supabase Auth avec reprise de session, retour OAuth PKCE et
-déconnexion dans Réglages. Les fournisseurs désactivés sont signalés sans envoi de
-code ni redirection. La publication reste indisponible jusqu’au raccordement complet
+La connexion Google utilise Supabase Auth avec reprise de session et retour OAuth PKCE.
+L’avatar ouvre le profil : prénom, nom, adresse privée et organisation facultative,
+déconnexion et suppression du compte avec ses wirds. Les onglets Téléphone et Email
+affichent « Bientôt ». Réglages conserve apparence, rappels et aide.
+La publication reste indisponible jusqu’au raccordement complet
 des données ; aucune publication n’est simulée.
 
 ```sh
@@ -35,3 +37,12 @@ et conserve les captures dans le dossier temporaire du système.
 Interface française, Nunito Sans locale et icônes Phosphor. Le schéma Supabase et
 ses tests figurent dans `supabase/`. Les réservations distantes et la PWA restent
 à raccorder ; cette version ne publie aucune réservation sur un serveur.
+
+Déploiement Vercel : `vercel.json` configure Angular, `npm ci`, `npm run build`
+et le dossier `dist/wirdlink/browser`, avec retour SPA pour les liens directs.
+Après déploiement, autoriser l’URL exacte `/connexion/retour` du domaine retenu
+dans Supabase Auth. Les secrets serveur restent dans Supabase Edge Functions.
+
+Pour le nom de l’écran Google, configurer « WirdLink » dans Google Auth Platform
+→ Branding et faire vérifier la marque. Tant que la marque et le domaine ne sont
+pas configurés, Google peut afficher le domaine `supabase.co` du projet.

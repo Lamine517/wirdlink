@@ -1,5 +1,4 @@
 import { Appearance, ThemePreference } from '../../../../core/services/appearance';
-import { AuthFlow } from '../../../auth/data-access/auth-flow';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -49,9 +48,6 @@ import { RequestState } from '../../../../shared/components/request-state/reques
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreferencesPage {
-  protected readonly auth = inject(AuthFlow);
-  protected readonly signingOut = signal(false);
-  protected readonly signOutError = signal('');
   protected readonly appearance = inject(Appearance);
   protected readonly themes: { value: ThemePreference; label: string }[] = [
     { value: 'auto', label: 'Automatique' },
@@ -69,19 +65,6 @@ export class PreferencesPage {
   protected readonly reminders = signal(false);
   protected readonly busy = signal(false);
   protected readonly error = signal('');
-
-  protected async signOut(): Promise<void> {
-    if (this.signingOut() || !this.network.online()) return;
-    this.signingOut.set(true);
-    this.signOutError.set('');
-    try {
-      await this.auth.signOut();
-    } catch {
-      this.signOutError.set('Impossible de vous déconnecter. Réessayez.');
-    } finally {
-      this.signingOut.set(false);
-    }
-  }
 
   protected async toggleReminders(): Promise<void> {
     if (this.busy() || this.blocked || !this.notificationSupport || !this.network.online()) return;

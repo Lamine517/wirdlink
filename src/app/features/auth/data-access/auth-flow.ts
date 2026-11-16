@@ -81,6 +81,18 @@ export class AuthFlow {
     this.pendingPhone.set('');
   }
 
+  async deleteAccount(): Promise<void> {
+    await this.gateway.deleteAccount();
+    this.sessionRevision++;
+    this.currentSession.set(null);
+    this.pendingPhone.set('');
+  }
+
+  updateDisplayName(name: string): void {
+    const session = this.currentSession();
+    if (session) this.currentSession.set({ ...session, displayName: name.trim() });
+  }
+
   changePhone(): void {
     this.pendingPhone.set('');
   }
