@@ -30,7 +30,7 @@
   <div class="filter-sheet">
     <fieldset>
       <legend>Voir</legend>
-      <div class="filter-sheet__choices">
+      <div class="filter-sheet__choices segmented-choice segmented-choice--three">
         @for (option of statusOptions; track option.value) {
           <button
             type="button"
@@ -46,7 +46,7 @@
     </fieldset>
     <fieldset>
       <legend>Quand</legend>
-      <div class="filter-sheet__choices">
+      <div class="filter-sheet__choices segmented-choice">
         @for (option of recurrenceOptions; track option.value) {
           <button
             type="button"
@@ -63,7 +63,7 @@
     </fieldset>
     <fieldset>
       <legend>Qui peut voir</legend>
-      <div class="filter-sheet__choices">
+      <div class="filter-sheet__choices segmented-choice">
         @for (option of visibilityOptions; track option.value) {
           <button
             type="button"
