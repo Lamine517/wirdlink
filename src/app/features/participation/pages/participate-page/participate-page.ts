@@ -38,6 +38,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipatePage {
+  protected readonly shareOrigin = window.location.origin;
   private readonly gateway = inject(FRONTEND_GATEWAY);
   protected readonly author = signal<WirdAuthor | null>(null);
   protected readonly store = inject(WirdStore);

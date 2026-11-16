@@ -155,10 +155,9 @@ describe('Stable wird header', () => {
   it('keeps the same title on both views and exposes an icon-only share action in the toolbar', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
-    const share = harness.routeNativeElement!.querySelector<HTMLAnchorElement>(
-      'app-wird-header a[aria-label="Partager ce wird"]',
+    const share = harness.routeNativeElement!.querySelector<HTMLButtonElement>(
+      'app-wird-header button[aria-label="Partager ce wird"]',
     )!;
-    expect(share.getAttribute('href')).toBe('/partage/salat-nabi');
     expect(share.textContent!.trim()).toBe('');
     expect(share.querySelector('app-icon')).not.toBeNull();
     expect(harness.routeNativeElement!.querySelector('.participation-share')).toBeNull();

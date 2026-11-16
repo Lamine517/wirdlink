@@ -19,6 +19,7 @@ import { WirdAccess } from '../../../access/data-access/wird-access';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipantsPage {
+  protected readonly shareOrigin = window.location.origin;
   protected readonly store = inject(WirdStore);
   private readonly access = inject(WirdAccess);
   private readonly route = inject(ActivatedRoute);
