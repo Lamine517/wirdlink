@@ -8,6 +8,7 @@
   <header class="participation-header">
     <h1>Je participe</h1>
   </header>
+  <app-wird-tabs [wirdId]="wird.id" />
   <section class="participation-summary" aria-label="Avancement du wird">
     <app-circular-progress
       [title]="wird.title"
@@ -34,75 +35,107 @@
       }
     </div>
   </section>
-  <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
-    <label class="participation-form__label" for="quantity">Ma part</label>
-    <app-quantity-picker
-      [target]="wird.target"
-      [control]="quantity"
-      [maximum]="store.available(wird.id)"
-    />
-    <fieldset>
-      <legend>Mon nom</legend>
-      <div class="choice-list">
-        <button
-          type="button"
-          class="button button--outline"
-          [class.button--selected]="!useName()"
-          [attr.aria-pressed]="!useName()"
-          (click)="useName.set(false)"
-        >
-          Sans nom</button
-        ><button
-          type="button"
-          class="button button--outline"
-          [class.button--selected]="useName()"
-          [attr.aria-pressed]="useName()"
-          (click)="useName.set(true)"
-        >
-          Mon nom
-        </button>
-      </div>
-    </fieldset>
-    @if (useName()) {
-      <label for="name">Votre nom affiché</label
-      ><input
-        id="name"
-        autocomplete="given-name"
-        maxlength="60"
-        placeholder="Ex. Awa"
-        [formControl]="name"
-        aria-describedby="name-hint"
-        [attr.aria-invalid]="nameError()"
-        (blur)="nameTouched.set(true)"
+  @if (wird.description?.trim()) {
+    <section class="wird-text">
+      <h2>Description</h2>
+      <p>{{ wird.description }}</p>
+    </section>
+  }
+  @if (wird.instructions?.trim()) {
+    <section class="wird-text">
+      <h2>Consignes</h2>
+      <p>{{ wird.instructions }}</p>
+    </section>
+  }
+  @if (wird.visibility === 'public') {
+    <a class="participation-share" [routerLink]="['/partage', wird.id]">Partager ce wird</a>
+  }
+  @if (store.available(wird.id) > 0) {
+    <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
+      <label class="participation-form__label" for="quantity">Ma part</label>
+      <app-quantity-picker
+        [target]="wird.target"
+        [control]="quantity"
+        [maximum]="store.available(wird.id)"
       />
-    }
-    @if (useName()) {
-      <p
-        id="name-hint"
-        class="participation-form__hint"
-        [class.participation-form__hint--error]="nameError()"
-      >
-        {{
-          nameError()
-            ? 'Écrivez votre nom, ou choisissez « Sans nom ».'
-            : 'Ce nom sera visible avec votre part. Vous pouvez rester sans nom.'
-        }}
-      </p>
-    }
-    <div class="participation-form__action" aria-live="polite">
-      <button
-        type="submit"
-        class="button button--primary participation-form__submit"
-        [disabled]="!canReserve()"
-        [attr.aria-describedby]="!canReserve() ? 'participation-guidance' : null"
-      >
-        Je commence
-      </button>
-      @if (!canReserve()) {
-        <p id="participation-guidance" class="participation-form__guidance">{{ guidance() }}</p>
+      <fieldset>
+        <legend>Mon nom</legend>
+        <div class="choice-list">
+          <button
+            type="button"
+            class="button button--outline"
+            [class.button--selected]="!useName()"
+            [attr.aria-pressed]="!useName()"
+            (click)="useName.set(false)"
+          >
+            Sans nom</button
+          ><button
+            type="button"
+            class="button button--outline"
+            [class.button--selected]="useName()"
+            [attr.aria-pressed]="useName()"
+            (click)="useName.set(true)"
+          >
+            Mon nom
+          </button>
+        </div>
+      </fieldset>
+      @if (useName()) {
+        <label for="name">Votre nom affiché</label
+        ><input
+          id="name"
+          autocomplete="given-name"
+          maxlength="60"
+          placeholder="Ex. Awa"
+          [formControl]="name"
+          aria-describedby="name-hint"
+          [attr.aria-invalid]="nameError()"
+          (blur)="nameTouched.set(true)"
+        />
       }
-    </div>
-  </form>
+      @if (useName()) {
+        <p
+          id="name-hint"
+          class="participation-form__hint"
+          [class.participation-form__hint--error]="nameError()"
+        >
+          {{
+            nameError()
+              ? 'Écrivez votre nom, ou choisissez « Sans nom ».'
+              : 'Ce nom sera visible avec votre part. Vous pouvez rester sans nom.'
+          }}
+        </p>
+      }
+      <div class="participation-form__action" aria-live="polite">
+        <button
+          type="submit"
+          class="button button--primary participation-form__submit"
+          [disabled]="!canReserve()"
+          [attr.aria-describedby]="!canReserve() ? 'participation-guidance' : null"
+        >
+          Je commence
+        </button>
+        @if (!canReserve()) {
+          <p id="participation-guidance" class="participation-form__guidance">{{ guidance() }}</p>
+        }
+      </div>
+    </form>
+  } @else {
+    <app-empty-state
+      [title]="
+        store.completed(wird.id) >= wird.target
+          ? 'Objectif atteint !'
+          : 'Toutes les parts sont prises'
+      "
+      [description]="
+        store.completed(wird.id) >= wird.target
+          ? 'Merci à toutes les personnes qui ont participé.'
+          : 'Des lectures sont encore en cours. Vous pouvez voir les participations.'
+      "
+      actionLabel="Voir les autres wirds"
+      actionLink="/"
+    />
+  }
 } @else {
   <h1>Wird introuvable</h1>
   <p>Ce lien ne correspond à aucun exemple disponible.</p>

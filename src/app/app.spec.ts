@@ -162,10 +162,16 @@ describe('WirdLink navigation', () => {
       await fixture.whenStable();
       fixture.detectChanges();
       const active = (fixture.nativeElement as HTMLElement).querySelector(
-        'nav a[aria-current="page"]',
+        '.bottom-nav a[aria-current="page"]',
       );
       expect(active?.getAttribute('href')).toBe(link);
       expect(active?.querySelector('app-icon')).not.toBeNull();
     }
+    await router.navigateByUrl('/preferences');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.bottom-nav [aria-current="page"]'),
+    ).toBeNull();
   });
 });

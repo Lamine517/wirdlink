@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+.access-header {
+  text-align: center;
+  margin: 16px 0 24px;
+}
+.access-header__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto;
+  color: var(--color-primary);
+  background: var(--color-bg-muted);
+}
+.access-header p {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+.access-code {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.4em;
+}

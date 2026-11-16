@@ -1,3 +1,7 @@
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
+import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
+import { NetworkStatus } from '../../../../core/services/network-status';
+import { WirdAccess } from '../../../access/data-access/wird-access';
 import { CircularProgress } from '../../../../shared/components/circular-progress/circular-progress';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
@@ -9,23 +13,36 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
 
 @Component({
   selector: 'app-participate-page',
-  imports: [RouterLink, ReactiveFormsModule, DecimalPipe, QuantityPicker, CircularProgress],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    DecimalPipe,
+    QuantityPicker,
+    CircularProgress,
+    WirdTabs,
+    EmptyState,
+  ],
   templateUrl: './participate-page.html',
   styleUrl: './participate-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipatePage {
   protected readonly store = inject(WirdStore);
+  protected readonly network = inject(NetworkStatus);
+  private readonly access = inject(WirdAccess);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
   });
   protected readonly selected = computed(() =>
-    this.store.wirds().find((wird) => wird.id === this.params().get('id')),
+    this.store
+      .wirds()
+      .find((wird) => wird.id === this.params().get('id') && this.access.canRead(wird.id)),
   );
   protected readonly useName = signal(false);
   protected readonly message = signal('');
+  private readonly reserved = signal(false);
   protected readonly quantity = new FormControl<number | null>(null, [
     Validators.required,
     Validators.min(1),
@@ -45,6 +62,8 @@ export class ParticipatePage {
     const quantity = value.quantity;
     const name = value.name?.trim() ?? '';
     return (
+      !this.reserved() &&
+      this.network.online() &&
       !!wird &&
       typeof quantity === 'number' &&
       Number.isSafeInteger(quantity) &&
@@ -60,6 +79,7 @@ export class ParticipatePage {
   protected readonly guidance = computed(() => {
     const value = this.formValue().quantity;
     const wird = this.selected();
+    if (!this.network.online()) return 'Reconnectez-vous pour commencer une part.';
     if (!wird || this.store.available(wird.id) === 0)
       return 'Toutes les parts sont prises pour le moment.';
     if (
@@ -75,8 +95,12 @@ export class ParticipatePage {
 
   protected reserve(): void {
     const wird = this.selected();
-    if (!wird) return;
+    if (!wird || this.reserved()) return;
     this.message.set('');
+    if (!this.network.online() || !navigator.onLine) {
+      this.message.set('Reconnectez-vous pour commencer une nouvelle part.');
+      return;
+    }
     if (!this.canReserve()) {
       this.nameTouched.set(true);
       this.message.set(
@@ -86,19 +110,19 @@ export class ParticipatePage {
       );
       return;
     }
-    if (!navigator.onLine) {
-      this.message.set('Reconnectez-vous pour commencer une nouvelle part.');
-      return;
-    }
+    this.reserved.set(true);
     const part = this.store.reserve(
       wird.id,
       this.quantity.value ?? 0,
       this.useName() ? this.name.value : '',
     );
     if (!part) {
+      this.reserved.set(false);
       this.message.set(`Choisissez un nombre entier entre 1 et ${this.store.available(wird.id)}.`);
       return;
     }
-    void this.router.navigate(['/mes-parts']);
+    void this.router.navigate(['/mes-parts']).catch(() => {
+      this.message.set('Votre part est réservée. Retrouvez-la dans Mes parts.');
+    });
   }
 }

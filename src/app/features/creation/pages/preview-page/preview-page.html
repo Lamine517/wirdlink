@@ -8,8 +8,17 @@
   <p class="text-secondary">
     {{ draft().recurrence }} · {{ draft().visibility === 'public' ? 'Public' : 'Avec un code' }}
   </p>
-  @if (draft().description) {
-    <p class="preview-card__instructions">{{ draft().description }}</p>
+  @if (draft().description.trim()) {
+    <section class="preview-card__text">
+      <h3>Description</h3>
+      <p>{{ draft().description }}</p>
+    </section>
+  }
+  @if (draft().instructions?.trim()) {
+    <section class="preview-card__text">
+      <h3>Consignes</h3>
+      <p>{{ draft().instructions }}</p>
+    </section>
   }
   @if (store.audio(); as media) {
     <app-audio-player [source]="media.url" [title]="draft().title" />
@@ -18,18 +27,22 @@
   <p class="text-strong">{{ draft().target | number }} lectures à partager</p>
 </article>
 <a class="button button--outline" routerLink="/creer/contenu">Modifier</a>
-<section class="publication-notice">
-  <img src="assets/icons/lock.svg" width="20" height="20" alt="" />
-  <p id="publish-hint">
-    Brouillon enregistré sur cet appareil. La connexion et la publication ne sont pas encore
-    disponibles.
-  </p>
-</section>
+<p id="publish-hint" class="text-secondary publication-notice">
+  Votre brouillon reste enregistré jusqu’à la publication.
+</p>
+<app-request-state
+  [loading]="publication.busy()"
+  loadingLabel="Publication en cours…"
+  [error]="error()"
+/>
 <button
   class="button button--primary preview-publish"
   type="button"
-  disabled
+  [disabled]="
+    !store.contentValid() || !store.scheduleValid() || publication.busy() || !network.online()
+  "
   aria-describedby="publish-hint"
+  (click)="publish()"
 >
-  Publier
+  {{ auth.session() ? 'Publier' : 'Continuer pour publier' }}
 </button>

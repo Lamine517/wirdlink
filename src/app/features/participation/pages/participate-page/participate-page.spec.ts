@@ -120,3 +120,24 @@ describe('Guided participation form', () => {
     expect(submitButton()?.disabled).toBeFalse();
   });
 });
+
+describe('Repeated participation submissions', () => {
+  beforeEach(() => {
+    localStorage.removeItem('wirdlink.demo.v1');
+    TestBed.configureTestingModule({ providers: appConfig.providers });
+  });
+  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  it('creates only one reservation when a form is submitted twice before navigation completes', async () => {
+    const harness = await RouterTestingHarness.create('/wird/salat-nabi');
+    const quantity = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
+    quantity.value = '10';
+    quantity.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+    const form = harness.routeNativeElement!.querySelector('form')!;
+    for (let attempt = 0; attempt < 2; attempt++)
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(WirdStore).parts().length).toBe(1);
+    expect(TestBed.inject(WirdStore).available('salat-nabi')).toBe(390);
+  });
+});

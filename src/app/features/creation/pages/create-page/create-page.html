@@ -52,3 +52,15 @@
     </button>
   </div>
 </app-bottom-sheet>
+
+<app-bottom-sheet #replacementSheet panelId="replace-draft" title="Remplacer le brouillon ?">
+  <div class="draft-delete-confirmation">
+    <p>Le modèle choisi remplacera le texte, les consignes et les fichiers du brouillon actuel.</p>
+    <button type="button" class="button button--outline" (click)="replacementSheet.close()">
+      Garder le brouillon
+    </button>
+    <button type="button" class="button button--primary" (click)="replaceDraft()">
+      Utiliser ce modèle
+    </button>
+  </div>
+</app-bottom-sheet>

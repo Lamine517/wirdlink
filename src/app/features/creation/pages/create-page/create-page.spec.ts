@@ -50,7 +50,7 @@ describe('Creation flow', () => {
     );
     expect(
       harness.routeNativeElement!.querySelector<HTMLButtonElement>('.preview-publish')?.disabled,
-    ).toBeTrue();
+    ).toBeFalse();
     expect(TestBed.inject(CreationDraftStore).draft().target).toBe(500);
     await harness.navigateByUrl('/creer');
     expect(harness.routeNativeElement!.querySelector('.draft-resume')?.textContent).toContain(
@@ -90,5 +90,69 @@ describe('Creation flow', () => {
       harness.routeNativeElement!.querySelector<HTMLButtonElement>('button[type="submit"]')!
         .disabled,
     ).toBeFalse();
+  });
+});
+
+describe('Optional creation content in preview', () => {
+  beforeEach(() => {
+    localStorage.removeItem('wirdlink.creation.v1');
+    TestBed.configureTestingModule({ providers: appConfig.providers });
+  });
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  it('shows description and opening instructions separately without changing the goal', async () => {
+    const draft = TestBed.inject(CreationDraftStore);
+    draft.updateContent({
+      title: 'Wird de famille',
+      description: 'Ensemble ce vendredi',
+      instructions: 'Fatiha ×1\nSalatoul Fatihi ×7\nAstaghfiroullah ×100',
+      target: 12000,
+    });
+    const harness = await RouterTestingHarness.create('/creer/apercu');
+    const text = harness.routeNativeElement!.querySelector('article')!.textContent!;
+    expect(text).toContain('Description');
+    expect(text).toContain('Consignes');
+    expect(text).toContain('Astaghfiroullah ×100');
+    expect(text.replace(/\s/g, '')).toContain('12000lecturesàpartager');
+    draft.updateContent({
+      title: 'Wird de famille',
+      description: '',
+      instructions: '',
+      target: 12000,
+    });
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelectorAll('.preview-card__text').length).toBe(0);
+  });
+});
+
+describe('Draft replacement confirmation', () => {
+  beforeEach(() => {
+    localStorage.removeItem('wirdlink.creation.v1');
+    TestBed.configureTestingModule({ providers: appConfig.providers });
+  });
+  afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
+  it('keeps optional instructions until replacing a draft is explicitly confirmed', async () => {
+    const draft = TestBed.inject(CreationDraftStore);
+    draft.updateContent({
+      title: 'Mon brouillon',
+      target: 500,
+      description: 'Ma description',
+      instructions: 'Fatiha ×1',
+    });
+    const harness = await RouterTestingHarness.create('/creer');
+    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!.click();
+    harness.detectChanges();
+    expect(
+      harness.routeNativeElement!.querySelector<HTMLDialogElement>('#replace-draft')!.open,
+    ).toBeTrue();
+    expect(draft.draft().instructions).toBe('Fatiha ×1');
+    const confirm = harness.routeNativeElement!.querySelector<HTMLButtonElement>(
+      '#replace-draft .button--primary',
+    )!;
+    confirm.click();
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Mon wird');
+    expect(draft.draft().instructions).toBe('');
+    expect(draft.draft().target).toBe(1000);
   });
 });

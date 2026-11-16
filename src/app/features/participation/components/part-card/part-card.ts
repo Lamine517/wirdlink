@@ -13,5 +13,6 @@ import { Icon } from '../../../../shared/components/icon/icon';
 })
 export class PartCard {
   readonly group = input.required<PartGroup>();
+  readonly disabled = input(false);
   readonly finishRequested = output<Part>();
 }

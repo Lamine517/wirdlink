@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+.participant__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.participant h2 {
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.participant__avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  color: var(--color-primary);
+  font-weight: 800;
+}
+.participant__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: var(--font-size-small);
+  color: var(--color-primary);
+}
+.participant__counts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

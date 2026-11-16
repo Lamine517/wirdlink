@@ -1,8 +1,9 @@
+import { WirdAccess } from '../../../access/data-access/wird-access';
 import { RouterLink } from '@angular/router';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { WirdStore } from '../../../../core/wird-store';
-import { SpeechReader } from '../../../../core/speech-reader';
+import { Icon } from '../../../../shared/components/icon/icon';
 import { WirdCard } from '../../components/wird-card/wird-card';
 import {
   VisibilityFilter,
@@ -13,15 +14,14 @@ import {
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, EmptyState, WirdCard, WirdFilters],
-  providers: [SpeechReader],
+  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
   protected readonly store = inject(WirdStore);
-  protected readonly reader = inject(SpeechReader);
+  private readonly access = inject(WirdAccess);
   protected readonly visibility = signal<VisibilityFilter>('all');
   protected readonly status = signal<WirdStatus>('active');
   protected readonly recurrence = signal<RecurrenceFilter>('all');
@@ -31,6 +31,7 @@ export class HomePage {
       const matchesStatus =
         this.status() === 'all' || (this.status() === 'finished' ? finished : !finished);
       return (
+        this.access.canRead(wird.id) &&
         matchesStatus &&
         (this.recurrence() === 'all' || wird.recurrence === this.recurrence()) &&
         (this.visibility() === 'all' || wird.visibility === this.visibility())
@@ -42,11 +43,5 @@ export class HomePage {
     this.visibility.set('all');
     this.status.set('active');
     this.recurrence.set('all');
-  }
-
-  protected readHelp(): void {
-    this.reader.read(
-      'Bienvenue sur WirdLink. Choisissez un wird, puis Je participe. Vos parts sont disponibles dans Mes parts.',
-    );
   }
 }

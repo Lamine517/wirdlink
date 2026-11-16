@@ -1,5 +1,6 @@
 import { contentReady, scheduleReady } from './features/creation/guards/draft-guards';
 import { Routes } from '@angular/router';
+import { readableWird } from './features/access/data-access/wird-access';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'wird/:id',
+    canActivate: [readableWird],
     loadComponent: () =>
       import('./features/participation/pages/participate-page/participate-page').then(
         (m) => m.ParticipatePage,
@@ -26,11 +28,60 @@ export const routes: Routes = [
   },
   {
     path: 'merci/:id',
+    canActivate: [readableWird],
     loadComponent: () =>
       import('./features/participation/pages/thank-you-page/thank-you-page').then(
         (m) => m.ThankYouPage,
       ),
     title: 'Merci · WirdLink',
+  },
+  {
+    path: 'wird/:id/participants',
+    canActivate: [readableWird],
+    loadComponent: () =>
+      import('./features/participation/pages/participants-page/participants-page').then(
+        (m) => m.ParticipantsPage,
+      ),
+    title: 'Les participants · WirdLink',
+  },
+  {
+    path: 'preferences',
+    loadComponent: () =>
+      import('./features/preferences/pages/preferences-page/preferences-page').then(
+        (m) => m.PreferencesPage,
+      ),
+    title: 'Réglages · WirdLink',
+  },
+  {
+    path: 'acces/:id',
+    loadComponent: () =>
+      import('./features/access/pages/access-page/access-page').then((m) => m.AccessPage),
+    title: 'Accès privé · WirdLink',
+  },
+  {
+    path: 'connexion',
+    canActivate: [contentReady, scheduleReady],
+    loadComponent: () =>
+      import('./features/auth/pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
+    title: 'Connexion · WirdLink',
+  },
+  {
+    path: 'connexion/retour',
+    loadComponent: () =>
+      import('./features/auth/pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),
+    title: 'Votre connexion · WirdLink',
+  },
+  {
+    path: 'partage',
+    loadComponent: () =>
+      import('./features/publication/pages/share-page/share-page').then((m) => m.SharePage),
+    title: 'Partager · WirdLink',
+  },
+  {
+    path: 'partage/:id',
+    loadComponent: () =>
+      import('./features/publication/pages/share-page/share-page').then((m) => m.SharePage),
+    title: 'Partager ce wird · WirdLink',
   },
   {
     path: 'creer',

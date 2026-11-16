@@ -21,6 +21,11 @@ const ICON_FILES = {
   facebook: 'facebook-logo',
   telegram: 'telegram-logo',
   phone: 'device-mobile',
+  sms: 'chat-circle',
+  share: 'share-network',
+  warning: 'warning-circle',
+  offline: 'wifi-slash',
+  settings: 'gear-six',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

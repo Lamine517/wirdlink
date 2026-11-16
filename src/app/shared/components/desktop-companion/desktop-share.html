@@ -1,27 +1,5 @@
-<section class="desktop-share" aria-labelledby="desktop-share-title">
-  <h2 id="desktop-share-title">{{ isWird() ? 'Envoyer ce wird' : 'Partager WirdLink' }}</h2>
-  @for (option of options; track option.key) {
-    <button
-      type="button"
-      class="button button--outline"
-      [class.button--whatsapp]="option.key === 'whatsapp'"
-      [disabled]="!shareable()"
-      (click)="openShare(option.key)"
-    >
-      <app-icon [name]="option.icon" [size]="24" />{{ option.label }}
-    </button>
-  }
-  <button type="button" class="button button--outline" (click)="copy()">
-    <app-icon name="copy" [size]="20" />Copier le lien
-  </button>
-  @if (!shareable()) {
-    <p class="desktop-caption">
-      Le partage vers un téléphone nécessite une adresse publique ou accessible sur votre réseau.
-    </p>
-  }
-  <label class="desktop-link-label" for="desktop-share-url">Lien à partager</label
-  ><input id="desktop-share-url" class="desktop-link" readonly [value]="url()" />
-  @if (message()) {
-    <p class="desktop-caption" role="status">{{ message() }}</p>
-  }
-</section>
+<app-share-actions
+  panelId="desktop-share"
+  [url]="url()"
+  [title]="isWird() ? 'Envoyer ce wird' : 'Partager WirdLink'"
+/>

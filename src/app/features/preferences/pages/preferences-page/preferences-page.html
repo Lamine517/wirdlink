@@ -1,0 +1,63 @@
+<a class="back-link" routerLink="/mes-parts"
+  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
+>
+<h1>Réglages</h1>
+<section class="surface-card preferences-card">
+  <h2>Les rappels</h2>
+  <p>Recevez un rappel pour vos lectures. Ce choix reste facultatif.</p>
+  @if (!notificationSupport) {
+    <p>Ce navigateur ne propose pas les notifications. Vous pouvez continuer sans rappel.</p>
+  } @else if (blocked) {
+    <p>
+      Les notifications sont bloquées. Vous pouvez modifier ce choix dans les réglages du
+      navigateur.
+    </p>
+  } @else {
+    <button
+      class="button button--outline"
+      type="button"
+      [attr.aria-pressed]="reminders()"
+      [disabled]="busy() || !network.online()"
+      (click)="toggleReminders()"
+    >
+      {{ reminders() ? 'Désactiver les rappels' : 'Activer les rappels' }}
+    </button>
+    @if (reminders()) {
+      <p role="status" class="preferences-status">Rappels activés sur cet appareil.</p>
+    }
+  }
+  <app-request-state [loading]="busy()" loadingLabel="Mise à jour des rappels…" [error]="error()" />
+</section>
+<section class="surface-card preferences-card">
+  <h2>Retrouver WirdLink facilement</h2>
+  @if (install.installed()) {
+    <p>WirdLink est ouvert depuis votre écran d’accueil.</p>
+  } @else if (install.available()) {
+    <button
+      class="button button--primary"
+      type="button"
+      [disabled]="install.busy()"
+      (click)="install.install()"
+    >
+      Ajouter à mon écran d’accueil
+    </button>
+  } @else if (ios) {
+    <p>
+      Dans Safari, ouvrez le menu Partager, puis choisissez « Sur l’écran d’accueil » si cette
+      option est proposée.
+    </p>
+  } @else {
+    <p>
+      Ouvrez le menu de votre navigateur, puis choisissez l’option d’ajout à l’écran d’accueil si
+      elle est proposée. Vous pouvez aussi garder ce lien dans vos favoris.
+    </p>
+  }
+  <p role="status">{{ install.message() }}</p>
+</section>
+
+<section class="surface-card preferences-card">
+  <h2>À propos de WirdLink</h2>
+  <a class="preferences-link" routerLink="/aide">Aide</a>
+  <a class="preferences-link" routerLink="/confidentialite">Vos informations</a>
+  <a class="preferences-link" routerLink="/conditions">Règles d’utilisation</a>
+</section>

@@ -50,15 +50,28 @@
     (removeRequested)="store.removeMedia($event)"
   />
   <div class="field-group">
-    <label for="draft-description"
-      >Message ou consignes <span class="text-secondary">facultatif</span></label
+    <label for="draft-description">Description <span class="text-secondary">facultatif</span></label
     ><textarea
       id="draft-description"
       formControlName="description"
       rows="3"
       maxlength="1000"
-      placeholder="Ex. Ouverture : Fatiha ×1, Salatoul Fatihi ×7. Puis participer au wird."
+      placeholder="Ex. Un wird pour notre famille, à partager ce vendredi."
     ></textarea>
+  </div>
+  <div class="field-group">
+    <label for="draft-instructions">Consignes <span class="text-secondary">facultatif</span></label>
+    <textarea
+      id="draft-instructions"
+      formControlName="instructions"
+      rows="4"
+      maxlength="1000"
+      placeholder="Ex. Avant de commencer : Fatiha ×1, Salatoul Fatihi ×7, Astaghfiroullah ×100."
+      aria-describedby="instructions-hint"
+    ></textarea>
+    <p id="instructions-hint" class="text-secondary">
+      Les lectures d’ouverture sont distinctes de l’objectif à partager.
+    </p>
   </div>
   <button type="submit" class="button button--primary" [disabled]="!canContinue()">Suivant</button>
   <p class="text-secondary">

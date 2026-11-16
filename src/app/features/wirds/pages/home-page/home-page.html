@@ -1,15 +1,12 @@
-@if (reader.error()) {
-  <p class="feedback feedback--error" role="alert">{{ reader.error() }}</p>
-}
 <header class="page-header">
   <a class="brand" routerLink="/" aria-label="WirdLink, accueil"
     ><img src="assets/brand/wirdlink-logo.svg" alt="" width="52" height="57" /><span
       >WirdLink</span
     ></a
   >
-  <button class="help-button" (click)="readHelp()">
-    <img src="assets/icons/help.svg" alt="" width="24" height="24" />Aide
-  </button>
+  <a class="settings-link" routerLink="/preferences" aria-label="Réglages" title="Réglages"
+    ><app-icon name="settings" [size]="24"
+  /></a>
 </header>
 <h1>Mes wirds</h1>
 <app-wird-filters

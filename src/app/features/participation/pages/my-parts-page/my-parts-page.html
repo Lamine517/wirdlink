@@ -12,7 +12,11 @@
   </p>
 }
 @for (group of visibleGroups(); track group.wirdId) {
-  <app-part-card [group]="group" (finishRequested)="finish($event)" />
+  <app-part-card
+    [group]="group"
+    [disabled]="!network.online()"
+    (finishRequested)="finish($event)"
+  />
 } @empty {
   @if (groups().length) {
     <app-empty-state
@@ -30,3 +34,5 @@
     />
   }
 }
+
+<a class="device-options-link" routerLink="/preferences">Rappels et écran d’accueil</a>

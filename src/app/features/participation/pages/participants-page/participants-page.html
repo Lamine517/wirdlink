@@ -1,0 +1,58 @@
+<a class="back-link" routerLink="/"
+  ><img src="assets/icons/back.svg" width="24" height="24" alt="" />Retour</a
+>
+@if (selected(); as wird) {
+  <h1>{{ wird.title }}</h1>
+  <app-wird-tabs [wirdId]="wird.id" active="participants" />
+  <p class="text-strong">
+    {{ store.completed(wird.id) | number }} lus sur {{ wird.target | number }}
+  </p>
+  <p class="text-secondary">
+    Participations sur cet appareil. Seuls les noms choisis sont affichés.
+  </p>
+  @for (group of groups(); track group.key) {
+    <article class="surface-card participant">
+      <div class="participant__identity">
+        <span class="participant__avatar" aria-hidden="true">
+          @if (group.name) {
+            {{ group.name.slice(0, 1).toLocaleUpperCase('fr') }}
+          } @else {
+            <app-icon name="users" [size]="24" />
+          }
+        </span>
+        <div>
+          <h2>{{ group.name || 'Sans nom' }}</h2>
+          <p class="text-secondary">
+            {{ group.count }} {{ group.count > 1 ? 'participations' : 'participation' }}
+          </p>
+        </div>
+      </div>
+      <div class="participant__counts">
+        @if (group.completed > 0) {
+          <span><app-icon name="check" [size]="18" />{{ group.completed | number }} lus</span>
+        }
+        @if (group.pending > 0) {
+          <span>{{ group.pending | number }} à lire</span>
+        }
+      </div>
+    </article>
+  } @empty {
+    <app-empty-state
+      title="Aucune participation ici"
+      description="Les participations enregistrées sur cet appareil apparaîtront ici."
+    />
+  }
+  @if (store.available(wird.id) > 0) {
+    <a class="button button--accent" [routerLink]="['/wird', wird.id]"
+      ><app-icon name="hand" [size]="24" />Je participe</a
+    >
+  }
+} @else {
+  <h1>Participants</h1>
+  <app-empty-state
+    title="Wird indisponible"
+    description="Retrouvez ce wird depuis son lien d’accès."
+    actionLabel="Retour à l’accueil"
+    actionLink="/"
+  />
+}

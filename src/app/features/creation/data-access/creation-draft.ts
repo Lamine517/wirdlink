@@ -5,6 +5,7 @@ export type Visibility = 'public' | 'private';
 export interface DraftContent {
   title: string;
   description: string;
+  instructions?: string;
   target: number | null;
 }
 export interface DraftSchedule {
@@ -48,6 +49,7 @@ export function isContentValid(draft: DraftContent): boolean {
     draft.title.trim().length > 0 &&
     draft.title.length <= 100 &&
     draft.description.length <= 1000 &&
+    (draft.instructions ?? '').length <= 1000 &&
     typeof draft.target === 'number' &&
     Number.isSafeInteger(draft.target) &&
     draft.target > 0
@@ -66,6 +68,7 @@ function emptyDraft(): CreationDraft {
   return {
     title: '',
     description: '',
+    instructions: '',
     target: null,
     recurrence: 'Une fois',
     startDate: todayDate(),
@@ -81,6 +84,8 @@ function isStoredDraft(value: unknown): value is CreationDraft {
     draft['title'].length <= 100 &&
     typeof draft['description'] === 'string' &&
     draft['description'].length <= 1000 &&
+    (draft['instructions'] === undefined ||
+      (typeof draft['instructions'] === 'string' && draft['instructions'].length <= 1000)) &&
     (draft['target'] === null ||
       (typeof draft['target'] === 'number' && Number.isFinite(draft['target']))) &&
     typeof draft['recurrence'] === 'string' &&
@@ -101,7 +106,16 @@ export class CreationDraftStore {
   readonly audio = signal<LocalMedia | null>(null);
   readonly warning = signal('');
   readonly mediaError = signal('');
-  readonly hasDraft = computed(() => !!this.draft().title || this.draft().target !== null);
+  readonly hasDraft = computed(() =>
+    Boolean(
+      this.draft().title ||
+        this.draft().target !== null ||
+        this.draft().description ||
+        this.draft().instructions ||
+        this.image() ||
+        this.audio(),
+    ),
+  );
   readonly contentValid = computed(() => isContentValid(this.draft()));
   readonly scheduleValid = computed(() => isScheduleValid(this.draft()));
 
@@ -112,7 +126,7 @@ export class CreationDraftStore {
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
         if (!isStoredDraft(parsed)) throw new Error('Invalid draft');
-        this.state.set(parsed);
+        this.state.set({ ...emptyDraft(), ...parsed });
       }
     } catch {
       this.warning.set('Le brouillon n’a pas pu être restauré. Vous pouvez en créer un nouveau.');
@@ -162,7 +176,7 @@ export class CreationDraftStore {
       kind === 'image'
         ? ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
         : file.type.startsWith('audio/');
-    if (!validType || file.size > 10 * 1024 * 1024) {
+    if (!validType || file.size === 0 || file.size > 10 * 1024 * 1024) {
       this.mediaError.set(
         kind === 'image'
           ? 'Choisissez une photo JPEG, PNG ou WebP de 10 Mo maximum.'

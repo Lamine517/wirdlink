@@ -37,3 +37,11 @@
   overflow: hidden;
   clip-path: inset(50%);
 }
+
+.device-options-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 16px;
+  font-size: var(--font-size-small);
+}
