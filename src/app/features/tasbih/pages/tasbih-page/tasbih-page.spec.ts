@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -6,11 +7,12 @@ import { TasbihStore } from '../../data-access/tasbih-store';
 import { HapticFeedback } from '../../data-access/haptic-feedback';
 
 describe('Tasbih interaction', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   let part: Part;
   let goal: jasmine.Spy;
   let tap: jasmine.Spy;
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     localStorage.removeItem('wirdlink.tasbih.v1');
     TestBed.configureTestingModule({ providers: appConfig.providers });
     part = TestBed.inject(WirdStore).reserve('salat-nabi', 3, 'Awa')!;
@@ -19,7 +21,7 @@ describe('Tasbih interaction', () => {
     tap = spyOn(haptics, 'tap');
   });
   afterEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     localStorage.removeItem('wirdlink.tasbih.v1');
   });
 

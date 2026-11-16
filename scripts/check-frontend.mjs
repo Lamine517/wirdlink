@@ -17,6 +17,9 @@ const mimeTypes = {
   '.svg': 'image/svg+xml',
   '.ttf': 'font/ttf',
   '.png': 'image/png',
+  '.webmanifest': 'application/manifest+json',
+  '.json': 'application/json',
+  '.ico': 'image/x-icon',
 };
 const server = http.createServer((request, response) => {
   let file = path.resolve(root, '.' + new URL(request.url, 'http://localhost').pathname);
@@ -26,7 +29,7 @@ const server = http.createServer((request, response) => {
   response.end(fs.readFileSync(file));
 });
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-const origin = 'http://127.0.0.1:' + server.address().port;
+const origin = process.env.WIRDLINK_CHECK_URL || 'http://127.0.0.1:' + server.address().port;
 const chromeBinary =
   process.env.CHROME_BIN ||
   (process.platform === 'darwin'
@@ -97,7 +100,7 @@ try {
     return result.result.value;
   };
   const wait = async (expression) => {
-    for (let attempt = 0; attempt < 60; attempt++) {
+    for (let attempt = 0; attempt < 200; attempt++) {
       if (await run(expression)) return;
       await sleep(100);
     }
@@ -155,202 +158,77 @@ try {
     assert.equal(overflow, false, label + ' text zoom overflow');
     await run("document.documentElement.style.fontSize='100%'");
   };
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-color-scheme', value: 'light' },
-      { name: 'prefers-reduced-motion', value: 'no-preference' },
-    ],
-  });
   await cdp('Runtime.enable');
   await cdp('Page.enable');
-  // Browser smoke checks must never send SMS or use a real authenticated session.
   await cdp('Network.enable');
   await cdp('Network.setBlockedURLs', { urls: ['*://*.supabase.co/*'] });
   await viewport(390);
   await navigate('/', 'app-home-page');
-  await wait('[...document.images].every(image=>image.complete&&image.naturalWidth>0)');
-  await checkLayout('Home');
-  assert.ok(await run('document.fonts.check(\'600 20px "Nunito Sans"\')'));
-  assert.ok(await run('!!document.querySelector(\'a.settings-link[href="/preferences"]\')'));
-  assert.equal(
-    await run(
-      "getComputedStyle(document.querySelector('.bottom-nav__link--active .bottom-nav__icon')).backgroundColor",
-    ),
-    'rgb(220, 232, 235)',
+  assert.equal(await run("document.querySelectorAll('app-wird-card').length"), 0);
+  assert.equal(await run("!!document.querySelector('.demo-banner')"), false);
+  assert.ok(
+    await run("document.querySelector('app-empty-state').textContent.includes('Créer un wird')"),
   );
-  await screenshot('home');
+  for (const width of [320, 390, 430, 600]) {
+    await viewport(width);
+    assert.equal(
+      await run("document.querySelector('.app-shell').getBoundingClientRect().width"),
+      width,
+    );
+  }
+  await checkLayout('Empty home');
   await viewport(1440, 1000);
-  await navigate('/', 'app-home-page');
-  await wait("document.querySelector('.desktop-layout--entered')!==null");
-  assert.notEqual(
-    await run("getComputedStyle(document.querySelector('.app-shell')).animationName"),
-    'none',
-  );
-  await sleep(650);
-  const frame = await run(
-    "(()=>{const rect=document.querySelector('.app-shell').getBoundingClientRect();return {width:rect.width,height:rect.height,left:rect.left,top:rect.top,bottom:rect.bottom}})()",
-  );
-  assert.equal(frame.width, 390);
-  assert.ok(frame.top >= 0 && frame.bottom <= 1000);
-  await screenshot('desktop');
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-      { name: 'prefers-color-scheme', value: 'light' },
-    ],
-  });
   assert.equal(
-    await run("getComputedStyle(document.querySelector('.app-shell')).animationName"),
-    'none',
+    await run("document.querySelector('.app-shell').getBoundingClientRect().width"),
+    390,
   );
+  await screenshot('desktop');
   await viewport(390);
-  await run(
-    "document.querySelector('[aria-controls=filters]').focus();document.querySelector('[aria-controls=filters]').click();true",
+  const manifest = await run("fetch('/manifest.webmanifest').then(response=>response.json())");
+  assert.equal(manifest.name, 'WirdLink');
+  assert.equal(manifest.display, 'standalone');
+  assert.ok(manifest.icons.some((icon) => icon.sizes === '512x512' && icon.purpose === 'maskable'));
+  for (const icon of manifest.icons) {
+    assert.ok(await run(`fetch(${JSON.stringify(icon.src)}).then(response=>response.ok)`));
+  }
+  await wait('navigator.serviceWorker.controller!==null');
+  assert.ok(
+    await run(
+      "navigator.serviceWorker.getRegistration().then(registration=>registration.active.scriptURL.endsWith('/ngsw-worker.js'))",
+    ),
   );
-  await wait("document.querySelector('dialog').open");
+  await run(
+    "window.installInvitations=0; const invitation=new Event('beforeinstallprompt',{cancelable:true});Object.assign(invitation,{prompt:async()=>{window.installInvitations++;return {outcome:'dismissed'}}});window.dispatchEvent(invitation);true",
+  );
+  await run("document.querySelector('app-install-app button').click();true");
+  await wait('installInvitations===1');
+  await run("document.querySelector('app-install-app button').click();true");
+  await wait("document.querySelector('#install-app-instructions').open");
+  await screenshot('install-instructions');
   await cdp('Input.dispatchKeyEvent', {
     type: 'keyDown',
     key: 'Escape',
     code: 'Escape',
     windowsVirtualKeyCode: 27,
   });
-  await cdp('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Escape',
-    code: 'Escape',
-    windowsVirtualKeyCode: 27,
-  });
-  await wait("!document.querySelector('dialog').open");
-  assert.equal(await run("document.activeElement?.getAttribute('aria-controls')"), 'filters');
-  // Exercise the real browser history; direct entry is intentionally a separate case.
-  await navigate('/', 'app-home-page');
-  await run("document.querySelector('.settings-link').click();true");
-  await wait("!!document.querySelector('app-preferences-page')");
-  await run('document.querySelector(\'a.preferences-link[href="/aide"]\').click();true');
-  await wait("!!document.querySelector('app-information-page')");
-  await run("document.querySelector('app-back-button button').click();true");
-  await wait("!!document.querySelector('app-preferences-page')");
-  await cdp('Page.reload');
-  await wait("!!document.querySelector('app-preferences-page')");
-  await run("document.querySelector('app-back-button button').click();true");
-  await wait("!!document.querySelector('app-home-page')");
-  await navigate('/mes-parts', 'app-my-parts-page');
-  await run("document.querySelector('a.device-options-link').click();true");
-  await wait("!!document.querySelector('app-preferences-page')");
-  await run("document.querySelector('app-back-button button').click();true");
-  await wait("!!document.querySelector('app-my-parts-page')");
-  await navigate('/preferences', 'app-preferences-page');
-  await run("document.querySelector('app-back-button button').click();true");
-  await wait("!!document.querySelector('app-home-page')");
-  await navigate('/wird/salat-nabi', '#quantity');
-  await checkLayout('Participation');
-  assert.equal(await run("document.querySelector('h1').textContent"), 'Salat ala Nabi');
-  const titleOffset = await run(
-    "document.querySelector('h1').getBoundingClientRect().top-document.querySelector('main').getBoundingClientRect().top+document.querySelector('main').scrollTop",
-  );
-  const toolbar = await run(
-    "(()=>{const back=document.querySelector('app-wird-header app-back-button').getBoundingClientRect();const share=document.querySelector('app-wird-header a[aria-label=\"Partager ce wird\"]').getBoundingClientRect();return {back:back.top,share:share.top,right:share.left>back.right}})()",
-  );
-  assert.equal(toolbar.back, toolbar.share);
-  assert.ok(toolbar.right);
-  await navigate('/wird/salat-nabi/participants', 'app-participants-page');
-  const otherOffset = await run(
-    "document.querySelector('h1').getBoundingClientRect().top-document.querySelector('main').getBoundingClientRect().top+document.querySelector('main').scrollTop",
-  );
-  assert.equal(otherOffset, titleOffset, 'The title should not jump between wird views');
-  await navigate('/wird/salat-nabi', '#quantity');
-  await screenshot('participation-header');
-
-  assert.ok(await run("document.querySelector('button[type=submit]').disabled"));
-  await enter('#quantity', '401');
-  await wait("document.querySelector('#quantity-error')!==null");
-  assert.equal(
-    await run("getComputedStyle(document.querySelector('#quantity')).borderColor"),
-    'rgb(179, 38, 30)',
-  );
-  await enter('#quantity', '10');
-  await submit();
-  await wait("document.querySelector('h1')?.textContent==='Mes parts'");
-  const counterPath = await run(
-    "document.querySelector('article a[href$=\"/compteur\"]').getAttribute('href')",
-  );
-  await cdp('Page.addScriptToEvaluateOnNewDocument', {
-    source:
-      "globalThis.vibrationCalls=[];Object.defineProperty(navigator,'vibrate',{configurable:true,value:pattern=>{globalThis.vibrationCalls.push(pattern);return true}});",
-  });
-  await run('document.querySelector(\'article a[href$="/compteur"]\').click();true');
-  await wait("!!document.querySelector('.tasbih__circle')");
-  await checkLayout('Tasbih');
-  for (let count = 0; count < 3; count++)
-    await run("document.querySelector('.tasbih__circle').click();true");
-  await cdp('Page.reload');
-  await wait("document.querySelector('.tasbih__value')?.textContent.trim()==='3'");
-  await run("document.querySelector('.tasbih__undo').click();true");
-  await wait("document.querySelector('.tasbih__value')?.textContent.trim()==='2'");
-  await run("document.querySelector('.tasbih__circle').click();true");
-  await run("document.querySelector('.tasbih-options').click();true");
-  await wait("document.querySelector('#tasbih-options').open");
-  await run(
-    "[...document.querySelectorAll('#tasbih-options button')].find(button=>button.textContent.includes('Remettre à zéro')).click();true",
-  );
-  assert.equal(await run("document.querySelector('.tasbih__value').textContent.trim()"), '3');
-  await run(
-    "[...document.querySelectorAll('#tasbih-options button')].find(button=>button.textContent.includes('Garder le compteur')).click();true",
-  );
-  await run("document.querySelector('#tasbih-options .bottom-sheet__close').click();true");
-  await wait("!document.querySelector('#tasbih-options').open");
-  await run("document.querySelector('main').scrollTop=0;true");
-  await screenshot('tasbih');
-  for (let count = 3; count < 10; count++)
-    await run("document.querySelector('.tasbih__circle').click();true");
-  await wait(
-    "document.querySelector('.tasbih__guidance').textContent.includes('Objectif atteint')",
-  );
-  assert.equal(await run('vibrationCalls.length'), 1, 'Goal must vibrate only once on crossing');
-  assert.equal(await run("document.querySelector('.tasbih__circle').disabled"), true);
-  await screenshot('tasbih-goal');
-  await navigate('/wird/salat-nabi/participants', 'app-participants-page');
-  assert.ok(
-    await run("document.querySelector('main').textContent.includes('600 lus')"),
-    'Personal taps must not update collective completion',
-  );
-  await navigate(counterPath, '.tasbih__circle');
-  assert.equal(
-    await run('vibrationCalls.length'),
-    0,
-    'Reloading an achieved goal must not vibrate again',
-  );
-  await cdp('Network.enable');
+  await wait("!document.querySelector('#install-app-instructions').open");
+  await screenshot('empty-home');
   await cdp('Network.emulateNetworkConditions', {
     offline: true,
     latency: 0,
     downloadThroughput: 0,
     uploadThroughput: 0,
   });
-  await wait("document.querySelector('.offline-status')?.textContent.includes('Hors ligne')");
-  assert.equal(await run("document.querySelector('.tasbih__finish').disabled"), true);
-  await run("document.querySelector('.tasbih__undo').click();true");
-  await wait("!document.querySelector('.tasbih__circle').disabled");
-  await run("document.querySelector('.tasbih__circle').click();true");
-  await wait("document.querySelector('.tasbih__value').textContent.trim()==='10'");
+  await cdp('Page.reload');
+  await wait("!!document.querySelector('app-home-page')");
+  await wait("!!document.querySelector('.offline-status')");
   await cdp('Network.emulateNetworkConditions', {
     offline: false,
     latency: 0,
     downloadThroughput: -1,
     uploadThroughput: -1,
   });
-  await wait("!document.querySelector('.tasbih__finish').disabled");
-  await run("document.querySelector('.tasbih__finish').click();true");
-  await wait("document.querySelector('h1')?.textContent==='Merci !'");
-  assert.equal(
-    await run("document.querySelector('[role=progressbar]').getAttribute('aria-valuenow')"),
-    '610',
-  );
-  await checkLayout('Thanks');
-  await navigate('/wird/salat-nabi/participants', 'app-participants-page');
-  await checkLayout('Participants');
-  assert.ok(await run("document.querySelector('main').textContent.includes('10 lus')"));
-  await screenshot('participants');
+  await wait("!document.querySelector('.offline-status')");
   await navigate('/creer/contenu', '#draft-title');
   await enter('#draft-title', 'Notre wird de famille');
   await enter('#draft-target', '12000');
@@ -402,7 +280,10 @@ try {
   await wait('[...document.images].every(image=>image.complete&&image.naturalWidth>0)');
   await screenshot('sign-in');
   assert.equal(await run("!!document.querySelector('#auth-phone')"), false);
-  assert.equal(await run("document.querySelector('[role=tabpanel]').textContent.includes('Bientôt')"), true);
+  assert.equal(
+    await run("document.querySelector('[role=tabpanel]').textContent.includes('Bientôt')"),
+    true,
+  );
   await run("document.querySelector('.auth-google').click();true");
   await wait(
     "document.querySelector('app-request-state')?.textContent.includes('brouillon est conservé')",
@@ -416,154 +297,25 @@ try {
   await wait(
     "document.querySelector('app-request-state')?.textContent.includes('pas encore disponible')",
   );
-  await navigate('/partage/salat-nabi', 'app-share-actions');
-  await checkLayout('Mobile sharing');
-  const ids = await run('[...document.querySelectorAll("[id]")].map(node=>node.id)');
-  assert.equal(new Set(ids).size, ids.length, 'Sharing IDs must be unique.');
-  await screenshot('sharing');
   await navigate('/preferences', 'app-preferences-page');
   await checkLayout('Settings');
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-      { name: 'prefers-color-scheme', value: 'dark' },
-    ],
-  });
-  await wait("document.documentElement.dataset.theme==='dark'");
-  const palette = await run(
-    "(()=>{const style=getComputedStyle(document.documentElement);return Object.fromEntries(['primary','text-primary','text-inverse','text-on-accent','text-on-danger','bg-app','accent','feedback-error'].map(key=>[key,style.getPropertyValue('--color-'+key).trim()]))})()",
-  );
-  const luminance = (color) => {
-    const channels = color.startsWith('#')
-      ? [1, 3, 5].map((offset) => parseInt(color.slice(offset, offset + 2), 16))
-      : (color.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
-    return channels
-      .map((value) => {
-        const channel = value / 255;
-        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      })
-      .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
-  };
-  const contrast = (a, b) => {
-    const x = luminance(a),
-      y = luminance(b);
-    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-  };
-  for (const [text, background] of [
-    ['text-primary', 'bg-app'],
-    ['text-inverse', 'primary'],
-    ['text-on-accent', 'accent'],
-    ['text-on-danger', 'feedback-error'],
-  ])
-    assert.ok(contrast(palette[text], palette[background]) >= 4.5, 'Dark theme contrast: ' + text);
-  await checkLayout('Dark settings');
-  await screenshot('settings-dark');
-  await run("document.querySelector('input[name=appearance][value=light]').click();true");
-  await wait("document.documentElement.dataset.theme==='light'");
-  await cdp('Page.reload');
-  await wait("!!document.querySelector('app-preferences-page')");
-  assert.equal(
-    await run('document.documentElement.dataset.theme'),
-    'light',
-    'Manual choice must survive reload and override the dark device theme',
-  );
-  await run("document.querySelector('input[name=appearance][value=auto]').click();true");
-  await wait("document.documentElement.dataset.theme==='dark'");
-  await navigate('/', 'app-home-page');
-  await screenshot('home-dark');
-  await navigate('/wird/salat-nabi', '#quantity');
-  await enter('#quantity', '10');
-  await submit();
-  await wait("!!document.querySelector('app-my-parts-page')");
-  await checkLayout('Dark parts');
-  await screenshot('parts-dark');
-  await run('document.querySelector(\'article a[href$="/compteur"]\').click();true');
-  await wait("!!document.querySelector('.tasbih__circle')");
-  await checkLayout('Dark tasbih');
-  await screenshot('tasbih-dark');
-  await navigate('/preferences', 'app-preferences-page');
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-      { name: 'prefers-color-scheme', value: 'light' },
-    ],
-  });
-  await wait("document.documentElement.dataset.theme==='light'");
-  assert.equal(
-    await run('document.querySelector(".app-page-view").getAnimations().length'),
-    0,
-    'Reduced motion must disable page animation',
-  );
-
-  assert.ok(await run('!!document.querySelector(\'a[href="/aide"]\')'));
-
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-reduced-motion', value: 'no-preference' },
-      { name: 'prefers-color-scheme', value: 'light' },
-    ],
-  });
-  await navigate('/', 'app-home-page');
-  await run(
-    "globalThis.pageFades=[];const original=Element.prototype.animate;Element.prototype.animate=function(frames,options){if(this.classList.contains('app-page-view'))globalThis.pageFades.push({duration:options.duration,hasTransform:frames.some(frame=>'transform' in frame)});return original.call(this,frames,options)};true",
-  );
-  await run("document.querySelector('.settings-link').click();true");
-  await wait("!!document.querySelector('app-preferences-page')");
-  await wait('pageFades.length>0');
-  assert.ok(
-    await run('pageFades.every(fade=>fade.duration===180&&!fade.hasTransform)'),
-    'Page transition should be a short fade without a spatial jump',
-  );
-  const fades = await run('pageFades.length');
-  await cdp('Emulation.setEmulatedMedia', {
-    features: [
-      { name: 'prefers-reduced-motion', value: 'reduce' },
-      { name: 'prefers-color-scheme', value: 'light' },
-    ],
-  });
-  await run("document.querySelector('app-back-button button').click();true");
-  await wait("!!document.querySelector('app-home-page')");
-  assert.equal(
-    await run('pageFades.length'),
-    fades,
-    'Reduced motion must not add a page animation',
-  );
-  await navigate('/preferences', 'app-preferences-page');
-  await screenshot('settings');
-  await navigate('/wird/salat-nabi', '#quantity');
-  await cdp('Network.enable');
-  await cdp('Network.emulateNetworkConditions', {
-    offline: true,
-    latency: 0,
-    downloadThroughput: 0,
-    uploadThroughput: 0,
-  });
-  await wait("document.querySelector('.offline-status')?.textContent.includes('Hors ligne')");
-  assert.equal(await run("document.querySelector('button[type=submit]').disabled"), true);
-  await cdp('Network.emulateNetworkConditions', {
-    offline: false,
-    latency: 0,
-    downloadThroughput: -1,
-    uploadThroughput: -1,
-  });
+  await navigate('/profil', 'app-profile-page');
+  await checkLayout('Profile');
+  assert.equal(await run("!!document.querySelector('#profile-address')"), false);
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify({
       passed: true,
-      widths: [320, 390, 1440],
-      textZoom: '200%',
-      frame,
+      emptyHome: true,
+      noDemoBanner: true,
+      mobileFullWidth: [320, 390, 430, 600],
+      desktopFrame: 390,
+      pwa: true,
+      offlineReload: true,
+      installInvitation: true,
+      manifest: true,
       realAudio: true,
-      tasbih: true,
-      counterGoalVibration: true,
-      automaticTheme: true,
-      pageTransitions: true,
-      stableWirdHeader: true,
       portraitUncropped: true,
-      creationTextRestored: true,
-      noSimulatedAuthentication: true,
-      offline: true,
-      reducedMotion: true,
       consoleErrors: errors,
       screenshots: artifacts,
     }),

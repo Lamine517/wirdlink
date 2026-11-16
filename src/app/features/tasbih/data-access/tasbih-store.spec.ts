@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { WirdStore } from '../../../core/wird-store';
 import { TasbihStore } from './tasbih-store';
@@ -5,12 +6,13 @@ import { TasbihStore } from './tasbih-store';
 const COUNTER_KEY = 'wirdlink.tasbih.v1';
 
 describe('Personal counter for a reserved share', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     localStorage.removeItem(COUNTER_KEY);
   });
   afterEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     localStorage.removeItem(COUNTER_KEY);
   });
 
@@ -43,6 +45,7 @@ describe('Personal counter for a reserved share', () => {
     counter.setHapticPreference('atGoal', false);
     counter.setHapticPreference('onTap', true);
     TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] });
     const restored = TestBed.inject(TasbihStore);
     expect(restored.count(first.id)).toBe(2);
     expect(restored.count(second.id)).toBe(1);

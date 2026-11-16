@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Inject, Injectable, InjectionToken, signal } from '@angular/core';
 
 export interface Wird {
   audioUrl?: string;
@@ -18,36 +18,27 @@ export interface Part {
   name: string;
   finished: boolean;
 }
-const INITIAL_WIRDS: Wird[] = [
-  {
-    id: 'salat-nabi',
-    title: 'Salat ala Nabi',
-    recurrence: 'Chaque vendredi',
-    visibility: 'public',
-    target: 1000,
-    completed: 600,
-  },
-  {
-    id: 'salat-fatihi',
-    title: '1 000 Salatoul Fatihi',
-    recurrence: 'Tous les jours',
-    visibility: 'public',
-    target: 1000,
-    completed: 600,
-  },
-];
-const STORAGE_KEY = 'wirdlink.demo.v1';
+export const WIRD_SEED = new InjectionToken<Wird[]>('WIRD_SEED', {
+  providedIn: 'root',
+  factory: () => [],
+});
+const STORAGE_KEY = 'wirdlink.parts.v1';
 
 @Injectable({ providedIn: 'root' })
 export class WirdStore {
-  readonly wirds = signal<Wird[]>(INITIAL_WIRDS.map((wird) => ({ ...wird })));
+  readonly wirds = signal<Wird[]>([]);
   readonly parts = signal<Part[]>([]);
   readonly savedName = signal('');
   readonly storageWarning = signal('');
   readonly activeParts = computed(() => this.parts().filter((part) => !part.finished));
 
-  constructor() {
+  constructor(@Inject(WIRD_SEED) private readonly initialWirds: Wird[] = []) {
+    this.wirds.set(initialWirds.map((wird) => ({ ...wird })));
     try {
+      if (localStorage.getItem('wirdlink.demo.v1')) {
+        localStorage.removeItem('wirdlink.demo.v1');
+        localStorage.removeItem('wirdlink.tasbih.v1');
+      }
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const value: unknown = JSON.parse(raw);
@@ -139,7 +130,7 @@ export class WirdStore {
     const totals = new Map<string, number>();
     return parts.every((value) => {
       if (!this.isPart(value) || ids.has(value.id)) return false;
-      const wird = INITIAL_WIRDS.find((item) => item.id === value.wirdId);
+      const wird = this.initialWirds.find((item) => item.id === value.wirdId);
       if (!wird) return false;
       ids.add(value.id);
       const total = (totals.get(wird.id) ?? 0) + value.quantity;

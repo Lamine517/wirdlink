@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -7,6 +8,7 @@ import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-acces
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 
 describe('Publication and mobile sharing screens', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('shows success and private code only after an approved publication, with a copy action', async () => {

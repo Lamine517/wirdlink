@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from './testing/wird-fixtures.spec';
 import { Router } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 import { appConfig } from './app.config';
@@ -7,6 +8,7 @@ import { FRONTEND_GATEWAY } from './core/services/frontend-gateway';
 import { gatewayStub } from './testing/frontend-gateway.spec';
 
 describe('WirdLink navigation', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   async function waitForSheetClose(dialog: HTMLDialogElement): Promise<void> {
     for (let attempt = 0; attempt < 30 && dialog.open; attempt++) {
       await new Promise<void>((resolve) => setTimeout(resolve, 16));
@@ -15,20 +17,24 @@ describe('WirdLink navigation', () => {
   }
 
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
-    TestBed.configureTestingModule({ imports: [App], providers: [
-      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
-    ] });
+    localStorage.removeItem('wirdlink.parts.v1');
+    TestBed.configureTestingModule({
+      imports: [App],
+      providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() }],
+    });
   });
-  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
 
   it('offers the three main destinations', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelectorAll('nav a').length).toBe(3);
-    expect([...element.querySelectorAll('nav a')].map((link) => link.textContent?.trim()))
-      .toEqual(['Accueil', 'Mes parts', 'Créer']);
+    expect([...element.querySelectorAll('nav a')].map((link) => link.textContent?.trim())).toEqual([
+      'Accueil',
+      'Mes parts',
+      'Créer',
+    ]);
   });
 
   it('takes a part and completes it through the participant screens', async () => {
@@ -71,7 +77,7 @@ describe('WirdLink navigation', () => {
     expect(harness.routeNativeElement!.querySelector('[role="alert"]')?.textContent).toContain(
       'entre 1 et 400',
     );
-    expect(localStorage.getItem('wirdlink.demo.v1')).toBeNull();
+    expect(localStorage.getItem('wirdlink.parts.v1')).toBeNull();
   });
 
   it('filters recurrence and selects the whole remaining quantity', async () => {
@@ -80,7 +86,7 @@ describe('WirdLink navigation', () => {
       .routeNativeElement!.querySelector<HTMLButtonElement>('[aria-controls="filters"]')!
       .click();
     harness.detectChanges();
-    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('dialog')!;
+    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('#filters')!;
     expect(dialog.open).toBeTrue();
     harness
       .routeNativeElement!.querySelector<HTMLButtonElement>('button[value="Tous les jours"]')!
@@ -90,7 +96,7 @@ describe('WirdLink navigation', () => {
     expect(harness.routeNativeElement!.querySelector('article')?.textContent).toContain(
       'Salatoul Fatihi',
     );
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.bottom-sheet__close')!.click();
+    dialog.querySelector<HTMLButtonElement>('.bottom-sheet__close')!.click();
     harness.detectChanges();
     await waitForSheetClose(dialog);
     await harness.navigateByUrl('/wird/salat-nabi');
@@ -151,7 +157,7 @@ describe('WirdLink navigation', () => {
     clear.click();
     harness.detectChanges();
     expect(harness.routeNativeElement!.querySelectorAll('article').length).toBe(2);
-    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('dialog')!;
+    const dialog = harness.routeNativeElement!.querySelector<HTMLDialogElement>('#filters')!;
     dialog.click();
     harness.detectChanges();
     await waitForSheetClose(dialog);
