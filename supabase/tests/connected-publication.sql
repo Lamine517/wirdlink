@@ -84,6 +84,8 @@ do $$ declare draft jsonb; published uuid; request_id uuid:=gen_random_uuid(); b
  published:=public.publish_wird(request_id,draft);
  if published is null or public.read_wird(published)->>'end_date' is not null then raise exception 'Optional end date rejected'; end if;
  if public.publish_wird(request_id,draft||'{"title":"Trimmed publication","endDate":null}'::jsonb)<>published then raise exception 'Normalized retry failed'; end if;
+ begin perform public.publish_wird(gen_random_uuid(),draft||jsonb_build_object('startDate',(current_date-2)::text)); raise exception 'Old start date accepted'; exception when invalid_parameter_value then null; end;
+ if public.publish_wird(gen_random_uuid(),draft||jsonb_build_object('startDate',(current_date-1)::text)) is null then raise exception 'Timezone start date rejected'; end if;
  begin perform public.publish_wird(gen_random_uuid(),draft||jsonb_build_object('imagePath',current_setting('wirdlink.owner')||'/missing.png')); raise exception 'Missing media accepted'; exception when invalid_parameter_value then null; end;
  begin perform public.publish_wird(gen_random_uuid(),draft||jsonb_build_object('imagePath',current_setting('wirdlink.other')||'/foreign.png')); raise exception 'Foreign media accepted'; exception when invalid_parameter_value then null; end;
 end $$;

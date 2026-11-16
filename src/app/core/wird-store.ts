@@ -151,7 +151,7 @@ export class WirdStore {
   refresh(): Promise<void> {
     if (!this.remote || !this.repository) return Promise.resolve();
     if (this.refreshTask) return this.refreshTask;
-    this.loading.set(true);
+    if (this.wirds().length === 0) this.loading.set(true);
     this.error.set('');
     const repository = this.repository;
     const generation = this.generation;

@@ -10,6 +10,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const HISTORY_DEPTH = '__wirdlinkDepth';
+function tabGroup(url: string): string | null {
+  if (url === '/' || url === '/mes-parts' || url === '/creer') return 'main';
+  const wird = url.match(/^\/wird\/([^/]+)(?:\/participants)?$/);
+  return wird ? `wird:${wird[1]}` : null;
+}
 function readDepth(state: unknown): number {
   if (!state || typeof state !== 'object') return 0;
   const depth = (state as Record<string, unknown>)[HISTORY_DEPTH];
@@ -23,8 +28,10 @@ export class NavigationHistory {
   private depth = readDepth(this.location.getState());
   private pendingDepth = this.depth;
   private initialized = false;
+  private currentUrl = '';
   private readonly pending = signal(false);
   readonly goingBack = this.pending.asReadonly();
+  readonly travel = signal<'forward' | 'back' | 'none'>('none');
 
   constructor() {
     this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
@@ -35,7 +42,9 @@ export class NavigationHistory {
         else if (!this.initialized || extras?.replaceUrl || extras?.skipLocationChange)
           this.pendingDepth = this.depth;
         else this.pendingDepth = this.depth + 1;
+        this.travel.set(this.travelFor(event));
       } else if (event instanceof NavigationEnd) {
+        this.currentUrl = event.urlAfterRedirects.split(/[?#]/)[0];
         this.initialized = true;
         this.depth = this.pendingDepth;
         const state = this.location.getState();
@@ -49,6 +58,16 @@ export class NavigationHistory {
         this.pending.set(false);
       }
     });
+  }
+
+  private travelFor(event: NavigationStart): 'forward' | 'back' | 'none' {
+    const nextUrl = event.url.split(/[?#]/)[0];
+    const origin = tabGroup(this.currentUrl);
+    const destination = tabGroup(nextUrl);
+    if (!this.initialized || (origin !== null && origin === destination)) return 'none';
+    if (event.navigationTrigger === 'popstate' || this.pendingDepth < this.depth) return 'back';
+    if (this.pendingDepth === this.depth) return 'none';
+    return 'forward';
   }
 
   back(fallback = '/'): void {

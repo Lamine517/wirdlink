@@ -23,11 +23,13 @@ export const routes: Routes = [
   {
     path: 'mes-parts/:id/compteur',
     canActivate: [
-      async () => {
+      async (route) => {
         const store = inject(WirdStore);
         const auth = inject(AuthFlow);
         await auth.ready;
-        await store.refresh();
+        const id = route.paramMap.get('id') ?? '';
+        if (store.parts().some((part) => part.id === id)) void store.refresh();
+        else await store.refresh();
         return true;
       },
     ],

@@ -39,6 +39,7 @@ const ICON_FILES = {
   image: 'image-square',
   filter: 'funnel-simple',
   minus: 'minus',
+  clock: 'clock',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

@@ -9,11 +9,12 @@ import {
   SignInProvider,
 } from '../../../../core/services/frontend-gateway';
 import { NetworkStatus } from '../../../../core/services/network-status';
+import { Icon } from '../../../../shared/components/icon/icon';
 import { RequestState } from '../../../../shared/components/request-state/request-state';
 
 @Component({
   selector: 'app-sign-in-page',
-  imports: [Translate, ReactiveFormsModule, BackButton, RequestState],
+  imports: [Translate, ReactiveFormsModule, BackButton, RequestState, Icon],
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

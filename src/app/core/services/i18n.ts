@@ -5,6 +5,24 @@ export type Locale = 'fr' | 'en' | 'ar';
 const STORAGE_KEY = 'wirdlink.language.v1';
 /** French copy is the source key; content entered by users is never translated. */
 const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
+  'Une mise à jour est prête.': ['An update is ready.', 'يتوفر تحديث جديد.'],
+  'Cette version doit être actualisée.': [
+    'This version needs to be refreshed.',
+    'يجب تحديث هذا الإصدار.',
+  ],
+  'Actualisez pour utiliser la dernière version de WirdLink.': [
+    'Refresh to use the latest version of WirdLink.',
+    'حدّث الصفحة لاستخدام أحدث إصدار من WirdLink.',
+  ],
+  Actualiser: ['Refresh', 'تحديث'],
+  'Actualiser l’application ?': ['Refresh the app?', 'هل تريد تحديث التطبيق؟'],
+  'Le texte enregistré de votre brouillon est conservé. Après l’actualisation, vous devrez rattacher votre photo et votre audio.':
+    [
+      'Your saved draft text is kept. After refreshing, you will need to attach your photo and audio again.',
+      'سيبقى نص مسودتك المحفوظ. بعد التحديث، ستحتاج إلى إرفاق الصورة والصوت من جديد.',
+    ],
+  'Garder cette page': ['Stay on this page', 'البقاء في هذه الصفحة'],
+  'Actualiser quand même': ['Refresh anyway', 'التحديث على أي حال'],
   Publier: ['Publish', 'نشر'],
   'Continuer pour publier': ['Continue to publish', 'المتابعة للنشر'],
   '{count} lectures à partager': ['{count} readings to share', '{count} قراءة للمشاركة'],
@@ -144,10 +162,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'Send this link and code only to invited people.',
     'أرسل الرابط والرمز إلى الأشخاص المدعوين فقط.',
   ],
-  'Essayez un autre nom ou un autre wird.': [
-    'Try another name or wird.',
-    'جرّب اسمًا أو وردًا آخر.',
-  ],
+  'Essayez un autre nom ou un autre wird.': ['Try another name or wird.', 'جرّب اسمًا أو وردًا آخر.'],
   'Ex. 1 000': ['E.g. 1,000', 'مثال: ١٠٠٠'],
   'Ex. 10': ['E.g. 10', 'مثال: ١٠'],
   'Ex. : Dahira de votre quartier': ['E.g. your local dahira', 'مثال: دائرة الحي'],
@@ -213,6 +228,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Mon tasbih': ['My tasbih', 'تسبيحي'],
   'Mon wird': ['My wird', 'وردي'],
   'Nom du wird': ['Wird name', 'اسم الورد'],
+  'Suggestions de nom': ['Name suggestions', 'اقتراحات الاسم'],
   'Objectif atteint !': ['Goal reached!', 'تم بلوغ الهدف!'],
   'Options du compteur': ['Counter options', 'خيارات العداد'],
   'Organisation ou dahira': ['Organization or dahira', 'المؤسسة أو الدائرة'],
@@ -231,6 +247,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Rechercher mes parts': ['Search my shares', 'البحث في حصصي'],
   'Recommencer à zéro': ['Start over', 'البدء من الصفر'],
   'Remettre à zéro': ['Reset', 'تصفير العداد'],
+  'Remplacer le brouillon': ['Replace the draft', 'استبدال المسودة'],
   'Remplacer le brouillon ?': ['Replace draft?', 'استبدال المسودة؟'],
   Reprendre: ['Resume', 'استئناف'],
   'Rester connecté': ['Stay signed in', 'البقاء متصلًا'],
@@ -276,7 +293,12 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Supprimer votre compte ?': ['Delete your account?', 'حذف حسابك؟'],
   Terminé: ['Done', 'مكتمل'],
   Tout: ['All', 'الكل'],
-  'Téléphone · Bientôt disponible': ['Phone · Coming soon', 'الهاتف · قريبًا'],
+  'Bientôt disponible': ['Coming soon', 'قريبًا'],
+  'Connexion par téléphone': ['Sign in by phone', 'تسجيل الدخول بالهاتف'],
+  'Ce moyen n’est pas encore ouvert. Continuez avec Google ou un lien reçu par email.': [
+    'This option is not open yet. Continue with Google or a link sent by email.',
+    'هذه الوسيلة غير متاحة بعد. تابع عبر Google أو عبر رابط يصلك بالبريد.',
+  ],
   'Un wird, un nom…': ['A wird, a name…', 'ورد، اسم…'],
   'Utiliser ce modèle': ['Use this template', 'استخدام هذا النموذج'],
   'Utilisez le lien d’accès du responsable pour retrouver cette lecture.': [
@@ -414,6 +436,10 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'WirdLink is a free volunteer project.',
     'WirdLink مشروع تطوعي مجاني.',
   ],
+  'Partagez un wird, choisissez votre part et comptez vos lectures simplement avec WirdLink.': [
+    'Share a wird, choose your share and count your readings simply with WirdLink.',
+    'شارك وردًا، واختر حصتك، وعدّ قراءاتك ببساطة مع WirdLink.',
+  ],
   'Les parts sont réservées au moment de leur confirmation. Confirmez vos lectures terminées pour actualiser la progression collective.':
     [
       'Shares are reserved when confirmed. Confirm completed readings to update collective progress.',
@@ -493,6 +519,15 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'Sign-in was interrupted. Try again.',
     'انقطع تسجيل الدخول. حاول مجددًا.',
   ],
+  'La date de début est passée. Choisissez aujourd’hui ou une date à venir.': [
+    'The start date has passed. Choose today or a later date.',
+    'فات تاريخ البدء. اختر اليوم أو تاريخًا لاحقًا.',
+  ],
+  'Commencer aujourd’hui': ['Start today', 'البدء اليوم'],
+  'La participation sans compte n’est pas disponible pour le moment. Réessayez plus tard.': [
+    'Participation without an account is unavailable right now. Try again later.',
+    'المشاركة بدون حساب غير متاحة حاليًا. حاول لاحقًا.',
+  ],
   'La part n’a pas pu être réservée. Vérifiez votre connexion et réessayez.': [
     'Unable to reserve your share. Check your connection and try again.',
     'تعذر حجز حصتك. تحقق من اتصالك وحاول مجددًا.',
@@ -543,10 +578,11 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'Too many attempts. Wait before trying again.',
     'محاولات كثيرة. انتظر قبل المحاولة مجددًا.',
   ],
-  'Un brouillon existe déjà. Retrouvez-le dans Créer avant de dupliquer ce wird.': [
-    'A draft already exists. Open it in Create before duplicating this wird.',
-    'توجد مسودة بالفعل. افتحها من «إنشاء» قبل نسخ هذا الورد.',
-  ],
+  'Ce wird remplacera le texte, les consignes et le calendrier du brouillon actuel. Photo et voix devront être ajoutées à nouveau.':
+    [
+      'This wird will replace the text, instructions and schedule of the current draft. Photo and audio will need to be added again.',
+      'سيستبدل هذا الورد نص المسودة الحالية وتعليماتها وجدولها. ستحتاج إلى إضافة الصورة والصوت من جديد.',
+    ],
   'Votre compte a été supprimé.': ['Your account has been deleted.', 'تم حذف حسابك.'],
   'Votre part est réservée. Retrouvez-la dans Mes parts.': [
     'Your share is reserved. Find it in My shares.',
@@ -652,29 +688,65 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'لم يتبقَّ سوى {count}. أدخل عددًا أصغر.',
   ],
   'Mon propre wird': ['My own wird', 'وردي الخاص'],
-  "{count} lectures à prendre": ["{count} readings available", "{count} قراءة متاحة"],
-  "Saisissez les 4 chiffres du code d’accès.": ["Enter the 4-digit access code.", "أدخل رمز الدخول المكوّن من ٤ أرقام."],
-  "Ce code est différent du code de connexion à 6 chiffres.": ["This differs from the 6-digit sign-in code.", "يختلف هذا الرمز عن رمز تسجيل الدخول المكوّن من ٦ أرقام."],
-  "Réessayer dans {seconds} s": ["Try again in {seconds} s", "حاول مجددًا بعد {seconds} ث"],
-  "Ouvrir le wird": ["Open wird", "فتح الورد"],
-  "Objectif": ["Goal", "الهدف"],
-  "Au moins {minimum} : les parts déjà prises sont conservées.": ["At least {minimum}: existing reserved shares are preserved.", "لا يقل عن {minimum}: تبقى الحصص المحجوزة محفوظة."],
-  "Description (facultatif)": ["Description (optional)", "الوصف (اختياري)"],
-  "Consignes (facultatif)": ["Instructions (optional)", "التعليمات (اختياري)"],
-  "Le calendrier, les fichiers et l’accès restent identiques pour les participants.": ["The schedule, files and access stay the same for participants.", "تبقى المواعيد والملفات وطريقة الدخول كما هي للمشاركين."],
-  "Enregistrement…": ["Saving…", "جارٍ الحفظ…"],
-  "Modification indisponible": ["Editing unavailable", "التعديل غير متاح"],
-  "Seul l’auteur peut modifier ce wird.": ["Only the author can edit this wird.", "يمكن للناشر فقط تعديل هذا الورد."],
-  "Vues du wird": ["Wird views", "عرض الورد"],
-  "Choisissez une photo JPEG, PNG ou WebP de 10 Mo maximum.": ["Choose a JPEG, PNG or WebP photo up to 10 MB.", "اختر صورة JPEG أو PNG أو WebP بحجم لا يتجاوز ١٠ ميغابايت."],
-  "Choisissez un fichier audio de 10 Mo maximum.": ["Choose an audio file up to 10 MB.", "اختر ملفًا صوتيًا بحجم لا يتجاوز ١٠ ميغابايت."],
-  "QR code pour ouvrir WirdLink sur le téléphone": ["QR code to open WirdLink on your phone", "رمز QR لفتح WirdLink على الهاتف"],
-  "QR indisponible": ["QR unavailable", "رمز QR غير متاح"],
-  "Impossible de charger les participations.": ["Unable to load contributions.", "تعذر تحميل المشاركات."],
-  "Reconnectez-vous pour commencer une nouvelle part.": ["Reconnect to start a new share.", "أعد الاتصال لبدء حصة جديدة."],
-  "La sauvegarde locale est indisponible. Gardez cette page ouverte.": ["Local saving is unavailable. Keep this page open.", "الحفظ المحلي غير متاح. أبقِ هذه الصفحة مفتوحة."],
-  "Ajout indisponible. Utilisez le menu de votre navigateur.": ["Unable to add the app. Use your browser menu.", "تعذرت إضافة التطبيق. استخدم قائمة المتصفح."],
-  "Merci": ["Thank you", "شكرًا"],
+  '{count} lectures à prendre': ['{count} readings available', '{count} قراءة متاحة'],
+  'Saisissez les 4 chiffres du code d’accès.': [
+    'Enter the 4-digit access code.',
+    'أدخل رمز الدخول المكوّن من ٤ أرقام.',
+  ],
+  'Ce code est différent du code de connexion à 6 chiffres.': [
+    'This differs from the 6-digit sign-in code.',
+    'يختلف هذا الرمز عن رمز تسجيل الدخول المكوّن من ٦ أرقام.',
+  ],
+  'Réessayer dans {seconds} s': ['Try again in {seconds} s', 'حاول مجددًا بعد {seconds} ث'],
+  'Ouvrir le wird': ['Open wird', 'فتح الورد'],
+  Objectif: ['Goal', 'الهدف'],
+  'Au moins {minimum} : les parts déjà prises sont conservées.': [
+    'At least {minimum}: existing reserved shares are preserved.',
+    'لا يقل عن {minimum}: تبقى الحصص المحجوزة محفوظة.',
+  ],
+  'Description (facultatif)': ['Description (optional)', 'الوصف (اختياري)'],
+  'Consignes (facultatif)': ['Instructions (optional)', 'التعليمات (اختياري)'],
+  'Le calendrier, les fichiers et l’accès restent identiques pour les participants.': [
+    'The schedule, files and access stay the same for participants.',
+    'تبقى المواعيد والملفات وطريقة الدخول كما هي للمشاركين.',
+  ],
+  'Enregistrement…': ['Saving…', 'جارٍ الحفظ…'],
+  'Modification indisponible': ['Editing unavailable', 'التعديل غير متاح'],
+  'Seul l’auteur peut modifier ce wird.': [
+    'Only the author can edit this wird.',
+    'يمكن للناشر فقط تعديل هذا الورد.',
+  ],
+  'Vues du wird': ['Wird views', 'عرض الورد'],
+  'Choisissez une photo JPEG, PNG ou WebP de 10 Mo maximum.': [
+    'Choose a JPEG, PNG or WebP photo up to 10 MB.',
+    'اختر صورة JPEG أو PNG أو WebP بحجم لا يتجاوز ١٠ ميغابايت.',
+  ],
+  'Choisissez un audio MP3, M4A, WAV, OGG ou WebM de 10 Mo maximum.': [
+    'Choose an MP3, M4A, WAV, OGG or WebM audio file up to 10 MB.',
+    'اختر صوتًا MP3 أو M4A أو WAV أو OGG أو WebM بحجم لا يتجاوز ١٠ ميغابايت.',
+  ],
+  'QR code pour ouvrir WirdLink sur le téléphone': [
+    'QR code to open WirdLink on your phone',
+    'رمز QR لفتح WirdLink على الهاتف',
+  ],
+  'QR indisponible': ['QR unavailable', 'رمز QR غير متاح'],
+  'Impossible de charger les participations.': [
+    'Unable to load contributions.',
+    'تعذر تحميل المشاركات.',
+  ],
+  'Reconnectez-vous pour commencer une nouvelle part.': [
+    'Reconnect to start a new share.',
+    'أعد الاتصال لبدء حصة جديدة.',
+  ],
+  'La sauvegarde locale est indisponible. Gardez cette page ouverte.': [
+    'Local saving is unavailable. Keep this page open.',
+    'الحفظ المحلي غير متاح. أبقِ هذه الصفحة مفتوحة.',
+  ],
+  'Ajout indisponible. Utilisez le menu de votre navigateur.': [
+    'Unable to add the app. Use your browser menu.',
+    'تعذرت إضافة التطبيق. استخدم قائمة المتصفح.',
+  ],
+  Merci: ['Thank you', 'شكرًا'],
   'Aller au contenu': ['Skip to content', 'انتقل إلى المحتوى'],
   'Navigation principale': ['Main navigation', 'التنقل الرئيسي'],
   Accueil: ['Home', 'الرئيسية'],

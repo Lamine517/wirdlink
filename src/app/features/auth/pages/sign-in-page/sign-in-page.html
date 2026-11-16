@@ -58,29 +58,33 @@
   >
     @if (method() === 'email') {
       @if (emailSent()) {
-        <p role="status">
-          {{
-            'Consultez votre boîte mail et ouvrez le lien pour vous connecter. Pensez aussi aux courriers indésirables.'
-              | t
-          }}
-        </p>
-        <button type="button" class="button button--outline" (click)="emailSent.set(false)">
-          {{ 'Changer d’adresse' | t }}
-        </button>
+        <div class="auth-form" role="status">
+          <p>
+            {{
+              'Consultez votre boîte mail et ouvrez le lien pour vous connecter. Pensez aussi aux courriers indésirables.'
+                | t
+            }}
+          </p>
+          <button type="button" class="button button--outline" (click)="emailSent.set(false)">
+            {{ 'Changer d’adresse' | t }}
+          </button>
+        </div>
       } @else {
-        <form class="form-stack" (submit)="$event.preventDefault(); sendEmail()">
-          <label for="auth-email">{{ 'Votre email' | t }}</label>
-          <input
-            id="auth-email"
-            type="email"
-            autocomplete="email"
-            placeholder="vous@exemple.com"
-            [formControl]="emailAddress"
-            [attr.aria-invalid]="emailAddress.touched && emailAddress.invalid"
-          />
-          @if (emailAddress.touched && emailAddress.invalid) {
-            <p class="field-error">{{ 'Saisissez une adresse email valide.' | t }}</p>
-          }
+        <form class="auth-form" (submit)="$event.preventDefault(); sendEmail()">
+          <div class="field-group">
+            <label for="auth-email">{{ 'Votre email' | t }}</label>
+            <input
+              id="auth-email"
+              type="email"
+              autocomplete="email"
+              placeholder="vous@exemple.com"
+              [formControl]="emailAddress"
+              [attr.aria-invalid]="emailAddress.touched && emailAddress.invalid"
+            />
+            @if (emailAddress.touched && emailAddress.invalid) {
+              <p class="field-error">{{ 'Saisissez une adresse email valide.' | t }}</p>
+            }
+          </div>
           <button
             type="submit"
             class="button button--primary"
@@ -91,7 +95,19 @@
         </form>
       }
     } @else {
-      <p class="auth-hint">{{ 'Téléphone · Bientôt disponible' | t }}</p>
+      <section class="auth-soon">
+        <span class="auth-soon__icon"><app-icon name="phone" [size]="32" /></span>
+        <p class="auth-soon__badge">
+          <app-icon name="clock" [size]="18" />{{ 'Bientôt disponible' | t }}
+        </p>
+        <h2>{{ 'Connexion par téléphone' | t }}</h2>
+        <p>
+          {{
+            'Ce moyen n’est pas encore ouvert. Continuez avec Google ou un lien reçu par email.'
+              | t
+          }}
+        </p>
+      </section>
     }
   </div>
   <app-request-state

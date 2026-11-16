@@ -1,0 +1,19 @@
+@if (updates.available()) {
+  <section class="update-notice" role="status">
+    <app-icon name="sparkle" [size]="20" />
+    <div class="update-notice__copy">
+      <p><strong>{{ (updates.unrecoverable() ? 'Cette version doit être actualisée.' : 'Une mise à jour est prête.') | t }}</strong></p>
+      <p>{{ 'Actualisez pour utiliser la dernière version de WirdLink.' | t }}</p>
+    </div>
+    <button type="button" class="button button--outline button--compact" [disabled]="updates.reloading()" (click)="requestReload()">
+      {{ 'Actualiser' | t }}
+    </button>
+  </section>
+}
+<app-bottom-sheet #confirmation panelId="app-update-confirmation" title="Actualiser l’application ?">
+  <div class="update-confirmation">
+    <p>{{ 'Le texte enregistré de votre brouillon est conservé. Après l’actualisation, vous devrez rattacher votre photo et votre audio.' | t }}</p>
+    <button type="button" class="button button--outline" (click)="confirmation.close()">{{ 'Garder cette page' | t }}</button>
+    <button type="button" class="button button--primary" [disabled]="updates.reloading()" (click)="updates.reload()">{{ 'Actualiser quand même' | t }}</button>
+  </div>
+</app-bottom-sheet>

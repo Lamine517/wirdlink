@@ -1,0 +1,18 @@
+:host { display: block; }
+.update-notice {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-small);
+
+  &__copy { flex: 1 1 12rem; min-width: 0; }
+  p { margin: 0; overflow-wrap: anywhere; }
+  p + p { margin-top: var(--space-4); }
+  .button { flex: 0 0 auto; }
+}
+.update-confirmation { display: grid; gap: var(--space-12); }
+.update-confirmation p { margin: 0; }

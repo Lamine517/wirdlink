@@ -48,8 +48,12 @@ export class Appearance {
   }
 
   private apply(): void {
+    const theme = this.resolved();
     const root = document.documentElement;
-    root.dataset['theme'] = this.resolved();
-    root.style.colorScheme = this.resolved();
+    root.dataset['theme'] = theme;
+    root.style.colorScheme = theme;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#101f25' : '#026780');
   }
 }

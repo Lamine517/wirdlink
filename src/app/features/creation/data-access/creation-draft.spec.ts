@@ -83,6 +83,12 @@ describe('Creation draft', () => {
     expect(
       store.setMedia('audio', new File(['audio'], 'voice.webm', { type: 'audio/webm' })),
     ).toBeTrue();
+    expect(
+      store.setMedia('audio', new File(['voice'], 'voice.m4a', { type: 'audio/x-m4a' })),
+    ).toBeTrue();
+    expect(
+      store.setMedia('audio', new File(['aac'], 'voice.aac', { type: 'audio/aac' })),
+    ).toBeFalse();
     store.chooseTemplate(WIRD_TEMPLATES[1]);
     expect(store.image()).toBeNull();
     expect(store.audio()).toBeNull();

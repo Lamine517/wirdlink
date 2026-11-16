@@ -55,8 +55,8 @@ Cet exemple ne définit aucune règle de réservation ou de comptage collectif.
 
 Interface en français selon les maquettes consultées ; code en anglais et documentation en français.
 La v2 ne prévoit que le français ; préserver les passages arabes présents dans les contenus, sans ajouter de parcours multilingue.
-Concevoir d'abord pour mobile ; sur ordinateur, afficher la même application dans un cadre de téléphone centré et entièrement contenu dans la fenêtre, avec défilement interne. Le panneau de partage reste à intégrer dans un prochain lot. Vérifier zoom et textes longs.
-Exigences v2 : hiérarchie compacte 24/20/16/14 px (en rem), décision 0003, zones tactiles de 48 px minimum, un geste principal par écran, Écouter en premier sur chaque carte.
+Concevoir d'abord pour mobile ; sur ordinateur, afficher la même application dans un cadre de téléphone centré et entièrement contenu dans la fenêtre, avec défilement interne. Les panneaux desktop et les actions de partage mobile sont intégrés. Vérifier zoom et textes longs.
+Exigences v2 : hiérarchie compacte 24/20/16/14 px (en rem), décision 0003, zones tactiles de 48 px minimum, un geste principal par écran, Écouter uniquement en présence d’un fichier audio réellement joint, avec lecture et pause.
 Choix utilisateur : Nunito Sans, graisses 600/800, hébergée localement ; icônes Phosphor. La remise au développement prévoyait Nunito SemiBold/ExtraBold, boutons principaux de 68 à 100 px, tokens et safe areas ; consulter `docs/sources/remise-au-developpement.md` (§3–5).
 Appliquer `docs/decisions/0003-interface-compacte-formulaires.md` : boutons principaux 56 px, cibles secondaires 48 px minimum ; tailles en rem et zoom conservés.
 Employer des boutons et liens sémantiques, des labels associés aux champs et un focus visible.
@@ -162,3 +162,15 @@ Les erreurs de quantité sont immédiates : bordure rouge, message textuel lié 
 et `aria-invalid`, puis retour à l’état normal lorsque la saisie est corrigée.
 
 Le formulaire guide la saisie avec labels, exemples et aides. Son action principale reste visible mais désactivée lorsque les champs nécessaires sont invalides ; une indication explique quoi renseigner pour l’activer. Les mêmes règles sont vérifiées à la soumission clavier.
+
+## Choix uniques
+
+Utiliser le motif segmenté de l’état En cours/Terminés pour les choix mutuellement exclusifs :
+fond commun atténué, option active en primaire et texte inverse. Les groupes des formulaires
+et filtres utilisent `.segmented-choice`. Conserver les radios natives pour les préférences
+et les formulaires, et un focus clavier visible. Les raccourcis de quantité sont des actions
+de saisie, pas une liste exhaustive de valeurs exclusives.
+
+Exception pour la fréquence : les quatre choix sont des boutons distincts en grille
+2 × 2, avec bordure primaire et sélection pleine en primaire. Ne pas les réunir
+dans un fond segmenté sur deux lignes.

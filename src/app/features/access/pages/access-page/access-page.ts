@@ -13,6 +13,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WirdAccess } from '../../data-access/wird-access';
 import {
+  GuestAccessError,
   InvalidCodeError,
   RateLimitError,
   ServiceUnavailableError,
@@ -77,6 +78,10 @@ export class AccessPage {
       } else if (error instanceof RateLimitError) {
         this.retryAt.set(Date.now() + Math.max(1, error.retryAfterSeconds) * 1000);
         this.error.set('Trop de tentatives. Patientez avant de réessayer.');
+      } else if (error instanceof GuestAccessError) {
+        this.error.set(
+          'La participation sans compte n’est pas disponible pour le moment. Réessayez plus tard.',
+        );
       } else if (error instanceof ServiceUnavailableError) {
         this.error.set('Impossible d’ouvrir ce wird. Réessayez dans un instant.');
       } else {

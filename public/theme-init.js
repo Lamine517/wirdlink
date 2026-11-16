@@ -15,4 +15,6 @@
       : preference;
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.setAttribute('content', theme === 'dark' ? '#101f25' : '#026780');
 })();

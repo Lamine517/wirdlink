@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
   styles: `
     :host {
       display: block;
-      margin: 16px 0;
+      margin: var(--space-8) 0 0;
     }
     .wird-tabs {
       display: flex;

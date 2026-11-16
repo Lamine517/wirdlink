@@ -109,3 +109,52 @@ Le cercle conserve nom et nombre « lus sur objectif ». Pourcentage et phrase d
 retirés ; parts en cours masquées si nulles ; reste indiqué par « à prendre ».
 Cette clarification visuelle reste à évaluer auprès de vrais utilisateurs du public cible.
 22 tests réussis, build réussi, 89,60 % des lignes couvertes, parcours Chrome vérifié.
+
+## Création, audio et vue web
+
+Création en trois étapes : contenu et médias, calendrier/visibilité, aperçu.
+Brouillon texte conservé localement, suppression avec confirmation ; médias limités à la session.
+Publication et authentification restent non intégrées. Écouter utilise uniquement un fichier audio
+réel, avec lecture/pause ; la synthèse vocale reste réservée à l’aide.
+Mes parts regroupe par wird, conserve la validation individuelle et propose une recherche.
+La vue desktop intègre logo, QR local, partage, liens d’information et animation d’entrée
+respectant la réduction des mouvements. Les affiches s’affichent entières.
+
+Écran Merci harmonisé : cercle avec titre et lectures terminées, distinction entre toutes
+les parts prises et objectif effectivement terminé.
+
+## Lot frontend et revue du 16 novembre 2026
+
+Les vues de connexion/code, accès privé, participants, confirmation/partage et réglages
+sont implémentées avec états d’erreur/attente/hors ligne. Une passerelle explicitement
+indisponible garde les actions serveur fermées jusqu’au raccordement ; les succès sont
+vérifiés avec des réponses substituées uniquement dans les tests.
+
+Description et consignes sont désormais deux champs facultatifs distincts ; les lectures
+d’ouverture ne changent pas l’objectif collectif. L’engrenage seul remplace Aide sur l’accueil ;
+les réglages regroupent Aide, informations, règles, rappels et écran d’accueil. L’onglet actif
+ajoute un fond léger derrière l’icône. Voir la [validation](validation-frontend.md), la
+[revue globale](revue-frontend.md) et la décision 0005.
+
+68 tests réussis, lignes 89,80 %, branches 76,40 %. Build et contrôle Chrome reproductible
+réussis (320/390/1440, texte 200 %, vrai audio, images, clavier/focus et mouvement réduit).
+SonarQube distant et recette sur appareils réels non effectués. Les limites de dépendances
+et de mise en service sont explicitées dans la revue. Supabase reste en attente.
+
+## Tasbih, apparence et continuité des vues
+
+Le tasbih est accessible depuis Compter/Reprendre sur chaque part en cours. Progression
+personnelle conservée localement, annulation, remise à zéro confirmée, signal visuel à l’objectif,
+vibration de fin et option par appui si le navigateur la propose. J’ai fini reste distinct des
+appuis et exige une confirmation en ligne. Aucun compteur collectif ne change pendant le comptage.
+
+Le titre reste le nom du wird sur ses deux vues. Le partage est une icône dans l’en-tête commun,
+à droite du retour. Apparence automatique/claire/sombre avec choix mémorisé ; changements de
+pages par fondu de 180 ms respectant le mouvement réduit. Voir les décisions 0007 et 0008.
+
+Derniers contrôles : 87 tests réussis, lignes 90,81 %, branches 77,91 %, build sans avertissement.
+Chrome : tasbih et reprise, plafond, annulation, demande de vibration de fin unique, absence
+d’incrément collectif avant confirmation, mode hors ligne ; thèmes et contraste principal,
+titre stable et fondu ; 320/390/1440 et texte 200 %, aucune exception JavaScript.
+La vibration réelle sur matériel et la recette sur appareils physiques ne sont pas vérifiées.
+Supabase et les services externes restent en attente.

@@ -1,3 +1,4 @@
+import { AppUpdateNotice } from './shared/components/app-update-notice/app-update-notice';
 import { I18nService } from './core/services/i18n';
 import { Translate } from './shared/pipes/translate';
 import { Appearance } from './core/services/appearance';
@@ -25,7 +26,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [Translate, RouterOutlet, RouterLink, Icon, DesktopIntro, DesktopShare],
+  imports: [AppUpdateNotice, Translate, RouterOutlet, RouterLink, Icon, DesktopIntro, DesktopShare],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,11 +80,20 @@ export class App {
       content?.focus({ preventScroll: true });
       this.pageAnimation?.cancel();
       const page = this.pageView()?.nativeElement;
-      if (animate && page && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        this.pageAnimation = page.animate([{ opacity: 0.55 }, { opacity: 1 }], {
-          duration: 180,
-          easing: 'ease-out',
-        });
+      const travel = this.navigation.travel();
+      if (
+        animate &&
+        page &&
+        travel !== 'none' &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        this.pageAnimation = page.animate(
+          [
+            { opacity: 0.72, transform: `translateX(${travel === 'back' ? '-18%' : '18%'})` },
+            { opacity: 1, transform: 'translateX(0)' },
+          ],
+          { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' },
+        );
       }
     });
   }

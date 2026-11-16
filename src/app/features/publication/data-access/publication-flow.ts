@@ -136,7 +136,10 @@ export class PublicationFlow {
       )
         throw new Error('Invalid publication response');
       const published = await this.wirds.ensure(receipt.id);
-      if (this.wirds.remote && !published) throw new Error('Publication read unavailable');
+      if (this.wirds.remote && !published) {
+        const retry = await this.wirds.ensure(receipt.id);
+        if (!retry) throw new Error('Publication read unavailable');
+      }
       if (this.auth.session()?.id !== ownerId) throw new Error('Publication identity changed');
       this.receiptOwner.set(ownerId);
       this.confirmedReceipt.set(receipt);

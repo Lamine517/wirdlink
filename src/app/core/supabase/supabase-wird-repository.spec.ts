@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
+  GuestAccessError,
   ServiceUnavailableError,
   InvalidCodeError,
   RateLimitError,
@@ -135,6 +136,55 @@ describe('SupabaseWirdRepository', () => {
     expect(upload.calls.argsFor(0)[2]).toEqual({ upsert: false, contentType: 'image/png' });
   });
 
+  it('publishes a stored permanent session when Auth validation is temporarily unavailable', async () => {
+    getUser.and.resolveTo({ data: { user: null }, error: { message: 'temporarily unavailable' } });
+    getSession.and.resolveTo({
+      data: { session: { user: { id: 'owner', is_anonymous: false } } },
+      error: null,
+    });
+    rpc.and.callFake((name: string) =>
+      Promise.resolve({
+        data:
+          name === 'publish_wird'
+            ? 'wird-id'
+            : { id: 'wird-id', title: 'Salat', visibility: 'public' },
+        error: null,
+      }),
+    );
+    expect((await repository.publish(request())).id).toBe('wird-id');
+  });
+
+  it('does not publish an anonymous session when Auth validation fails', async () => {
+    getUser.and.resolveTo({ data: { user: null }, error: { message: 'temporarily unavailable' } });
+    getSession.and.resolveTo({
+      data: { session: { user: { id: 'guest', is_anonymous: true } } },
+      error: null,
+    });
+    await expectAsync(repository.publish(request())).toBeRejectedWithError(ServiceUnavailableError);
+    expect(upload).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it('uploads a phone voice note as MP4 audio', async () => {
+    rpc.and.callFake((name: string) =>
+      Promise.resolve({
+        data:
+          name === 'publish_wird'
+            ? 'wird-id'
+            : { id: 'wird-id', title: 'Salat', visibility: 'public' },
+        error: null,
+      }),
+    );
+    const publication = request();
+    publication.audio = {
+      file: new File(['voice'], 'voice.m4a', { type: 'audio/x-m4a' }),
+      url: 'blob:test',
+    };
+    await repository.publish(publication);
+    expect(upload.calls.argsFor(0)[0]).toMatch(/audio-[a-f0-9]{64}\.m4a$/);
+    expect(upload.calls.argsFor(0)[2]).toEqual({ upsert: false, contentType: 'audio/mp4' });
+  });
+
   it('preserves the request when publication fails', async () => {
     rpc.and.resolveTo({ data: null, error: { code: '500' } });
     const publication = request();
@@ -198,6 +248,13 @@ describe('SupabaseWirdRepository', () => {
     signInAnonymously.and.resolveTo({ data: { session: null }, error: { message: 'disabled' } });
     await expectAsync(repository.reserve('wird-id', 10, '', 'request')).toBeRejectedWithError(
       ServiceUnavailableError,
+    );
+    signInAnonymously.and.resolveTo({
+      data: { session: null },
+      error: { code: 'anonymous_provider_disabled', message: 'Anonymous sign-ins are disabled' },
+    });
+    await expectAsync(repository.reserve('wird-id', 1, '', 'request')).toBeRejectedWithError(
+      GuestAccessError,
     );
   });
 

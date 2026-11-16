@@ -44,10 +44,15 @@ export const readableWird: CanActivateFn = async (route) => {
   const router = inject(Router);
   const id = route.paramMap.get('id') ?? '';
   if (store.remote) {
-    try {
-      await store.ensure(id);
-    } catch {
-      return router.createUrlTree(['/'], { queryParams: { retry: 'true' } });
+    const known = store.wirds().some((wird) => wird.id === id);
+    if (known) {
+      void store.ensure(id);
+    } else {
+      try {
+        await store.ensure(id);
+      } catch {
+        return router.createUrlTree(['/'], { queryParams: { retry: 'true' } });
+      }
     }
   }
   const wird = store.wirds().find((item) => item.id === id);

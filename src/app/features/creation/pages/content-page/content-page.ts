@@ -3,7 +3,15 @@ import { signal } from '@angular/core';
 import { WIRD_REPOSITORY } from '../../../../core/services/wird-repository';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 import { WIRD_TEMPLATES } from '../../data-access/creation-draft';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -15,10 +23,41 @@ import {
 import { CreationSteps } from '../../components/creation-steps/creation-steps';
 import { DraftMedia } from '../../components/draft-media/draft-media';
 
+export interface TitleSuggestion {
+  title: string;
+  target: number | null;
+}
+
+const TEMPLATE_TARGETS = new Set<number>(
+  WIRD_TEMPLATES.flatMap((item) => (item.target === null ? [] : [item.target])),
+);
+
+export function normalizeTitle(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLocaleLowerCase('fr');
+}
+
+export function filterTitleSuggestions(
+  suggestions: readonly TitleSuggestion[],
+  query: string,
+  limit = 6,
+): TitleSuggestion[] {
+  const needle = normalizeTitle(query.trim());
+  return suggestions
+    .filter((item) => {
+      const title = normalizeTitle(item.title);
+      return title.includes(needle) && title !== needle;
+    })
+    .slice(0, limit);
+}
+
 @Component({
   selector: 'app-content-page',
-  imports: [Translate, ReactiveFormsModule, CreationSteps, DraftMedia],
+  imports: [Translate, ReactiveFormsModule, CreationSteps, DraftMedia, DecimalPipe],
   templateUrl: './content-page.html',
+  styleUrl: './content-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentPage {
@@ -64,9 +103,28 @@ export class ContentPage {
       (!Number.isSafeInteger(value) || value < 1 || value > MAX_WIRD_TARGET)
     );
   });
-  protected readonly titleSuggestions = signal<string[]>(
-    WIRD_TEMPLATES.filter((item) => item.id !== 'custom').map((item) => item.title),
+  private readonly previousTitles = signal<string[]>([]);
+  protected readonly suggestionsOpen = signal(false);
+  protected readonly activeIndex = signal(-1);
+  protected readonly catalog = computed<TitleSuggestion[]>(() => {
+    const templates = WIRD_TEMPLATES.filter((item) => item.id !== 'custom').map((item) => ({
+      title: item.title,
+      target: item.target,
+    }));
+    const known = new Set(templates.map((item) => normalizeTitle(item.title)));
+    const previous = this.previousTitles()
+      .filter((title) => title.trim() && !known.has(normalizeTitle(title)))
+      .map((title) => ({ title, target: null }));
+    return [...templates, ...previous];
+  });
+  protected readonly visibleSuggestions = computed(() =>
+    filterTitleSuggestions(this.catalog(), this.value().title ?? ''),
   );
+  protected readonly activeSuggestionId = computed(() => {
+    const index = this.activeIndex();
+    return index >= 0 ? `wird-title-option-${index}` : null;
+  });
+  private readonly titleField = viewChild<ElementRef<HTMLElement>>('titleField');
   private readonly repository = inject(WIRD_REPOSITORY, { optional: true });
   private readonly auth = inject(AuthFlow);
   constructor() {
@@ -75,8 +133,7 @@ export class ContentPage {
       if (!id || !this.repository) return;
       try {
         const titles = await this.repository.titles();
-        if (id === this.auth.session()?.id)
-          this.titleSuggestions.update((items) => [...new Set([...titles, ...items])]);
+        if (id === this.auth.session()?.id) this.previousTitles.set([...new Set(titles)]);
       } catch {
         /* Suggestions never block writing a title. */
       }
@@ -85,6 +142,50 @@ export class ContentPage {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.store.updateContent(this.form.getRawValue()));
   }
+  protected openSuggestions(): void {
+    this.suggestionsOpen.set(true);
+    this.activeIndex.set(-1);
+    queueMicrotask(() =>
+      this.titleField()?.nativeElement.scrollIntoView({ block: 'nearest', inline: 'nearest' }),
+    );
+  }
+
+  protected closeSuggestions(): void {
+    this.suggestionsOpen.set(false);
+    this.activeIndex.set(-1);
+  }
+
+  protected onTitleInput(): void {
+    this.suggestionsOpen.set(true);
+    this.activeIndex.set(-1);
+  }
+
+  protected onTitleKeydown(event: KeyboardEvent): void {
+    const items = this.visibleSuggestions();
+    if (!this.suggestionsOpen() || items.length === 0) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeIndex.update((index) => (index + 1) % items.length);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeIndex.update((index) => (index <= 0 ? items.length - 1 : index - 1));
+    } else if (event.key === 'Escape') {
+      this.closeSuggestions();
+    } else if (event.key === 'Enter' && this.activeIndex() >= 0) {
+      event.preventDefault();
+      this.selectSuggestion(items[this.activeIndex()]);
+    }
+  }
+
+  protected selectSuggestion(item: TitleSuggestion): void {
+    this.form.controls.title.setValue(item.title);
+    const current = this.form.controls.target.value;
+    if (item.target !== null && (current === null || TEMPLATE_TARGETS.has(current))) {
+      this.form.controls.target.setValue(item.target);
+    }
+    this.closeSuggestions();
+  }
+
   protected continue(): void {
     if (this.canContinue()) void this.router.navigate(['/creer/calendrier']);
   }

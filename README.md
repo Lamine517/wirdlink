@@ -38,8 +38,9 @@ et conserve les captures dans le dossier temporaire du système.
 
 Interface en français, anglais et arabe, Nunito Sans locale et icônes Phosphor.
 Le schéma Supabase et ses tests transactionnels figurent dans `supabase/`.
-Pour participer sans compte, activer Anonymous Sign-Ins dans Supabase Auth.
-Une session Google ou email existante suffit pour publier et participer.
+Pour participer sans compte, Anonymous Sign-Ins doit être activé dans Supabase Auth
+du projet hébergé. Tant que ce réglage est désactivé, la réservation sans session
+permanente échoue. Une session Google ou email existante suffit pour publier et participer.
 
 Déploiement Vercel : `vercel.json` configure Angular, `npm ci`, `npm run build`
 et le dossier `dist/wirdlink/browser`, avec retour SPA pour les liens directs.

@@ -59,6 +59,12 @@ export class ServiceUnavailableError extends Error {
     this.name = 'ServiceUnavailableError';
   }
 }
+export class GuestAccessError extends Error {
+  constructor() {
+    super('Guest participation unavailable');
+    this.name = 'GuestAccessError';
+  }
+}
 export class InvalidCodeError extends Error {
   constructor() {
     super('Invalid or expired code');

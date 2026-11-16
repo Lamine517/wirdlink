@@ -85,6 +85,7 @@ export class SupabaseAuthGateway implements FrontendGateway {
         const { data } = auth.onAuthStateChange((event, session) => {
           // Initial storage is validated by restoreSession. Never await SDK calls here.
           if (!active || event === 'INITIAL_SESSION') return;
+          if (event === 'TOKEN_REFRESHED' && !session) return;
           const current = ++revision;
           if (!session) {
             listener(null);

@@ -4,26 +4,59 @@
   <p class="feedback" role="status">{{ store.warning() | t }}</p>
 }
 <form class="form-stack" [formGroup]="form" (ngSubmit)="continue()">
-  <div class="field-group">
+  <div class="field-group" #titleField>
     <label for="draft-title">{{ 'Nom du wird' | t }}</label
     ><input
       id="draft-title"
-      list="wird-title-suggestions"
+      role="combobox"
+      aria-autocomplete="list"
       autocomplete="off"
       formControlName="title"
       [placeholder]="'Ex. Salat ala Nabi' | t"
       maxlength="100"
       required
+      [attr.aria-expanded]="suggestionsOpen() && visibleSuggestions().length > 0"
+      aria-controls="wird-title-list"
+      [attr.aria-activedescendant]="activeSuggestionId()"
       [attr.aria-describedby]="
         form.controls.title.dirty && !form.controls.title.value.trim() ? 'title-error' : null
       "
       [attr.aria-invalid]="form.controls.title.dirty && !form.controls.title.value.trim()"
+      (focus)="openSuggestions()"
+      (input)="onTitleInput()"
+      (keydown)="onTitleKeydown($event)"
+      (blur)="closeSuggestions()"
     />
-    <datalist id="wird-title-suggestions">
-      @for (title of titleSuggestions(); track title) {
-        <option [value]="title"></option>
-      }
-    </datalist>
+    @if (suggestionsOpen() && visibleSuggestions().length > 0) {
+      <ul
+        id="wird-title-list"
+        class="title-suggestions"
+        role="listbox"
+        [attr.aria-label]="'Suggestions de nom' | t"
+      >
+        @for (item of visibleSuggestions(); track item.title; let index = $index) {
+          <li>
+            <button
+              id="wird-title-option-{{ index }}"
+              type="button"
+              role="option"
+              class="title-suggestions__option"
+              [class.title-suggestions__option--active]="index === activeIndex()"
+              [attr.aria-selected]="index === activeIndex()"
+              (pointerdown)="$event.preventDefault()"
+              (click)="selectSuggestion(item)"
+            >
+              <span>{{ item.title }}</span>
+              @if (item.target) {
+                <span class="text-secondary"
+                  >{{ item.target | number }} {{ 'lectures' | t }}</span
+                >
+              }
+            </button>
+          </li>
+        }
+      </ul>
+    }
     @if (form.controls.title.dirty && !form.controls.title.value.trim()) {
       <p id="title-error" class="field-error" role="alert">
         {{ 'Donnez un nom à votre wird.' | t }}

@@ -32,6 +32,7 @@ describe('Responsible sign-in screens', () => {
     harness.routeNativeElement!.querySelector<HTMLButtonElement>('#auth-phone-tab')!.click();
     harness.detectChanges();
     expect(harness.routeNativeElement!.textContent).toContain('Bientôt disponible');
+    expect(harness.routeNativeElement!.querySelector('.auth-soon app-icon')).not.toBeNull();
     expect(harness.routeNativeElement!.querySelector('input[type="email"]')).toBeNull();
     expect(harness.routeNativeElement!.textContent).not.toContain('Apple');
     harness.routeNativeElement!.querySelector<HTMLButtonElement>('.auth-google')!.click();

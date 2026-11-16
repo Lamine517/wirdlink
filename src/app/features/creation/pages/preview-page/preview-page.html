@@ -40,19 +40,21 @@
   [loadingLabel]="'Publication en cours…' | t"
   [error]="error()"
 />
+@if (startPassed()) {
+  <p class="feedback feedback--error" role="alert">
+    {{ 'La date de début est passée. Choisissez aujourd’hui ou une date à venir.' | t }}
+  </p>
+  <button type="button" class="button button--outline" (click)="startToday()">
+    {{ 'Commencer aujourd’hui' | t }}
+  </button>
+}
 @if (auth.restoring()) {
   <app-request-state [loading]="true" [loadingLabel]="'Vérification de votre connexion…' | t" />
 }
 <button
   class="button button--primary preview-publish"
   type="button"
-  [disabled]="
-    !store.contentValid() ||
-    !store.scheduleValid() ||
-    publication.busy() ||
-    !network.online() ||
-    auth.restoring()
-  "
+  [disabled]="!canSubmit()"
   aria-describedby="publish-hint"
   (click)="publish()"
 >

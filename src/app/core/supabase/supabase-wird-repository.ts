@@ -2,10 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LocalMedia } from '../../features/creation/data-access/creation-draft';
 import {
+  GuestAccessError,
   InvalidCodeError,
   RateLimitError,
   ServiceUnavailableError,
 } from '../services/frontend-gateway';
+import { publicationContentType, publicationExtension } from '../media-file';
 import type { PublicationReceipt, PublicationRequest } from '../services/frontend-gateway';
 import type { PartMutation, WirdRepository, WirdChanges } from '../services/wird-repository';
 import type { Part, Wird } from '../wird-store';
@@ -67,7 +69,12 @@ export class SupabaseWirdRepository implements WirdRepository {
     try {
       return await operation(await this.client());
     } catch (error) {
-      if (error instanceof InvalidCodeError || error instanceof RateLimitError) throw error;
+      if (
+        error instanceof InvalidCodeError ||
+        error instanceof RateLimitError ||
+        error instanceof GuestAccessError
+      )
+        throw error;
       throw new ServiceUnavailableError();
     }
   }
@@ -183,8 +190,10 @@ export class SupabaseWirdRepository implements WirdRepository {
     void this.client()
       .then((client) => {
         if (!active) return;
-        const { data } = client.auth.onAuthStateChange((_event, session) => {
-          if (active) listener(session?.user.id ?? null);
+        const { data } = client.auth.onAuthStateChange((event, session) => {
+          // A token refresh can briefly report no session. That is not a sign-out.
+          if (active && !(event === 'TOKEN_REFRESHED' && !session))
+            listener(session?.user.id ?? null);
         });
         stop = () => data.subscription.unsubscribe();
       })
@@ -233,6 +242,7 @@ export class SupabaseWirdRepository implements WirdRepository {
     if (error) throw new ServiceUnavailableError();
     if (data.session) return data.session.user.id;
     const result = await client.auth.signInAnonymously();
+    if (result.error?.code === 'anonymous_provider_disabled') throw new GuestAccessError();
     if (result.error || !result.data.session) throw new ServiceUnavailableError();
     return result.data.session.user.id;
   }
@@ -291,19 +301,9 @@ export class SupabaseWirdRepository implements WirdRepository {
     requestId: string,
   ): Promise<string | null> {
     if (!media) return null;
-    const extensions: Record<string, string> =
-      kind === 'image'
-        ? { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
-        : {
-            'audio/mpeg': 'mp3',
-            'audio/mp4': 'm4a',
-            'audio/wav': 'wav',
-            'audio/x-wav': 'wav',
-            'audio/ogg': 'ogg',
-            'audio/webm': 'webm',
-          };
-    const extension = extensions[media.file.type];
-    if (!extension || media.file.size === 0 || media.file.size > 10 * 1024 * 1024)
+    const contentType = publicationContentType(kind, media.file);
+    const extension = contentType ? publicationExtension(contentType) : null;
+    if (!contentType || !extension || media.file.size === 0 || media.file.size > 10 * 1024 * 1024)
       throw new ServiceUnavailableError();
     const digest = await crypto.subtle.digest('SHA-256', await media.file.arrayBuffer());
     const hash = Array.from(new Uint8Array(digest), (byte) =>
@@ -312,27 +312,25 @@ export class SupabaseWirdRepository implements WirdRepository {
     const path = `${userId}/${requestId}/${kind}-${hash}.${extension}`;
     const { error } = await client.storage
       .from('wird-media')
-      .upload(path, media.file, { upsert: false, contentType: media.file.type });
+      .upload(path, media.file, { upsert: false, contentType });
     if (error && String(error.statusCode) !== '409') throw new ServiceUnavailableError();
     return path;
   }
   publish(request: PublicationRequest): Promise<PublicationReceipt> {
     return this.run(async (client) => {
-      const { data, error } = await client.auth.getUser();
-      if (error || !data.user || data.user.is_anonymous !== false)
-        throw new ServiceUnavailableError();
+      const user = await this.responsibleUser(client);
       const imagePath = await this.upload(
         client,
         request.image,
         'image',
-        data.user.id,
+        user.id,
         request.requestId,
       );
       const audioPath = await this.upload(
         client,
         request.audio,
         'audio',
-        data.user.id,
+        user.id,
         request.requestId,
       );
       const draft = request.draft;
@@ -356,6 +354,18 @@ export class SupabaseWirdRepository implements WirdRepository {
       if (!receipt) throw new ServiceUnavailableError();
       return receipt;
     });
+  }
+  private async responsibleUser(client: SupabaseClient): Promise<{ id: string }> {
+    const verified = await client.auth.getUser();
+    if (!verified.error && verified.data.user) {
+      if (verified.data.user.is_anonymous !== false) throw new ServiceUnavailableError();
+      return verified.data.user;
+    }
+    // A transient Auth check must not block a permanent session. The database still enforces it.
+    const stored = await client.auth.getSession();
+    const user = stored.data.session?.user;
+    if (stored.error || !user || user.is_anonymous !== false) throw new ServiceUnavailableError();
+    return user;
   }
   private async receipt(client: SupabaseClient, id: string): Promise<PublicationReceipt | null> {
     const { data, error } = await client.rpc('publication_receipt', { p_wird_id: id });

@@ -92,7 +92,7 @@ import { Icon } from '../../../../shared/components/icon/icon';
     }
     h1 {
       text-align: center;
-      margin: 12px 0 16px;
+      margin: var(--space-8) 0 var(--space-20);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

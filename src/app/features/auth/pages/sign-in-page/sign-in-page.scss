@@ -4,11 +4,10 @@
   display: block;
 }
 .auth-hint {
-  margin: 0;
+  margin: 0 0 var(--space-20);
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);
 }
-.auth-form,
 .auth-actions {
   @include mixins.stack(var(--space-12));
   margin: var(--space-24) 0;
@@ -50,13 +49,65 @@
 
 .auth-google {
   width: 100%;
-  margin: var(--space-24) 0;
+  margin: 0 0 var(--space-20);
 }
 .auth-methods {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin: 0 0 var(--space-16);
 }
-.auth-coming-soon {
+.auth-form {
+  @include mixins.stack(var(--space-16));
+  margin: 0;
+
+  p {
+    margin: 0;
+  }
+}
+.auth-soon {
+  @include mixins.stack(var(--space-8));
+  align-items: center;
+  margin-top: var(--space-8);
+  padding: var(--space-24) var(--space-16);
   text-align: center;
-  margin-top: var(--space-12);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-card);
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: var(--font-size-card-title);
+  }
+
+  > p:last-child {
+    max-width: 28rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--space-8);
+    border-radius: 50%;
+    background: var(--color-bg-muted);
+    color: var(--color-primary);
+  }
+
+  &__badge {
+    @include mixins.flex-row(var(--space-8), center);
+    margin: 0;
+    padding: var(--space-4) var(--space-12);
+    border-radius: var(--radius-large);
+    background: var(--color-bg-muted);
+    color: var(--color-primary);
+    font-size: var(--font-size-small);
+    font-weight: 800;
+  }
 }

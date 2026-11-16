@@ -36,7 +36,7 @@
 />
 <app-request-state
   [skeleton]="true"
-  [loading]="store.loading()"
+  [loading]="store.loading() && store.wirds().length === 0"
   [error]="store.error()"
   [retryLabel]="'Réessayer' | t"
   (retry)="store.refresh()"

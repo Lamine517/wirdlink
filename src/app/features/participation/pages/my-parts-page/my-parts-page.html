@@ -4,7 +4,7 @@
 <h1>{{ 'Mes parts' | t }}</h1>
 <app-request-state
   [skeleton]="true"
-  [loading]="store.loading()"
+  [loading]="store.loading() && groups().length === 0"
   [error]="store.error()"
   retryLabel="Réessayer"
   (retry)="store.refresh()"

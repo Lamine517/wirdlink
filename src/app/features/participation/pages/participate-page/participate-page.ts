@@ -18,7 +18,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FRONTEND_GATEWAY, WirdAuthor } from '../../../../core/services/frontend-gateway';
+import {
+  FRONTEND_GATEWAY,
+  GuestAccessError,
+  WirdAuthor,
+} from '../../../../core/services/frontend-gateway';
 import { DecimalPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,6 +52,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
 export class ParticipatePage {
   private readonly draft = inject(CreationDraftStore);
   private readonly deleteSheet = viewChild.required<BottomSheet>('deleteSheet');
+  private readonly replaceDraftSheet = viewChild.required<BottomSheet>('replaceDraftSheet');
   protected readonly deleting = signal(false);
   protected openDelete(): void {
     this.deleteSheet().open();
@@ -57,14 +62,24 @@ export class ParticipatePage {
     if (wird?.isOwner) void this.router.navigate(['/wird', wird.id, 'modifier']);
   }
   protected duplicate(): void {
-    const wird = this.selected();
-    if (!wird) return;
+    if (!this.selected()) return;
     if (this.draft.hasDraft()) {
-      this.message.set(
-        'Un brouillon existe déjà. Retrouvez-le dans Créer avant de dupliquer ce wird.',
-      );
+      this.replaceDraftSheet().open();
       return;
     }
+    this.copySelectedWird();
+  }
+
+  protected confirmDuplicate(): void {
+    this.replaceDraftSheet().close();
+    this.copySelectedWird();
+  }
+
+  private copySelectedWird(): void {
+    const wird = this.selected();
+    if (!wird) return;
+    this.draft.removeMedia('image');
+    this.draft.removeMedia('audio');
     this.draft.updateContent({
       title: wird.title,
       target: wird.target,
@@ -115,7 +130,7 @@ export class ParticipatePage {
   );
   protected readonly useName = signal(false);
   protected readonly message = signal('');
-  private readonly reserved = signal(false);
+  protected readonly reserved = signal(false);
   private requestId = crypto.randomUUID();
   private requestValue = '';
   protected readonly quantity = new FormControl<number | null>(null, [
@@ -218,9 +233,13 @@ export class ParticipatePage {
         this.requestId,
       );
       if (!part) throw new Error('Invalid quantity');
-    } catch {
+    } catch (error) {
       this.reserved.set(false);
-      this.message.set('La part n’a pas pu être réservée. Vérifiez votre connexion et réessayez.');
+      this.message.set(
+        error instanceof GuestAccessError
+          ? 'La participation sans compte n’est pas disponible pour le moment. Réessayez plus tard.'
+          : 'La part n’a pas pu être réservée. Vérifiez votre connexion et réessayez.',
+      );
       return;
     }
     void this.router.navigate(['/mes-parts']).catch(() => {

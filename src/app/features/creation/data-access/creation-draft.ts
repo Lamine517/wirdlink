@@ -1,4 +1,5 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { publicationContentType } from '../../../core/media-file';
 
 export type Recurrence = 'Une fois' | 'Tous les jours' | 'Chaque semaine' | 'Chaque vendredi';
 export type Visibility = 'public' | 'private';
@@ -111,11 +112,11 @@ export class CreationDraftStore {
   readonly hasDraft = computed(() =>
     Boolean(
       this.draft().title ||
-        this.draft().target !== null ||
-        this.draft().description ||
-        this.draft().instructions ||
-        this.image() ||
-        this.audio(),
+      this.draft().target !== null ||
+      this.draft().description ||
+      this.draft().instructions ||
+      this.image() ||
+      this.audio(),
     ),
   );
   readonly contentValid = computed(() => isContentValid(this.draft()));
@@ -174,15 +175,12 @@ export class CreationDraftStore {
 
   setMedia(kind: 'image' | 'audio', file: File): boolean {
     this.mediaError.set('');
-    const validType =
-      kind === 'image'
-        ? ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
-        : file.type.startsWith('audio/');
+    const validType = publicationContentType(kind, file) !== null;
     if (!validType || file.size === 0 || file.size > 10 * 1024 * 1024) {
       this.mediaError.set(
         kind === 'image'
           ? 'Choisissez une photo JPEG, PNG ou WebP de 10 Mo maximum.'
-          : 'Choisissez un fichier audio de 10 Mo maximum.',
+          : 'Choisissez un audio MP3, M4A, WAV, OGG ou WebM de 10 Mo maximum.',
       );
       return false;
     }

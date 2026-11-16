@@ -14,7 +14,7 @@
   />
   <app-wird-tabs [wirdId]="wird.id" />
   @if (author(); as author) {
-    <p class="text-secondary">
+    <p class="wird-byline">
       {{ 'Publié par' | t }} {{ author.displayName }}
       @if (author.organization) {
         · {{ author.organization }}
@@ -132,7 +132,7 @@
         >
           {{ 'Je commence' | t }}
         </button>
-        @if (!canReserve()) {
+        @if (!canReserve() && !reserved()) {
           <p id="participation-guidance" class="participation-form__guidance">
             {{ guidance() | t }}
           </p>
@@ -160,6 +160,27 @@
   <h1>{{ 'Wird introuvable' | t }}</h1>
   <p>{{ 'Ce wird est indisponible. Retrouvez-le depuis son lien de partage.' | t }}</p>
 }
+
+<app-bottom-sheet
+  #replaceDraftSheet
+  panelId="replace-draft-from-wird"
+  [title]="'Remplacer le brouillon ?' | t"
+>
+  <div class="form-stack">
+    <p>
+      {{
+        'Ce wird remplacera le texte, les consignes et le calendrier du brouillon actuel. Photo et voix devront être ajoutées à nouveau.'
+          | t
+      }}
+    </p>
+    <button type="button" class="button button--outline" (click)="replaceDraftSheet.close()">
+      {{ 'Garder le brouillon' | t }}
+    </button>
+    <button type="button" class="button button--primary" (click)="confirmDuplicate()">
+      {{ 'Remplacer le brouillon' | t }}
+    </button>
+  </div>
+</app-bottom-sheet>
 
 <app-bottom-sheet #deleteSheet panelId="delete-wird" [title]="'Supprimer ce wird ?' | t">
   <div class="form-stack">
