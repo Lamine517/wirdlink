@@ -15,7 +15,7 @@
     @if (store.completed(wird.id) >= wird.target) {
       <p class="thank-you__status">{{ 'Objectif atteint !' | t }}</p>
     } @else if (store.available(wird.id) > 0) {
-      <p class="thank-you__status">{{ store.available(wird.id) | number }} lectures à prendre</p>
+      <p class="thank-you__status">{{ '{count} lectures à prendre' | t: { count: store.available(wird.id) } }}</p>
     } @else {
       <p class="thank-you__status">{{ 'Toutes les parts sont prises.' | t }}</p>
     }

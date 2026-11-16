@@ -20,9 +20,9 @@
   />
   <p id="access-hint" class="text-secondary">
     {{
-      code.touched && code.invalid
+      (code.touched && code.invalid
         ? 'Saisissez les 4 chiffres du code d’accès.'
-        : 'Ce code est différent du code de connexion à 6 chiffres.'
+        : 'Ce code est différent du code de connexion à 6 chiffres.') | t
     }}
   </p>
   <button
@@ -30,7 +30,7 @@
     type="submit"
     [disabled]="busy() || code.invalid || cooldown() > 0 || !network.online()"
   >
-    {{ cooldown() > 0 ? 'Réessayer dans ' + cooldown() + ' s' : 'Ouvrir le wird' }}
+    {{ (cooldown() > 0 ? 'Réessayer dans {seconds} s' : 'Ouvrir le wird') | t: { seconds: cooldown() } }}
   </button>
 </form>
 <app-request-state

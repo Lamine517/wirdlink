@@ -1,6 +1,5 @@
 import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 import { PublicationFlow } from '../../../publication/data-access/publication-flow';
@@ -13,15 +12,7 @@ import { AudioPlayer } from '../../../../shared/components/audio-player/audio-pl
 
 @Component({
   selector: 'app-preview-page',
-  imports: [
-    Translate,
-    RouterLink,
-    DecimalPipe,
-    CreationSteps,
-    BeadProgress,
-    AudioPlayer,
-    RequestState,
-  ],
+  imports: [Translate, RouterLink, CreationSteps, BeadProgress, AudioPlayer, RequestState],
   templateUrl: './preview-page.html',
   styleUrl: './preview-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

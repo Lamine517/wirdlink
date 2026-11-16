@@ -10,7 +10,7 @@
   }
   <h2>{{ draft().title }}</h2>
   <p class="text-secondary">
-    {{ draft().recurrence }} ·
+    {{ draft().recurrence | t }} ·
     {{ draft().visibility === 'public' ? ('Public' | t) : ('Avec un code' | t) }}
   </p>
   @if (draft().description.trim()) {
@@ -29,7 +29,7 @@
     <app-audio-player [source]="media.url" [title]="draft().title" />
   }
   <app-bead-progress [completed]="0" [target]="draft().target ?? 1" />
-  <p class="text-strong">{{ draft().target | number }} lectures à partager</p>
+  <p class="text-strong">{{ '{count} lectures à partager' | t: { count: draft().target ?? 0 } }}</p>
 </article>
 <a class="button button--outline" routerLink="/creer/contenu">{{ 'Modifier' | t }}</a>
 <p id="publish-hint" class="text-secondary publication-notice">
@@ -56,5 +56,5 @@
   aria-describedby="publish-hint"
   (click)="publish()"
 >
-  {{ auth.session() ? 'Publier' : 'Continuer pour publier' }}
+  {{ (auth.session() ? 'Publier' : 'Continuer pour publier') | t }}
 </button>
