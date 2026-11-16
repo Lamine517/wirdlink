@@ -62,14 +62,6 @@
       >
         <img src="assets/icons/providers/google.svg" width="20" height="20" alt="" />Google
       </button>
-      <button
-        class="button button--outline"
-        type="button"
-        [disabled]="busy() || !network.online()"
-        (click)="oauth('apple')"
-      >
-        <img src="assets/icons/providers/apple.svg" width="20" height="20" alt="" />Apple
-      </button>
     </div>
   } @else {
     <form class="auth-form" (submit)="$event.preventDefault(); verify()" [attr.aria-busy]="busy()">
