@@ -21,7 +21,11 @@ const mimeTypes = {
   '.json': 'application/json',
   '.ico': 'image/x-icon',
 };
+const policy = JSON.parse(fs.readFileSync('vercel.json', 'utf8'))
+  .headers.flatMap((rule) => rule.headers)
+  .find((header) => header.key === 'Content-Security-Policy')?.value;
 const server = http.createServer((request, response) => {
+  if (policy) response.setHeader('Content-Security-Policy', policy);
   let file = path.resolve(root, '.' + new URL(request.url, 'http://localhost').pathname);
   if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory())
     file = path.join(root, 'index.html');
@@ -299,6 +303,12 @@ try {
   assert.equal(await run("document.querySelectorAll('.preview-card__text').length"), 2);
   assert.equal(await run("!!document.querySelector('.preview-card__image')"), false);
   assert.equal(await run("!!document.querySelector('audio')"), false);
+  assert.ok(
+    await run(
+      "parseFloat(getComputedStyle(document.querySelector('.preview-publish')).minHeight) >= 56",
+    ),
+    'Primary button styles must load under the production CSP',
+  );
   await screenshot('preview-text');
   await run("document.querySelector('.preview-publish').click();true");
   await wait("document.querySelector('.auth-google')!==null");
