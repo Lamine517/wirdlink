@@ -5,6 +5,10 @@ export type Locale = 'fr' | 'en' | 'ar';
 const STORAGE_KEY = 'wirdlink.language.v1';
 /** French copy is the source key; content entered by users is never translated. */
 const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
+  'Connectez-vous au moment de publier pour retrouver votre profil.': [
+    'Sign in when publishing to access your profile.',
+    'سجّل الدخول عند النشر للوصول إلى ملفك الشخصي.',
+  ],
   'Il reste {available} sur {target}': [
     '{available} left out of {target}',
     'متبقي {available} من {target}',

@@ -78,7 +78,7 @@ export class AccessPage {
         this.retryAt.set(Date.now() + Math.max(1, error.retryAfterSeconds) * 1000);
         this.error.set('Trop de tentatives. Patientez avant de réessayer.');
       } else if (error instanceof ServiceUnavailableError) {
-        this.error.set('L’accès privé n’est pas encore disponible. Réessayez plus tard.');
+        this.error.set('Impossible d’ouvrir ce wird. Réessayez dans un instant.');
       } else {
         this.error.set('Impossible d’ouvrir ce wird. Réessayez dans un instant.');
       }
