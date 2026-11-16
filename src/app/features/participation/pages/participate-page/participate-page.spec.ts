@@ -1,18 +1,20 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
 import { WirdStore } from '../../../../core/wird-store';
 
 describe('Guided participation form', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   let harness: RouterTestingHarness;
 
   beforeEach(async () => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     TestBed.configureTestingModule({ providers: appConfig.providers });
     harness = await RouterTestingHarness.create('/wird/salat-nabi');
   });
 
-  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
 
   function enterQuantity(value: string): void {
     const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
@@ -122,11 +124,12 @@ describe('Guided participation form', () => {
 });
 
 describe('Repeated participation submissions', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     TestBed.configureTestingModule({ providers: appConfig.providers });
   });
-  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
   it('creates only one reservation when a form is submitted twice before navigation completes', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     const quantity = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;
@@ -143,11 +146,12 @@ describe('Repeated participation submissions', () => {
 });
 
 describe('Stable wird header', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     TestBed.configureTestingModule({ providers: appConfig.providers });
   });
-  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
   it('keeps the same title on both views and exposes an icon-only share action in the toolbar', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');

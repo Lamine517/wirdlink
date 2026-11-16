@@ -1,6 +1,7 @@
 import { WirdAccess } from '../../../access/data-access/wird-access';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
+import { InstallApp } from '../../../../shared/components/install-app/install-app';
 import { RouterLink } from '@angular/router';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -16,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon, UserAvatar],
+  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon, UserAvatar, InstallApp],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

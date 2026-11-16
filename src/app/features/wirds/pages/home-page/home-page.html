@@ -22,6 +22,7 @@
     /></a>
   </div>
 </header>
+<app-install-app />
 <h1>Mes wirds</h1>
 <app-wird-filters
   [(visibility)]="visibility"
@@ -39,10 +40,19 @@
     [completed]="store.completed(wird.id)"
   />
 } @empty {
-  <app-empty-state
-    title="Aucun wird ici"
-    description="Essayez d’autres filtres pour retrouver un wird."
-    actionLabel="Voir les wirds en cours"
-    (actionRequested)="resetFilters()"
-  />
+  @if (store.wirds().length === 0) {
+    <app-empty-state
+      title="Aucun wird pour le moment"
+      description="Créez votre premier wird pour commencer."
+      actionLabel="Créer un wird"
+      actionLink="/creer"
+    />
+  } @else {
+    <app-empty-state
+      title="Aucun wird ici"
+      description="Essayez d’autres filtres pour retrouver un wird."
+      actionLabel="Voir les wirds en cours"
+      (actionRequested)="resetFilters()"
+    />
+  }
 }

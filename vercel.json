@@ -4,5 +4,9 @@
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
   "outputDirectory": "dist/wirdlink/browser",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    { "source": "/ngsw.json", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/ngsw-worker.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+  ]
 }

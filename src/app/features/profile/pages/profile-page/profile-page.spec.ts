@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -7,6 +8,7 @@ import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-acces
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Profile and account actions', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   let gateway: ReturnType<typeof gatewayStub>;
   beforeEach(() => {
     gateway = gatewayStub();

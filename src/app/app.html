@@ -2,7 +2,6 @@
 <div class="desktop-layout" [class.desktop-layout--entered]="homeEntered()">
   <aside class="desktop-layout__intro"><app-desktop-intro [url]="shareUrl()" /></aside>
   <div class="app-shell">
-    <div class="demo-banner">Démonstration · vos parts restent sur cet appareil</div>
     <main #content class="app-shell__content" id="main" tabindex="-1">
       @if (!network.online()) {
         <p class="feedback offline-status" role="status">

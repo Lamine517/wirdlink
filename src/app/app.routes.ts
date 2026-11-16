@@ -144,9 +144,9 @@ export const routes: Routes = [
     data: {
       title: 'Vos informations',
       paragraphs: [
-        'Cette démonstration conserve les parts, le nom choisi et le texte du brouillon dans le stockage de ce navigateur.',
+        'Les brouillons et les parts enregistrées sur cet appareil utilisent le stockage de votre navigateur.',
         'La connexion Google et votre profil sont gérés par Supabase. Les informations du profil restent facultatives.',
-        'Votre prénom, votre nom et votre organisation peuvent apparaître comme auteur de vos wirds. Votre adresse reste privée.',
+        'Votre prénom, votre nom et votre organisation peuvent apparaître comme auteur de vos wirds. ',
         'Depuis Mon profil, vous pouvez modifier vos informations, vous déconnecter ou supprimer votre compte et vos wirds.',
         'Les photos et fichiers audio choisis restent dans la session et ne sont pas envoyés à un serveur.',
         'Le partage ouvre le service choisi. Les textes de confidentialité définitifs seront relus avant la publication du service.',
@@ -161,7 +161,7 @@ export const routes: Routes = [
     data: {
       title: 'Règles d’utilisation',
       paragraphs: [
-        'WirdLink est un projet bénévole et gratuit. Cette version est une démonstration.',
+        'WirdLink est un projet bénévole et gratuit.',
         'Les compteurs ne sont pas encore partagés entre appareils. Aucun brouillon n’est publié.',
         'Les conditions définitives restent à faire valider avant ouverture du service.',
       ],

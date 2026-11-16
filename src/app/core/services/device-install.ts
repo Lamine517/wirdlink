@@ -1,7 +1,8 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 
 interface InstallPrompt extends Event {
-  prompt(): Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  prompt(): Promise<{ outcome: 'accepted' | 'dismissed' } | void>;
+  userChoice?: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -40,9 +41,9 @@ export class DeviceInstall {
     this.busy.set(true);
     this.message.set('');
     try {
-      const choice = await prompt.prompt();
+      const choice = (await prompt.prompt()) ?? (await prompt.userChoice);
       this.message.set(
-        choice.outcome === 'accepted'
+        !choice || choice.outcome === 'accepted'
           ? 'Installation demandée au navigateur.'
           : 'Vous pourrez l’ajouter plus tard.',
       );

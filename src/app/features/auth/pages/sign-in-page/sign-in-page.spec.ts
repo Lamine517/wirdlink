@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -7,6 +8,7 @@ import { AuthFlow } from '../../data-access/auth-flow';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Responsible sign-in screens', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   let gateway: ReturnType<typeof gatewayStub>;
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');

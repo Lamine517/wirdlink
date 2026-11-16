@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -6,11 +7,12 @@ import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Creation flow', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: [
-      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
-    ] });
+    TestBed.configureTestingModule({
+      providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() }],
+    });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
 
@@ -98,11 +100,12 @@ describe('Creation flow', () => {
 });
 
 describe('Optional creation content in preview', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: [
-      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
-    ] });
+    TestBed.configureTestingModule({
+      providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() }],
+    });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('shows description and opening instructions separately without changing the goal', async () => {
@@ -131,11 +134,12 @@ describe('Optional creation content in preview', () => {
 });
 
 describe('Draft replacement confirmation', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   beforeEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');
-    TestBed.configureTestingModule({ providers: [
-      ...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
-    ] });
+    TestBed.configureTestingModule({
+      providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gatewayStub() }],
+    });
   });
   afterEach(() => localStorage.removeItem('wirdlink.creation.v1'));
   it('keeps optional instructions until replacing a draft is explicitly confirmed', async () => {

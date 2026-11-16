@@ -1,3 +1,4 @@
+import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
@@ -11,9 +12,10 @@ import { WirdStore } from '../../../../core/wird-store';
 import { WirdAccess } from '../../data-access/wird-access';
 
 describe('Private access frontend', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
   let gateway: ReturnType<typeof gatewayStub>;
   beforeEach(() => {
-    localStorage.removeItem('wirdlink.demo.v1');
+    localStorage.removeItem('wirdlink.parts.v1');
     gateway = gatewayStub();
     TestBed.configureTestingModule({
       providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gateway }],
@@ -30,7 +32,7 @@ describe('Private access frontend', () => {
       },
     ]);
   });
-  afterEach(() => localStorage.removeItem('wirdlink.demo.v1'));
+  afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
 
   function setCode(harness: RouterTestingHarness, value: string): void {
     const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#access-code')!;
