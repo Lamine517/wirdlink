@@ -1,6 +1,6 @@
 # 0015 — Participation sans compte et publication fiable
 
-Date : 16 novembre 2026. Statut : le client est corrigé ; l’activation Auth du projet hébergé reste à faire dans le tableau de bord.
+Date : 16 novembre 2026. Statut : le client et la migration `stabilize_publication` sont appliqués sur le projet hébergé. L’activation des sessions anonymes reste à confirmer dans le tableau de bord.
 
 ## Contexte
 
@@ -30,6 +30,10 @@ de ramener à aujourd’hui une date déjà passée.
 ## Vérification
 
 Tests Angular des types de fichiers, du repli de session et du refus explicite
-lorsque les sessions anonymes sont désactivées. La migration SQL et le réglage
-Auth hébergé ne sont pas appliqués depuis cet environnement : le compte CLI
-disponible ne voit pas le projet WirdLink.
+lorsque les sessions anonymes sont désactivées. La migration
+`20261116221420_stabilize_publication` est appliquée sur
+`unhcqgwexwmxkwkwvgbl` : une date de début locale d’un jour avant la date UTC
+est acceptée, et l’envoi d’un fichier exige un compte permanent lu dans
+`auth.users`, plus le jeton. Le rôle anonyme ne peut pas appeler cette
+vérification. Le réglage Anonymous Sign-Ins du tableau de bord n’est pas
+confirmé depuis cet environnement.
