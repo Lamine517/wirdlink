@@ -50,9 +50,3 @@
     width: 12.5rem;
   }
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .progress-ring {
-    animation: content-enter 240ms ease-out;
-  }
-}

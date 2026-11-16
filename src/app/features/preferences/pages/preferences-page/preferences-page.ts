@@ -1,3 +1,4 @@
+import { Appearance, ThemePreference } from '../../../../core/services/appearance';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -29,6 +30,16 @@ import { RequestState } from '../../../../shared/components/request-state/reques
       min-height: 48px;
       font-weight: 800;
     }
+    .appearance-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
+      gap: 8px;
+    }
+    .appearance-options .button {
+      overflow-wrap: normal;
+      padding-inline: 4px;
+      min-width: 0;
+    }
     .preferences-status {
       color: var(--color-primary);
       font-weight: 800;
@@ -37,6 +48,12 @@ import { RequestState } from '../../../../shared/components/request-state/reques
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreferencesPage {
+  protected readonly appearance = inject(Appearance);
+  protected readonly themes: { value: ThemePreference; label: string }[] = [
+    { value: 'auto', label: 'Automatique' },
+    { value: 'light', label: 'Clair' },
+    { value: 'dark', label: 'Sombre' },
+  ];
   protected readonly install = inject(DeviceInstall);
   protected readonly network = inject(NetworkStatus);
   private readonly gateway = inject(FRONTEND_GATEWAY);

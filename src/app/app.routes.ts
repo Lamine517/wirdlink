@@ -18,6 +18,12 @@ export const routes: Routes = [
     title: 'Mes parts · WirdLink',
   },
   {
+    path: 'mes-parts/:id/compteur',
+    loadComponent: () =>
+      import('./features/tasbih/pages/tasbih-page/tasbih-page').then((m) => m.TasbihPage),
+    title: 'Mon tasbih · WirdLink',
+  },
+  {
     path: 'wird/:id',
     canActivate: [readableWird],
     loadComponent: () =>

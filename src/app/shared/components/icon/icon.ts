@@ -26,6 +26,14 @@ const ICON_FILES = {
   warning: 'warning-circle',
   offline: 'wifi-slash',
   settings: 'gear-six',
+  tap: 'hand-tap',
+  undo: 'arrow-counter-clockwise',
+  back: 'caret-left',
+  calendar: 'calendar',
+  microphone: 'microphone',
+  image: 'image-square',
+  filter: 'funnel-simple',
+  minus: 'minus',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

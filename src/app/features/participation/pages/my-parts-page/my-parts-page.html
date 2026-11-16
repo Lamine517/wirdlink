@@ -14,6 +14,7 @@
 @for (group of visibleGroups(); track group.wirdId) {
   <app-part-card
     [group]="group"
+    [progress]="counter.progress()"
     [disabled]="!network.online()"
     (finishRequested)="finish($event)"
   />

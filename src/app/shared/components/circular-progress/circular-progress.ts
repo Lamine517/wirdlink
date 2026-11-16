@@ -10,6 +10,7 @@ import { DecimalPipe } from '@angular/common';
 })
 export class CircularProgress {
   readonly title = input.required<string>();
+  readonly showTitle = input(true);
   readonly completed = input.required<number>();
   readonly target = input.required<number>();
   protected readonly progress = computed(() => {

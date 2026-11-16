@@ -1,7 +1,8 @@
 # WirdLink
 
 Application Angular pour créer et partager des wirds. Parcours frontend : accueil,
-participation, Mes parts, création, aperçu, connexion, accès privé et partage mobile.
+participation, tasbih lié à chaque part, Mes parts, création, aperçu, connexion, accès privé
+et partage mobile. Apparence automatique, claire ou sombre dans Réglages.
 Les réservations et brouillons utilisent encore des données locales de démonstration.
 Les écrans de connexion et publication affichent une indisponibilité tant qu’un service
 vérifié n’est pas raccordé ; aucun code ni aucune publication n’est simulé.

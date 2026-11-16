@@ -23,7 +23,7 @@
     aria-controls="filters"
     (click)="filterSheet.open()"
   >
-    <img src="assets/icons/filter.svg" alt="" width="24" height="24" />Filtrer
+    <app-icon name="filter" [size]="24" />Filtrer
   </button>
 </div>
 <app-bottom-sheet #filterSheet panelId="filters" title="Filtrer">

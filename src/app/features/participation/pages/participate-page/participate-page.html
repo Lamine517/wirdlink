@@ -1,15 +1,16 @@
 @if (message()) {
   <p class="feedback feedback--error" role="alert">{{ message() }}</p>
 }
-<app-back-button />
 @if (selected(); as wird) {
-  <header class="participation-header">
-    <h1>Je participe</h1>
-  </header>
+  <app-wird-header
+    [title]="wird.title"
+    [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
+  />
   <app-wird-tabs [wirdId]="wird.id" />
   <section class="participation-summary" aria-label="Avancement du wird">
     <app-circular-progress
       [title]="wird.title"
+      [showTitle]="false"
       [completed]="store.completed(wird.id)"
       [target]="wird.target"
     />
@@ -45,9 +46,7 @@
       <p>{{ wird.instructions }}</p>
     </section>
   }
-  @if (wird.visibility === 'public') {
-    <a class="participation-share" [routerLink]="['/partage', wird.id]">Partager ce wird</a>
-  }
+
   @if (store.available(wird.id) > 0) {
     <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
       <label class="participation-form__label" for="quantity">Ma part</label>
@@ -135,6 +134,7 @@
     />
   }
 } @else {
+  <app-back-button />
   <h1>Wird introuvable</h1>
   <p>Ce lien ne correspond à aucun exemple disponible.</p>
 }

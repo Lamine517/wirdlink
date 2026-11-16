@@ -1,9 +1,10 @@
+import { Icon } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-creation-steps',
-  imports: [RouterLink],
+  imports: [RouterLink, Icon],
   templateUrl: './creation-steps.html',
   styleUrl: './creation-steps.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

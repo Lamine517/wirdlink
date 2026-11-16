@@ -12,7 +12,7 @@
       @if (store.storageWarning()) {
         <p class="feedback" role="status">{{ store.storageWarning() }}</p>
       }
-      <router-outlet (activate)="resetScroll()" />
+      <div #pageView class="app-page-view"><router-outlet (activate)="resetScroll()" /></div>
     </main>
     <nav class="bottom-nav" aria-label="Navigation principale">
       <a

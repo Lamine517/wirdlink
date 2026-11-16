@@ -1,10 +1,11 @@
+import { Icon } from '../../../../shared/components/icon/icon';
 import { suggestQuantities } from './quantity-suggestions';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quantity-picker',
-  imports: [ReactiveFormsModule],
+  imports: [Icon, ReactiveFormsModule],
   templateUrl: './quantity-picker.html',
   styleUrl: './quantity-picker.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

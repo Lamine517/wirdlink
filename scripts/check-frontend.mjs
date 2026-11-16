@@ -155,6 +155,12 @@ try {
     assert.equal(overflow, false, label + ' text zoom overflow');
     await run("document.documentElement.style.fontSize='100%'");
   };
+  await cdp('Emulation.setEmulatedMedia', {
+    features: [
+      { name: 'prefers-color-scheme', value: 'light' },
+      { name: 'prefers-reduced-motion', value: 'no-preference' },
+    ],
+  });
   await cdp('Runtime.enable');
   await cdp('Page.enable');
   await viewport(390);
@@ -185,7 +191,10 @@ try {
   assert.ok(frame.top >= 0 && frame.bottom <= 1000);
   await screenshot('desktop');
   await cdp('Emulation.setEmulatedMedia', {
-    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+    features: [
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+      { name: 'prefers-color-scheme', value: 'light' },
+    ],
   });
   assert.equal(
     await run("getComputedStyle(document.querySelector('.app-shell')).animationName"),
@@ -232,6 +241,23 @@ try {
   await wait("!!document.querySelector('app-home-page')");
   await navigate('/wird/salat-nabi', '#quantity');
   await checkLayout('Participation');
+  assert.equal(await run("document.querySelector('h1').textContent"), 'Salat ala Nabi');
+  const titleOffset = await run(
+    "document.querySelector('h1').getBoundingClientRect().top-document.querySelector('main').getBoundingClientRect().top+document.querySelector('main').scrollTop",
+  );
+  const toolbar = await run(
+    "(()=>{const back=document.querySelector('app-wird-header app-back-button').getBoundingClientRect();const share=document.querySelector('app-wird-header a[aria-label=\"Partager ce wird\"]').getBoundingClientRect();return {back:back.top,share:share.top,right:share.left>back.right}})()",
+  );
+  assert.equal(toolbar.back, toolbar.share);
+  assert.ok(toolbar.right);
+  await navigate('/wird/salat-nabi/participants', 'app-participants-page');
+  const otherOffset = await run(
+    "document.querySelector('h1').getBoundingClientRect().top-document.querySelector('main').getBoundingClientRect().top+document.querySelector('main').scrollTop",
+  );
+  assert.equal(otherOffset, titleOffset, 'The title should not jump between wird views');
+  await navigate('/wird/salat-nabi', '#quantity');
+  await screenshot('participation-header');
+
   assert.ok(await run("document.querySelector('button[type=submit]').disabled"));
   await enter('#quantity', '401');
   await wait("document.querySelector('#quantity-error')!==null");
@@ -242,7 +268,76 @@ try {
   await enter('#quantity', '10');
   await submit();
   await wait("document.querySelector('h1')?.textContent==='Mes parts'");
-  await run("document.querySelector('article button').click();true");
+  const counterPath = await run(
+    "document.querySelector('article a[href$=\"/compteur\"]').getAttribute('href')",
+  );
+  await cdp('Page.addScriptToEvaluateOnNewDocument', {
+    source:
+      "globalThis.vibrationCalls=[];Object.defineProperty(navigator,'vibrate',{configurable:true,value:pattern=>{globalThis.vibrationCalls.push(pattern);return true}});",
+  });
+  await run('document.querySelector(\'article a[href$="/compteur"]\').click();true');
+  await wait("!!document.querySelector('.tasbih__circle')");
+  await checkLayout('Tasbih');
+  for (let count = 0; count < 3; count++)
+    await run("document.querySelector('.tasbih__circle').click();true");
+  await cdp('Page.reload');
+  await wait("document.querySelector('.tasbih__value')?.textContent.trim()==='3'");
+  await run("document.querySelector('.tasbih__undo').click();true");
+  await wait("document.querySelector('.tasbih__value')?.textContent.trim()==='2'");
+  await run("document.querySelector('.tasbih__circle').click();true");
+  await run("document.querySelector('.tasbih-options').click();true");
+  await wait("document.querySelector('#tasbih-options').open");
+  await run(
+    "[...document.querySelectorAll('#tasbih-options button')].find(button=>button.textContent.includes('Remettre à zéro')).click();true",
+  );
+  assert.equal(await run("document.querySelector('.tasbih__value').textContent.trim()"), '3');
+  await run(
+    "[...document.querySelectorAll('#tasbih-options button')].find(button=>button.textContent.includes('Garder le compteur')).click();true",
+  );
+  await run("document.querySelector('#tasbih-options .bottom-sheet__close').click();true");
+  await wait("!document.querySelector('#tasbih-options').open");
+  await run("document.querySelector('main').scrollTop=0;true");
+  await screenshot('tasbih');
+  for (let count = 3; count < 10; count++)
+    await run("document.querySelector('.tasbih__circle').click();true");
+  await wait(
+    "document.querySelector('.tasbih__guidance').textContent.includes('Objectif atteint')",
+  );
+  assert.equal(await run('vibrationCalls.length'), 1, 'Goal must vibrate only once on crossing');
+  assert.equal(await run("document.querySelector('.tasbih__circle').disabled"), true);
+  await screenshot('tasbih-goal');
+  await navigate('/wird/salat-nabi/participants', 'app-participants-page');
+  assert.ok(
+    await run("document.querySelector('main').textContent.includes('600 lus')"),
+    'Personal taps must not update collective completion',
+  );
+  await navigate(counterPath, '.tasbih__circle');
+  assert.equal(
+    await run('vibrationCalls.length'),
+    0,
+    'Reloading an achieved goal must not vibrate again',
+  );
+  await cdp('Network.enable');
+  await cdp('Network.emulateNetworkConditions', {
+    offline: true,
+    latency: 0,
+    downloadThroughput: 0,
+    uploadThroughput: 0,
+  });
+  await wait("document.querySelector('.offline-status')?.textContent.includes('Hors ligne')");
+  assert.equal(await run("document.querySelector('.tasbih__finish').disabled"), true);
+  await run("document.querySelector('.tasbih__undo').click();true");
+  await wait("!document.querySelector('.tasbih__circle').disabled");
+  await run("document.querySelector('.tasbih__circle').click();true");
+  await wait("document.querySelector('.tasbih__value').textContent.trim()==='10'");
+  await cdp('Network.emulateNetworkConditions', {
+    offline: false,
+    latency: 0,
+    downloadThroughput: -1,
+    uploadThroughput: -1,
+  });
+  await wait("!document.querySelector('.tasbih__finish').disabled");
+  await run("document.querySelector('.tasbih__finish').click();true");
   await wait("document.querySelector('h1')?.textContent==='Merci !'");
   assert.equal(
     await run("document.querySelector('[role=progressbar]').getAttribute('aria-valuenow')"),
@@ -324,7 +419,112 @@ try {
   await screenshot('sharing');
   await navigate('/preferences', 'app-preferences-page');
   await checkLayout('Settings');
+  await cdp('Emulation.setEmulatedMedia', {
+    features: [
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+      { name: 'prefers-color-scheme', value: 'dark' },
+    ],
+  });
+  await wait("document.documentElement.dataset.theme==='dark'");
+  const palette = await run(
+    "(()=>{const style=getComputedStyle(document.documentElement);return Object.fromEntries(['primary','text-primary','text-inverse','text-on-accent','text-on-danger','bg-app','accent','feedback-error'].map(key=>[key,style.getPropertyValue('--color-'+key).trim()]))})()",
+  );
+  const luminance = (color) => {
+    const channels = color.startsWith('#')
+      ? [1, 3, 5].map((offset) => parseInt(color.slice(offset, offset + 2), 16))
+      : (color.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
+    return channels
+      .map((value) => {
+        const channel = value / 255;
+        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+      })
+      .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+  };
+  const contrast = (a, b) => {
+    const x = luminance(a),
+      y = luminance(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  };
+  for (const [text, background] of [
+    ['text-primary', 'bg-app'],
+    ['text-inverse', 'primary'],
+    ['text-on-accent', 'accent'],
+    ['text-on-danger', 'feedback-error'],
+  ])
+    assert.ok(contrast(palette[text], palette[background]) >= 4.5, 'Dark theme contrast: ' + text);
+  await checkLayout('Dark settings');
+  await screenshot('settings-dark');
+  await run("document.querySelector('input[name=appearance][value=light]').click();true");
+  await wait("document.documentElement.dataset.theme==='light'");
+  await cdp('Page.reload');
+  await wait("!!document.querySelector('app-preferences-page')");
+  assert.equal(
+    await run('document.documentElement.dataset.theme'),
+    'light',
+    'Manual choice must survive reload and override the dark device theme',
+  );
+  await run("document.querySelector('input[name=appearance][value=auto]').click();true");
+  await wait("document.documentElement.dataset.theme==='dark'");
+  await navigate('/', 'app-home-page');
+  await screenshot('home-dark');
+  await navigate('/wird/salat-nabi', '#quantity');
+  await enter('#quantity', '10');
+  await submit();
+  await wait("!!document.querySelector('app-my-parts-page')");
+  await checkLayout('Dark parts');
+  await screenshot('parts-dark');
+  await run('document.querySelector(\'article a[href$="/compteur"]\').click();true');
+  await wait("!!document.querySelector('.tasbih__circle')");
+  await checkLayout('Dark tasbih');
+  await screenshot('tasbih-dark');
+  await navigate('/preferences', 'app-preferences-page');
+  await cdp('Emulation.setEmulatedMedia', {
+    features: [
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+      { name: 'prefers-color-scheme', value: 'light' },
+    ],
+  });
+  await wait("document.documentElement.dataset.theme==='light'");
+  assert.equal(
+    await run('document.querySelector(".app-page-view").getAnimations().length'),
+    0,
+    'Reduced motion must disable page animation',
+  );
+
   assert.ok(await run('!!document.querySelector(\'a[href="/aide"]\')'));
+
+  await cdp('Emulation.setEmulatedMedia', {
+    features: [
+      { name: 'prefers-reduced-motion', value: 'no-preference' },
+      { name: 'prefers-color-scheme', value: 'light' },
+    ],
+  });
+  await navigate('/', 'app-home-page');
+  await run(
+    "globalThis.pageFades=[];const original=Element.prototype.animate;Element.prototype.animate=function(frames,options){if(this.classList.contains('app-page-view'))globalThis.pageFades.push({duration:options.duration,hasTransform:frames.some(frame=>'transform' in frame)});return original.call(this,frames,options)};true",
+  );
+  await run("document.querySelector('.settings-link').click();true");
+  await wait("!!document.querySelector('app-preferences-page')");
+  await wait('pageFades.length>0');
+  assert.ok(
+    await run('pageFades.every(fade=>fade.duration===180&&!fade.hasTransform)'),
+    'Page transition should be a short fade without a spatial jump',
+  );
+  const fades = await run('pageFades.length');
+  await cdp('Emulation.setEmulatedMedia', {
+    features: [
+      { name: 'prefers-reduced-motion', value: 'reduce' },
+      { name: 'prefers-color-scheme', value: 'light' },
+    ],
+  });
+  await run("document.querySelector('app-back-button button').click();true");
+  await wait("!!document.querySelector('app-home-page')");
+  assert.equal(
+    await run('pageFades.length'),
+    fades,
+    'Reduced motion must not add a page animation',
+  );
+  await navigate('/preferences', 'app-preferences-page');
   await screenshot('settings');
   await navigate('/wird/salat-nabi', '#quantity');
   await cdp('Network.enable');
@@ -350,6 +550,11 @@ try {
       textZoom: '200%',
       frame,
       realAudio: true,
+      tasbih: true,
+      counterGoalVibration: true,
+      automaticTheme: true,
+      pageTransitions: true,
+      stableWirdHeader: true,
       portraitUncropped: true,
       creationTextRestored: true,
       noSimulatedAuthentication: true,
@@ -367,5 +572,5 @@ try {
     chrome.kill();
     await stopped;
   }
-  fs.rmSync(profile, { recursive: true, force: true });
+  fs.rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }
