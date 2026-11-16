@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 const ICON_FILES = {
+  more: 'dots-three',
+  edit: 'pencil-simple',
+  trash: 'trash',
+  signOut: 'sign-out',
   home: 'house',
   hand: 'hand',
   plus: 'plus',

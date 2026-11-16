@@ -67,3 +67,8 @@
 .draft-delete-confirmation p {
   margin: 0 0 8px;
 }
+
+.template-card__icon--custom {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}

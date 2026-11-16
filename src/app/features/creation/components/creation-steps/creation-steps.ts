@@ -1,10 +1,11 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-creation-steps',
-  imports: [RouterLink, Icon],
+  imports: [Translate, RouterLink, Icon],
   templateUrl: './creation-steps.html',
   styleUrl: './creation-steps.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

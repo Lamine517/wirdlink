@@ -1,11 +1,12 @@
 <app-back-button />
-<h1>Mon profil</h1>
+<h1>{{ 'Mon profil' | t }}</h1>
 @if (message()) {
-  <p class="profile-status" role="status">{{ message() }}</p>
+  <p class="profile-status" role="status">{{ message() | t }}</p>
 }
 <app-request-state
+  [skeleton]="true"
   [loading]="loading()"
-  loadingLabel="Chargement du profil…"
+  [loadingLabel]="'Chargement du profil…' | t"
   [error]="error()"
   [retryLabel]="!loaded() && auth.session() ? 'Réessayer' : ''"
   (retry)="load()"
@@ -13,48 +14,50 @@
 @if (auth.session(); as session) {
   <div class="profile-summary">
     <app-user-avatar [name]="session.displayName ?? ''" />
-    <strong>{{ session.displayName || 'Votre compte' }}</strong>
+    <strong>{{ session.displayName || ('Votre compte' | t) }}</strong>
   </div>
   @if (loaded()) {
     <form class="profile-form" [formGroup]="form" (ngSubmit)="save()">
       <div>
-        <label for="profile-first-name">Prénom</label>
+        <label for="profile-first-name">{{ 'Prénom' | t }}</label>
         <input
           id="profile-first-name"
           formControlName="firstName"
           autocomplete="given-name"
           maxlength="60"
-          placeholder="Votre prénom"
+          [placeholder]="'Votre prénom' | t"
         />
       </div>
       <div>
-        <label for="profile-last-name">Nom</label>
+        <label for="profile-last-name">{{ 'Nom' | t }}</label>
         <input
           id="profile-last-name"
           formControlName="lastName"
           autocomplete="family-name"
           maxlength="60"
-          placeholder="Votre nom"
+          [placeholder]="'Votre nom' | t"
         />
       </div>
       <div>
-        <label for="profile-organization">Organisation ou dahira <span>(facultatif)</span></label>
+        <label for="profile-organization"
+          >{{ 'Organisation ou dahira' | t }}<span>{{ '(facultatif)' | t }}</span></label
+        >
         <input
           id="profile-organization"
           formControlName="organization"
           maxlength="120"
-          placeholder="Ex. : Dahira de votre quartier"
+          [placeholder]="'Ex. : Dahira de votre quartier' | t"
         />
       </div>
       <p class="profile-hint">
-        Votre nom et votre organisation apparaîtront comme auteur de vos wirds.
+        {{ 'Votre nom et votre organisation apparaîtront comme auteur de vos wirds.' | t }}
       </p>
       <button
         class="button button--primary"
         type="submit"
         [disabled]="busy() || deleting() || form.invalid || form.pristine || !network.online()"
       >
-        Enregistrer
+        {{ 'Enregistrer' | t }}
       </button>
     </form>
   }
@@ -62,10 +65,10 @@
     <button
       class="button button--outline"
       type="button"
-      (click)="signOut()"
+      (click)="signOutSheet.open()"
       [disabled]="busy() || deleting() || !network.online()"
     >
-      Se déconnecter
+      {{ 'Se déconnecter' | t }}
     </button>
     <button
       class="profile-delete"
@@ -73,17 +76,19 @@
       (click)="deleteSheet.open()"
       [disabled]="busy() || deleting() || !network.online()"
     >
-      Supprimer mon compte
+      {{ 'Supprimer mon compte' | t }}
     </button>
   </div>
 } @else if (!loading() && !message()) {
-  <p>Connectez-vous avec Google au moment de publier pour retrouver votre profil.</p>
+  <p>{{ 'Connectez-vous avec Google au moment de publier pour retrouver votre profil.' | t }}</p>
 }
-<app-bottom-sheet #deleteSheet panelId="delete-account" title="Supprimer votre compte ?">
+<app-bottom-sheet #deleteSheet panelId="delete-account" [title]="'Supprimer votre compte ?' | t">
   <div class="profile-actions">
     <p>
-      Votre compte, vos wirds et toutes leurs participations seront supprimés définitivement. Vos
-      parts dans d’autres wirds et votre brouillon sur cet appareil seront aussi supprimés.
+      {{
+        'Votre compte, vos wirds et toutes leurs participations seront supprimés définitivement. Vos parts dans d’autres wirds et votre brouillon sur cet appareil seront aussi supprimés.'
+          | t
+      }}
     </p>
     <button
       class="button button--outline"
@@ -91,7 +96,7 @@
       (click)="deleteSheet.close()"
       [disabled]="deleting()"
     >
-      Garder mon compte
+      {{ 'Garder mon compte' | t }}
     </button>
     <button
       class="button button--danger"
@@ -99,12 +104,29 @@
       (click)="deleteAccount(deleteSheet)"
       [disabled]="deleting() || !network.online()"
     >
-      Supprimer définitivement
+      {{ 'Supprimer définitivement' | t }}
     </button>
     <app-request-state
       [loading]="deleting()"
-      loadingLabel="Suppression en cours…"
+      [loadingLabel]="'Suppression en cours…' | t"
       [error]="deletionError()"
     />
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet #signOutSheet panelId="sign-out" [title]="'Se déconnecter ?' | t">
+  <div class="profile-actions">
+    <p>{{ 'Vos wirds sont conservés. Reconnectez-vous pour les retrouver.' | t }}</p>
+    <button type="button" class="button button--outline" (click)="signOutSheet.close()">
+      {{ 'Rester connecté' | t }}
+    </button>
+    <button
+      type="button"
+      class="button button--primary"
+      [disabled]="busy()"
+      (click)="signOutConfirmed(signOutSheet)"
+    >
+      {{ 'Se déconnecter' | t }}
+    </button>
   </div>
 </app-bottom-sheet>

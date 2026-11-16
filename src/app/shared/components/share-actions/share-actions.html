@@ -1,12 +1,12 @@
 <section class="share-actions" [attr.aria-labelledby]="panelId() + '-title'">
-  <h2 [id]="panelId() + '-title'">{{ title() }}</h2>
+  <h2 [id]="panelId() + '-title'">{{ title() | t }}</h2>
   <button
     type="button"
     class="button button--whatsapp"
     [disabled]="!shareable()"
     (click)="open('whatsapp')"
   >
-    <app-icon name="whatsapp" [size]="24" />Envoyer sur WhatsApp
+    <app-icon name="whatsapp" [size]="24" />{{ 'Envoyer sur WhatsApp' | t }}
   </button>
   <div class="share-actions__row">
     <button
@@ -43,15 +43,17 @@
           [disabled]="!shareable() || sharing()"
           (click)="share()"
         >
-          <app-icon name="share" [size]="22" />Autre
+          <app-icon name="share" [size]="22" />{{ 'Autre' | t }}
         </button>
       }
     </div>
   }
   <button type="button" class="button button--outline" (click)="copy()">
-    <app-icon name="copy" [size]="20" />Copier le lien
+    <app-icon name="copy" [size]="20" />{{ 'Copier le lien' | t }}
   </button>
-  <label class="share-actions__caption" [for]="panelId() + '-url'">Lien à partager</label>
+  <label class="share-actions__caption" [for]="panelId() + '-url'">{{
+    'Lien à partager' | t
+  }}</label>
   <input
     #shareInput
     [id]="panelId() + '-url'"
@@ -62,8 +64,8 @@
   />
   @if (!shareable()) {
     <p class="share-actions__caption">
-      Ce lien est local. Ouvrez WirdLink depuis une adresse accessible pour le partager.
+      {{ 'Ce lien est local. Ouvrez WirdLink depuis une adresse accessible pour le partager.' | t }}
     </p>
   }
-  <p class="share-actions__feedback" role="status">{{ message() }}</p>
+  <p class="share-actions__feedback" role="status">{{ message() | t }}</p>
 </section>

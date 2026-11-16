@@ -5,12 +5,13 @@ participation, tasbih lié à chaque part, Mes parts, création, aperçu, connex
 et partage mobile. Apparence automatique, claire ou sombre dans Réglages.
 L’accueil démarre vide, sans wird de démonstration. Les anciens exemples et leurs
 parts locales sont retirés au chargement ; les comptes et les profils sont conservés.
-La connexion Google utilise Supabase Auth avec reprise de session et retour OAuth PKCE.
+La connexion Google et le lien de connexion par email utilisent Supabase Auth avec reprise de session et retour PKCE.
 L’avatar ouvre le profil : prénom, nom et organisation facultative,
-déconnexion et suppression du compte avec ses wirds. Les onglets Téléphone et Email
-affichent « Bientôt ». Réglages conserve apparence, rappels et aide.
-La publication reste indisponible jusqu’au raccordement complet
-des données ; aucune publication n’est simulée.
+déconnexion avec confirmation et suppression du compte avec ses wirds.
+La publication, les parts et les liens privés utilisent PostgreSQL et Storage protégés par RLS.
+Le menu du wird permet le partage, la duplication du texte et, pour son auteur, la modification
+ou la suppression. Réglages propose français, anglais et arabe avec lecture droite à gauche.
+Le téléphone et les rappels restent à venir.
 
 ```sh
 npm ci
@@ -30,9 +31,10 @@ si Chrome n’est pas à son emplacement habituel. Il utilise un profil temporai
 et conserve les captures dans le dossier temporaire du système.
 
 
-Interface française, Nunito Sans locale et icônes Phosphor. Le schéma Supabase et
-ses tests figurent dans `supabase/`. Les réservations distantes restent
-à raccorder ; cette version ne publie aucune réservation sur un serveur.
+Interface en français, anglais et arabe, Nunito Sans locale et icônes Phosphor.
+Le schéma Supabase et ses tests transactionnels figurent dans `supabase/`.
+Pour participer sans compte, activer Anonymous Sign-Ins dans Supabase Auth.
+Une session Google ou email existante suffit pour publier et participer.
 
 Déploiement Vercel : `vercel.json` configure Angular, `npm ci`, `npm run build`
 et le dossier `dist/wirdlink/browser`, avec retour SPA pour les liens directs.

@@ -104,6 +104,7 @@ try {
       if (await run(expression)) return;
       await sleep(100);
     }
+    console.error(await run('document.body.innerText'));
     throw Error('Timed out: ' + expression);
   };
   const viewport = (width, height = 844) =>
@@ -162,15 +163,40 @@ try {
   await cdp('Page.enable');
   await cdp('Network.enable');
   await cdp('Network.setBlockedURLs', { urls: ['*://*.supabase.co/*'] });
+  await cdp('Page.addScriptToEvaluateOnNewDocument', {
+    source: `
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      const url = typeof input === 'string' ? input : input.url ?? String(input);
+      if (url.includes('.supabase.co/')) {
+        const read = url.includes('/rest/v1/rpc/read_wirds');
+        return Promise.resolve(new Response(read ? '[]' : '{"message":"Test unavailable"}', {
+          status: read ? 200 : 503, headers: { 'Content-Type': 'application/json' }
+        }));
+      }
+      return originalFetch(input, init);
+    };
+  `,
+  });
   await viewport(390);
   await navigate('/', 'app-home-page');
   assert.equal(await run("document.querySelectorAll('app-wird-card').length"), 0);
   assert.equal(await run("!!document.querySelector('.demo-banner')"), false);
-  assert.ok(
-    await run("document.querySelector('app-empty-state').textContent.includes('Créer un wird')"),
-  );
+  await wait("document.querySelector('app-empty-state')?.textContent.includes('Créer un wird')");
   for (const width of [320, 390, 430, 600]) {
     await viewport(width);
+    await run("document.querySelector('[aria-controls=filters]').click();true");
+    await wait("!!document.querySelector('dialog[open]')");
+    assert.equal(
+      await run("document.querySelector('dialog[open]').getBoundingClientRect().width"),
+      width,
+    );
+    assert.equal(
+      await run("document.querySelector('dialog[open]').getBoundingClientRect().left"),
+      0,
+    );
+    await run("document.querySelector('dialog[open] .bottom-sheet__close').click();true");
+    await wait("!document.querySelector('dialog[open]')");
     assert.equal(
       await run("document.querySelector('.app-shell').getBoundingClientRect().width"),
       width,
@@ -280,10 +306,11 @@ try {
   await wait('[...document.images].every(image=>image.complete&&image.naturalWidth>0)');
   await screenshot('sign-in');
   assert.equal(await run("!!document.querySelector('#auth-phone')"), false);
-  assert.equal(
-    await run("document.querySelector('[role=tabpanel]').textContent.includes('Bientôt')"),
-    true,
-  );
+  await wait("!!document.querySelector('#auth-email')");
+  await run("document.querySelector('#auth-phone-tab').click();true");
+  await wait("document.querySelector('[role=tabpanel]').textContent.includes('Bientôt')");
+  await run("document.querySelector('#auth-email-tab').click();true");
+  await wait("!document.querySelector('.auth-google').disabled");
   await run("document.querySelector('.auth-google').click();true");
   await wait(
     "document.querySelector('app-request-state')?.textContent.includes('brouillon est conservé')",

@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
@@ -7,7 +8,7 @@ import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-part-card',
-  imports: [DecimalPipe, Icon, RouterLink],
+  imports: [Translate, DecimalPipe, Icon, RouterLink],
   templateUrl: './part-card.html',
   styleUrl: './part-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

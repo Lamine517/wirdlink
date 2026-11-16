@@ -1,14 +1,14 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Wird } from '../../../../core/wird-store';
 import { BeadProgress } from '../../../../shared/components/bead-progress/bead-progress';
 
 @Component({
   selector: 'app-wird-card',
-  imports: [Icon, RouterLink, DecimalPipe, BeadProgress, AudioPlayer],
+  imports: [Translate, Icon, RouterLink, BeadProgress, AudioPlayer],
   templateUrl: './wird-card.html',
   styles: `
     .wird-card__title {

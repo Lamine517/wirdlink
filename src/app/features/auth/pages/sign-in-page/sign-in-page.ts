@@ -1,3 +1,5 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +13,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
 
 @Component({
   selector: 'app-sign-in-page',
-  imports: [BackButton, RequestState],
+  imports: [Translate, ReactiveFormsModule, BackButton, RequestState],
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,11 +26,25 @@ export class SignInPage {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly busy = signal(false);
   protected readonly error = signal('');
+  protected readonly emailAddress = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required, Validators.email, Validators.maxLength(254)],
+  });
+  protected readonly emailSent = signal(false);
   protected readonly method = signal<'phone' | 'email'>('email');
   protected readonly callbackMode = this.route.snapshot.routeConfig?.path === 'connexion/retour';
 
   constructor() {
     if (this.callbackMode) void this.callback();
+  }
+
+  protected async sendEmail(): Promise<void> {
+    this.emailAddress.markAsTouched();
+    if (this.emailAddress.invalid || this.busy() || !this.network.online()) return;
+    await this.perform(async () => {
+      await this.auth.email(this.emailAddress.value);
+      this.emailSent.set(true);
+    }, 'Le lien n’a pas pu être envoyé. Réessayez.');
   }
 
   protected async oauth(provider: SignInProvider): Promise<void> {
@@ -66,7 +82,9 @@ export class SignInPage {
       await action();
     } catch (error) {
       if (error instanceof ServiceUnavailableError) {
-        this.error.set('La connexion n’est pas encore disponible. Votre brouillon est conservé.');
+        this.error.set(
+          'Connexion impossible pour le moment. Réessayez, votre brouillon est conservé.',
+        );
       } else {
         this.error.set(fallback);
       }

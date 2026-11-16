@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
@@ -7,7 +8,7 @@ import { CreationDraftStore, WIRD_TEMPLATES } from '../../data-access/creation-d
 
 @Component({
   selector: 'app-create-page',
-  imports: [RouterLink, DecimalPipe, Icon, BottomSheet],
+  imports: [Translate, RouterLink, DecimalPipe, Icon, BottomSheet],
   templateUrl: './create-page.html',
   styleUrl: './create-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +22,9 @@ export class CreatePage {
     tahlil: 'sparkle',
     custom: 'plus',
   } as const;
-  protected readonly templates = WIRD_TEMPLATES;
+  protected readonly templates = [...WIRD_TEMPLATES].sort(
+    (a, b) => Number(b.id === 'custom') - Number(a.id === 'custom'),
+  );
   private readonly replacementSheet = viewChild.required<BottomSheet>('replacementSheet');
   private readonly pendingTemplate = signal<(typeof WIRD_TEMPLATES)[number] | null>(null);
   private readonly router = inject(Router);

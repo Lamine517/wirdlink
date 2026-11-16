@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,7 +19,7 @@ import { UserAvatar } from '../../../../shared/components/user-avatar/user-avata
 
 @Component({
   selector: 'app-profile-page',
-  imports: [ReactiveFormsModule, BackButton, BottomSheet, RequestState, UserAvatar],
+  imports: [Translate, ReactiveFormsModule, BackButton, BottomSheet, RequestState, UserAvatar],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,6 +99,11 @@ export class ProfilePage {
     } finally {
       this.busy.set(false);
     }
+  }
+
+  protected async signOutConfirmed(sheet: BottomSheet): Promise<void> {
+    await this.signOut();
+    if (!this.auth.session()) sheet.close();
   }
 
   protected async signOut(): Promise<void> {

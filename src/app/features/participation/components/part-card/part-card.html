@@ -11,7 +11,7 @@
   <div class="part-group__totals">
     @if (group().pendingQuantity) {
       <span
-        ><strong>{{ group().pendingQuantity | number }}</strong> à lire</span
+        ><strong>{{ group().pendingQuantity | number }}</strong> {{ 'à lire' | t }}</span
       >
     }
     @if (group().finishedQuantity) {
@@ -19,7 +19,7 @@
         ><app-icon name="check" [size]="16" /><strong>{{
           group().finishedQuantity | number
         }}</strong>
-        lus</span
+        {{ 'lus' | t }}</span
       >
     }
   </div>
@@ -27,12 +27,11 @@
     @let counted = progress().get(part.id) ?? 0;
     <div class="part-group__pending">
       <span
-        >{{ part.quantity | number }} lectures<span class="part-group__name">{{
-          part.name || 'Sans nom'
-        }}</span>
+        >{{ part.quantity | number }} {{ 'lectures' | t
+        }}<span class="part-group__name">{{ part.name || ('Sans nom' | t) }}</span>
         @if (counted > 0) {
           <span class="part-group__name"
-            >{{ counted | number }} / {{ part.quantity | number }} comptées</span
+            >{{ counted | number }} / {{ part.quantity | number }} {{ 'comptées' | t }}</span
           >
         }
       </span>
@@ -40,7 +39,9 @@
         <a
           class="button button--primary button--compact"
           [routerLink]="['/mes-parts', part.id, 'compteur']"
-          ><app-icon name="tap" [size]="20" />{{ counted === 0 ? 'Compter' : 'Reprendre' }}</a
+          ><app-icon name="tap" [size]="20" />{{
+            counted === 0 ? ('Compter' | t) : ('Reprendre' | t)
+          }}</a
         >
         <button
           type="button"
@@ -48,7 +49,7 @@
           [disabled]="disabled()"
           (click)="finishRequested.emit(part)"
         >
-          J’ai fini
+          {{ 'J’ai fini' | t }}
         </button>
       </div>
     </div>
@@ -57,13 +58,18 @@
     <details class="part-group__details">
       <summary>
         <app-icon name="next" [size]="16" />{{ group().finished.length }}
-        {{ group().finished.length > 1 ? 'participations terminées' : 'participation terminée' }}
+        {{
+          (group().finished.length > 1
+            ? ('participations terminées' | t)
+            : ('participation terminée' | t)
+          ) | t
+        }}
       </summary>
       <ul>
         @for (part of group().finished; track part.id) {
           <li>
-            <span>{{ part.name || 'Sans nom' }}</span
-            ><strong>{{ part.quantity | number }} lus</strong>
+            <span>{{ part.name || ('Sans nom' | t) }}</span
+            ><strong>{{ part.quantity | number }} {{ 'lus' | t }}</strong>
           </li>
         }
       </ul>

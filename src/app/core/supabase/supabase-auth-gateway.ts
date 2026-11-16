@@ -5,11 +5,15 @@ import {
   InvalidCodeError,
   RateLimitError,
   ResponsibleSession,
+  PublicationRequest,
+  PublicationReceipt,
   ServiceUnavailableError,
   SignInProvider,
   UserProfile,
   WirdAuthor,
 } from '../services/frontend-gateway';
+import type { Wird } from '../wird-store';
+import { SupabaseWirdRepository } from './supabase-wird-repository';
 import { SUPABASE_AUTH_METHODS, SUPABASE_CLIENT } from './supabase-client';
 
 function responsibleSession(user: User | null): ResponsibleSession | null {
@@ -41,6 +45,7 @@ export function translateAuthError(error: AuthError): Error {
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthGateway implements FrontendGateway {
   private readonly client = inject(SUPABASE_CLIENT);
+  private readonly wirds = inject(SupabaseWirdRepository);
   private readonly methods = inject(SUPABASE_AUTH_METHODS);
 
   private async sessionWithProfile(user: User | null): Promise<ResponsibleSession | null> {
@@ -123,6 +128,19 @@ export class SupabaseAuthGateway implements FrontendGateway {
     const session = responsibleSession(data.user);
     if (!session) throw new ServiceUnavailableError();
     return (await this.sessionWithProfile(data.user)) ?? session;
+  }
+
+  async signInWithEmail(email: string): Promise<void> {
+    const normalized = email.trim().toLowerCase();
+    if (normalized.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized))
+      throw new Error('Invalid email');
+    const { error } = await (
+      await this.client()
+    ).auth.signInWithOtp({
+      email: normalized,
+      options: { emailRedirectTo: window.location.origin + '/connexion/retour' },
+    });
+    if (error) throw translateAuthError(error);
   }
 
   async signInWithProvider(provider: SignInProvider): Promise<void> {
@@ -210,12 +228,11 @@ export class SupabaseAuthGateway implements FrontendGateway {
     return { displayName: author.display_name, organization: author.organization };
   }
 
-  // Publishing stays closed until remote reads, private access and media are connected.
-  publish(): Promise<never> {
-    return Promise.reject(new ServiceUnavailableError());
+  publish(request: PublicationRequest): Promise<PublicationReceipt> {
+    return this.wirds.publish(request);
   }
-  unlock(): Promise<never> {
-    return Promise.reject(new ServiceUnavailableError());
+  unlock(wirdId: string, code: string): Promise<Wird> {
+    return this.wirds.unlock(wirdId, code);
   }
   setReminders(): Promise<never> {
     return Promise.reject(new ServiceUnavailableError());

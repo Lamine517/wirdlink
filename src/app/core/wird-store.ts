@@ -1,6 +1,20 @@
-import { computed, Inject, Injectable, InjectionToken, signal } from '@angular/core';
+import { WIRD_REPOSITORY, WirdRepository, WirdChanges } from './services/wird-repository';
+import {
+  computed,
+  Inject,
+  Injectable,
+  InjectionToken,
+  Optional,
+  DestroyRef,
+  signal,
+} from '@angular/core';
 
 export interface Wird {
+  isOwner?: boolean;
+  imageUrl?: string;
+  reserved?: number;
+  startDate?: string;
+  endDate?: string;
   audioUrl?: string;
   description?: string;
   instructions?: string;
@@ -32,7 +46,39 @@ export class WirdStore {
   readonly storageWarning = signal('');
   readonly activeParts = computed(() => this.parts().filter((part) => !part.finished));
 
-  constructor(@Inject(WIRD_SEED) private readonly initialWirds: Wird[] = []) {
+  readonly loading = signal(false);
+  readonly error = signal('');
+  readonly remote: boolean;
+  readonly ready: Promise<void>;
+  private refreshTask: Promise<void> | null = null;
+  private generation = 0;
+  private revision = 0;
+
+  constructor(
+    @Inject(WIRD_SEED) private readonly initialWirds: Wird[] = [],
+    @Optional() @Inject(WIRD_REPOSITORY) private readonly repository: WirdRepository | null = null,
+    @Optional() destroyRef: DestroyRef | null = null,
+  ) {
+    this.remote = !!repository && initialWirds.length === 0;
+    this.ready = this.remote ? this.refresh() : Promise.resolve();
+    if (this.remote) {
+      let lastIdentity: string | null | undefined;
+      const stop = repository?.watchIdentity?.((identity) => {
+        if (identity === lastIdentity) return;
+        lastIdentity = identity;
+        this.generation++;
+        this.refreshTask = null;
+        this.wirds.set([]);
+        this.parts.set([]);
+        this.savedName.set('');
+        // Auth callbacks must not await another SDK call while its session lock is held.
+        queueMicrotask(() => {
+          void this.refresh();
+        });
+      });
+      if (stop) destroyRef?.onDestroy(stop);
+      return;
+    }
     this.wirds.set(initialWirds.map((wird) => ({ ...wird })));
     try {
       if (localStorage.getItem('wirdlink.demo.v1')) {
@@ -55,6 +101,7 @@ export class WirdStore {
   available(wirdId: string): number {
     const wird = this.wirds().find((item) => item.id === wirdId);
     if (!wird) return 0;
+    if (this.remote) return Math.max(0, wird.target - wird.completed - (wird.reserved ?? 0));
     return (
       wird.target -
       wird.completed -
@@ -65,6 +112,7 @@ export class WirdStore {
   }
 
   completed(wirdId: string): number {
+    if (this.remote) return this.wirds().find((item) => item.id === wirdId)?.completed ?? 0;
     return (
       (this.wirds().find((item) => item.id === wirdId)?.completed ?? 0) +
       this.parts()
@@ -74,6 +122,7 @@ export class WirdStore {
   }
 
   reserve(wirdId: string, quantity: number, name: string): Part | null {
+    if (this.remote) return null;
     if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > this.available(wirdId))
       return null;
     const part: Part = {
@@ -90,12 +139,163 @@ export class WirdStore {
   }
 
   finish(partId: string): boolean {
+    if (this.remote) return false;
     if (!this.parts().some((part) => part.id === partId && !part.finished)) return false;
     this.parts.update((parts) =>
       parts.map((part) => (part.id === partId ? { ...part, finished: true } : part)),
     );
     this.persist();
     return true;
+  }
+
+  refresh(): Promise<void> {
+    if (!this.remote || !this.repository) return Promise.resolve();
+    if (this.refreshTask) return this.refreshTask;
+    this.loading.set(true);
+    this.error.set('');
+    const repository = this.repository;
+    const generation = this.generation;
+    const revision = this.revision;
+    this.refreshTask = (async () => {
+      try {
+        const identity = await repository.identity();
+        const [wirds, parts] = await Promise.all([repository.listWirds(), repository.listParts()]);
+        if (
+          identity !== (await repository.identity()) ||
+          generation !== this.generation ||
+          revision !== this.revision
+        )
+          return;
+        const missingIds = [...new Set(parts.map((part) => part.wirdId))].filter(
+          (id) => !wirds.some((wird) => wird.id === id),
+        );
+        const missing = await Promise.all(missingIds.map((id) => repository.getWird(id)));
+        if (
+          identity !== (await repository.identity()) ||
+          generation !== this.generation ||
+          revision !== this.revision
+        )
+          return;
+        this.wirds.set([...wirds, ...missing.filter((wird): wird is Wird => !!wird)]);
+        this.parts.set(parts);
+      } catch {
+        if (generation === this.generation)
+          this.error.set('Impossible de charger les wirds. Réessayez.');
+      } finally {
+        if (generation === this.generation) {
+          this.loading.set(false);
+          this.refreshTask = null;
+        }
+      }
+    })();
+    return this.refreshTask;
+  }
+
+  async ensure(id: string): Promise<Wird | null> {
+    if (!this.remote || !this.repository)
+      return this.wirds().find((wird) => wird.id === id) ?? null;
+    const generation = this.generation;
+    const revision = this.revision;
+    const identity = await this.repository.identity();
+    const wird = await this.repository.getWird(id);
+    if (generation !== this.generation || identity !== (await this.repository.identity()))
+      return null;
+    if (revision !== this.revision) return this.wirds().find((item) => item.id === id) ?? null;
+    if (wird) {
+      this.revision++;
+      this.upsert(wird);
+    } else this.wirds.update((items) => items.filter((item) => item.id !== id));
+    return wird;
+  }
+
+  async reservePart(
+    id: string,
+    quantity: number,
+    name: string,
+    requestId: string,
+  ): Promise<Part | null> {
+    if (!this.remote || !this.repository) return this.reserve(id, quantity, name);
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const result = await this.repository.reserve(id, quantity, name, requestId);
+    // A first guest reservation can create an anonymous session. A session switch is rejected.
+    if (
+      identity &&
+      (generation !== this.generation || identity !== (await this.repository.identity()))
+    )
+      throw new Error('Session changed');
+    this.revision++;
+    this.upsert(result.wird);
+    this.parts.update((parts) => [
+      ...parts.filter((part) => part.id !== result.part.id),
+      result.part,
+    ]);
+    this.savedName.set(result.part.name);
+    return result.part;
+  }
+
+  async finishPart(id: string): Promise<boolean> {
+    if (!this.remote || !this.repository) return this.finish(id);
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const result = await this.repository.finish(id);
+    if (generation !== this.generation || identity !== (await this.repository.identity()))
+      throw new Error('Session changed');
+    this.revision++;
+    this.upsert(result.wird);
+    this.parts.update((parts) => parts.map((part) => (part.id === id ? result.part : part)));
+    return true;
+  }
+
+  async participants(id: string): Promise<Part[]> {
+    if (!this.remote || !this.repository) return this.parts().filter((part) => part.wirdId === id);
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const parts = await this.repository.listParticipants(id);
+    return generation === this.generation && identity === (await this.repository.identity())
+      ? parts
+      : [];
+  }
+
+  async unlock(id: string, code: string): Promise<Wird> {
+    if (!this.repository) throw new Error('Repository unavailable');
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const wird = await this.repository.unlock(id, code);
+    if (
+      identity &&
+      (generation !== this.generation || identity !== (await this.repository.identity()))
+    )
+      throw new Error('Session changed');
+    this.revision++;
+    this.upsert(wird);
+    return wird;
+  }
+
+  async update(id: string, changes: WirdChanges): Promise<void> {
+    if (!this.repository) throw new Error('Repository unavailable');
+    const identity = await this.repository.identity();
+    const generation = this.generation;
+    const wird = await this.repository.update(id, changes);
+    if (generation !== this.generation || identity !== (await this.repository.identity()))
+      throw new Error('Session changed');
+    this.revision++;
+    this.upsert(wird);
+  }
+
+  async delete(id: string): Promise<void> {
+    if (!this.repository) throw new Error('Repository unavailable');
+    const identity = await this.repository.identity();
+    const generation = this.generation;
+    await this.repository.delete(id);
+    if (generation !== this.generation || identity !== (await this.repository.identity())) return;
+    this.revision++;
+    this.wirds.update((items) => items.filter((wird) => wird.id !== id));
+    this.parts.update((items) => items.filter((part) => part.wirdId !== id));
+  }
+
+  private upsert(wird: Wird): void {
+    this.wirds.update((items) => [...items.filter((item) => item.id !== wird.id), wird]);
   }
 
   private persist(): void {

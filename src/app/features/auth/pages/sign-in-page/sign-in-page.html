@@ -1,26 +1,31 @@
 <app-back-button fallback="/creer/apercu" />
 @if (callbackMode) {
-  <h1>Votre connexion</h1>
+  <h1>{{ 'Votre connexion' | t }}</h1>
   <app-request-state
     [loading]="busy()"
-    loadingLabel="Connexion en cours…"
+    [loadingLabel]="'Connexion en cours…' | t"
     [error]="error()"
     retryLabel="Recommencer"
     (retry)="retryCallback()"
   />
 } @else {
-  <h1>Votre connexion</h1>
-  <p class="auth-hint">Connectez-vous pour publier votre wird.</p>
+  <h1>{{ 'Votre connexion' | t }}</h1>
+  <p class="auth-hint">{{ 'Connectez-vous pour publier votre wird.' | t }}</p>
   <button
     class="button button--outline auth-google"
     type="button"
     [disabled]="busy() || !network.online()"
     (click)="oauth('google')"
   >
-    <img src="assets/icons/providers/google.svg" width="20" height="20" alt="" />
-    Continuer avec Google
+    <img src="assets/icons/providers/google.svg" width="20" height="20" alt="" />{{
+      'Continuer avec Google' | t
+    }}
   </button>
-  <div class="segmented-choice auth-methods" role="tablist" aria-label="Autres moyens de connexion">
+  <div
+    class="segmented-choice auth-methods"
+    role="tablist"
+    [attr.aria-label]="'Autres moyens de connexion' | t"
+  >
     <button
       type="button"
       role="tab"
@@ -31,7 +36,7 @@
       class="button button--outline"
       (click)="method.set('phone')"
     >
-      Téléphone
+      {{ 'Téléphone' | t }}
     </button>
     <button
       type="button"
@@ -43,16 +48,55 @@
       class="button button--outline"
       (click)="method.set('email')"
     >
-      Email
+      {{ 'Email' | t }}
     </button>
   </div>
-  <p
+  <div
     id="auth-coming-soon"
-    class="auth-hint auth-coming-soon"
     role="tabpanel"
     [attr.aria-labelledby]="method() === 'phone' ? 'auth-phone-tab' : 'auth-email-tab'"
   >
-    {{ method() === 'phone' ? 'Téléphone' : 'Email' }} · Bientôt disponible
-  </p>
-  <app-request-state [loading]="busy()" loadingLabel="Connexion en cours…" [error]="error()" />
+    @if (method() === 'email') {
+      @if (emailSent()) {
+        <p role="status">
+          {{
+            'Consultez votre boîte mail et ouvrez le lien pour vous connecter. Pensez aussi aux courriers indésirables.'
+              | t
+          }}
+        </p>
+        <button type="button" class="button button--outline" (click)="emailSent.set(false)">
+          {{ 'Changer d’adresse' | t }}
+        </button>
+      } @else {
+        <form class="form-stack" (submit)="$event.preventDefault(); sendEmail()">
+          <label for="auth-email">{{ 'Votre email' | t }}</label>
+          <input
+            id="auth-email"
+            type="email"
+            autocomplete="email"
+            placeholder="vous@exemple.com"
+            [formControl]="emailAddress"
+            [attr.aria-invalid]="emailAddress.touched && emailAddress.invalid"
+          />
+          @if (emailAddress.touched && emailAddress.invalid) {
+            <p class="field-error">{{ 'Saisissez une adresse email valide.' | t }}</p>
+          }
+          <button
+            type="submit"
+            class="button button--primary"
+            [disabled]="emailAddress.invalid || busy() || !network.online()"
+          >
+            {{ 'Recevoir un lien de connexion' | t }}
+          </button>
+        </form>
+      }
+    } @else {
+      <p class="auth-hint">{{ 'Téléphone · Bientôt disponible' | t }}</p>
+    }
+  </div>
+  <app-request-state
+    [loading]="busy()"
+    [loadingLabel]="'Connexion en cours…' | t"
+    [error]="error()"
+  />
 }

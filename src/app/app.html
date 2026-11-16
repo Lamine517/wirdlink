@@ -1,43 +1,48 @@
-<a class="skip-link" href="#main">Aller au contenu</a>
+<a class="skip-link" href="#main">{{ 'Aller au contenu' | t }}</a>
 <div class="desktop-layout" [class.desktop-layout--entered]="homeEntered()">
   <aside class="desktop-layout__intro"><app-desktop-intro [url]="shareUrl()" /></aside>
   <div class="app-shell">
     <main #content class="app-shell__content" id="main" tabindex="-1">
       @if (!network.online()) {
         <p class="feedback offline-status" role="status">
-          <app-icon name="offline" [size]="24" />Hors ligne · vos parts restent consultables.
+          <app-icon name="offline" [size]="24" />{{
+            'Hors ligne · vos parts restent consultables.' | t
+          }}
         </p>
       }
       @if (store.storageWarning()) {
-        <p class="feedback" role="status">{{ store.storageWarning() }}</p>
+        <p class="feedback" role="status">{{ store.storageWarning() | t }}</p>
       }
       <div #pageView class="app-page-view"><router-outlet (activate)="resetScroll()" /></div>
     </main>
-    <nav class="bottom-nav" aria-label="Navigation principale">
+    <nav class="bottom-nav" [attr.aria-label]="'Navigation principale' | t">
       <a
         routerLink="/"
         class="bottom-nav__link"
         [class.bottom-nav__link--active]="section() === 'home'"
         [attr.aria-current]="section() === 'home' ? 'page' : null"
       >
-        <span class="bottom-nav__icon"><app-icon name="home" [size]="28" /></span>Accueil
-      </a>
+        <span class="bottom-nav__icon"><app-icon name="home" [size]="28" /></span
+        >{{ 'Accueil' | t }}</a
+      >
       <a
         routerLink="/mes-parts"
         class="bottom-nav__link"
         [class.bottom-nav__link--active]="section() === 'parts'"
         [attr.aria-current]="section() === 'parts' ? 'page' : null"
       >
-        <span class="bottom-nav__icon"><app-icon name="hand" [size]="28" /></span>Mes parts
-      </a>
+        <span class="bottom-nav__icon"><app-icon name="hand" [size]="28" /></span
+        >{{ 'Mes parts' | t }}</a
+      >
       <a
         routerLink="/creer"
         class="bottom-nav__link"
         [class.bottom-nav__link--active]="section() === 'create'"
         [attr.aria-current]="section() === 'create' ? 'page' : null"
       >
-        <span class="bottom-nav__icon"><app-icon name="plus" [size]="28" /></span>Créer
-      </a>
+        <span class="bottom-nav__icon"><app-icon name="plus" [size]="28" /></span
+        >{{ 'Créer' | t }}</a
+      >
     </nav>
   </div>
 
@@ -46,6 +51,8 @@
   </aside>
 </div>
 <footer class="desktop-footer">
-  <a routerLink="/aide">Aide</a><a routerLink="/confidentialite">Vos informations</a
-  ><a routerLink="/conditions">Règles d’utilisation</a><span>© 2026 WirdLink</span>
+  <a routerLink="/aide">{{ 'Aide' | t }}</a
+  ><a routerLink="/confidentialite">{{ 'Vos informations' | t }}</a
+  ><a routerLink="/conditions">{{ 'Règles d’utilisation' | t }}</a
+  ><span>© 2026 WirdLink</span>
 </footer>

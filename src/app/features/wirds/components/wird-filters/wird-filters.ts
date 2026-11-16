@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
@@ -9,7 +10,7 @@ export type VisibilityFilter = 'all' | 'public' | 'private';
 
 @Component({
   selector: 'app-wird-filters',
-  imports: [Icon, BottomSheet],
+  imports: [Translate, Icon, BottomSheet],
   templateUrl: './wird-filters.html',
   styleUrl: './wird-filters.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

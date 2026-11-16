@@ -1,5 +1,5 @@
 <header class="page-header">
-  <a class="brand" routerLink="/" aria-label="WirdLink, accueil"
+  <a class="brand" routerLink="/" [attr.aria-label]="'WirdLink, accueil' | t"
     ><img src="assets/brand/wirdlink-logo.svg" alt="" width="52" height="57" /><span
       >WirdLink</span
     ></a
@@ -10,28 +10,39 @@
         class="account-link"
         routerLink="/profil"
         [attr.aria-label]="
-          session.displayName ? 'Compte de ' + session.displayName : 'Votre compte'
+          session.displayName ? ('Compte de' | t) + ' ' + session.displayName : ('Votre compte' | t)
         "
-        title="Votre compte"
+        [title]="'Votre compte' | t"
       >
         <app-user-avatar [name]="session.displayName ?? ''" />
       </a>
     }
-    <a class="settings-link" routerLink="/preferences" aria-label="Réglages" title="Réglages"
+    <a
+      class="settings-link"
+      routerLink="/preferences"
+      [attr.aria-label]="'Réglages' | t"
+      [title]="'Réglages' | t"
       ><app-icon name="settings" [size]="24"
     /></a>
   </div>
 </header>
 <app-install-app />
-<h1>Mes wirds</h1>
+<h1>{{ 'Mes wirds' | t }}</h1>
 <app-wird-filters
   [(visibility)]="visibility"
   [resultCount]="visibleWirds().length"
   [(status)]="status"
   [(recurrence)]="recurrence"
 />
+<app-request-state
+  [skeleton]="true"
+  [loading]="store.loading()"
+  [error]="store.error()"
+  [retryLabel]="'Réessayer' | t"
+  (retry)="store.refresh()"
+/>
 <p class="result-count" aria-live="polite">
-  {{ visibleWirds().length }} {{ visibleWirds().length > 1 ? 'wirds' : 'wird' }}
+  {{ visibleWirds().length }} {{ (visibleWirds().length > 1 ? ('wirds' | t) : ('wird' | t)) | t }}
 </p>
 @for (wird of visibleWirds(); track wird.id) {
   <app-wird-card
@@ -40,18 +51,18 @@
     [completed]="store.completed(wird.id)"
   />
 } @empty {
-  @if (store.wirds().length === 0) {
+  @if (!store.loading() && !store.error() && store.wirds().length === 0) {
     <app-empty-state
-      title="Aucun wird pour le moment"
-      description="Créez votre premier wird pour commencer."
-      actionLabel="Créer un wird"
+      [title]="'Aucun wird pour le moment' | t"
+      [description]="'Créez votre premier wird pour commencer.' | t"
+      [actionLabel]="'Créer un wird' | t"
       actionLink="/creer"
     />
-  } @else {
+  } @else if (!store.loading() && !store.error()) {
     <app-empty-state
-      title="Aucun wird ici"
-      description="Essayez d’autres filtres pour retrouver un wird."
-      actionLabel="Voir les wirds en cours"
+      [title]="'Aucun wird ici' | t"
+      [description]="'Essayez d’autres filtres pour retrouver un wird.' | t"
+      [actionLabel]="'Voir les wirds en cours' | t"
       (actionRequested)="resetFilters()"
     />
   }

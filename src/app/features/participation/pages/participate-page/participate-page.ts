@@ -1,3 +1,8 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
+import { CreationDraftStore, todayDate } from '../../../creation/data-access/creation-draft';
+import { viewChild } from '@angular/core';
+import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
 import { WirdHeader } from '../../components/wird-header/wird-header';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
@@ -24,6 +29,9 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
 @Component({
   selector: 'app-participate-page',
   imports: [
+    Translate,
+    AudioPlayer,
+    BottomSheet,
     BackButton,
     WirdHeader,
     ReactiveFormsModule,
@@ -38,6 +46,57 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParticipatePage {
+  private readonly draft = inject(CreationDraftStore);
+  private readonly deleteSheet = viewChild.required<BottomSheet>('deleteSheet');
+  protected readonly deleting = signal(false);
+  protected openDelete(): void {
+    this.deleteSheet().open();
+  }
+  protected edit(): void {
+    const wird = this.selected();
+    if (wird?.isOwner) void this.router.navigate(['/wird', wird.id, 'modifier']);
+  }
+  protected duplicate(): void {
+    const wird = this.selected();
+    if (!wird) return;
+    if (this.draft.hasDraft()) {
+      this.message.set(
+        'Un brouillon existe déjà. Retrouvez-le dans Créer avant de dupliquer ce wird.',
+      );
+      return;
+    }
+    this.draft.updateContent({
+      title: wird.title,
+      target: wird.target,
+      description: wird.description ?? '',
+      instructions: wird.instructions ?? '',
+    });
+    this.draft.updateSchedule({
+      recurrence: wird.recurrence,
+      startDate: todayDate(),
+      endDate: '',
+      visibility: wird.visibility,
+    });
+    this.draft.warning.set(
+      'Le wird a été copié dans votre brouillon. Ajoutez à nouveau les photos et les fichiers audio si besoin.',
+    );
+    void this.router.navigate(['/creer/contenu']);
+  }
+  protected async deleteWird(): Promise<void> {
+    const wird = this.selected();
+    if (!wird?.isOwner || this.deleting()) return;
+    this.deleting.set(true);
+    this.message.set('');
+    try {
+      await this.store.delete(wird.id);
+      this.deleteSheet().close();
+      await this.router.navigate(['/']);
+    } catch {
+      this.message.set('Le wird n’a pas pu être supprimé. Réessayez.');
+    } finally {
+      this.deleting.set(false);
+    }
+  }
   protected readonly shareOrigin = window.location.origin;
   private readonly gateway = inject(FRONTEND_GATEWAY);
   protected readonly author = signal<WirdAuthor | null>(null);
@@ -57,6 +116,8 @@ export class ParticipatePage {
   protected readonly useName = signal(false);
   protected readonly message = signal('');
   private readonly reserved = signal(false);
+  private requestId = crypto.randomUUID();
+  private requestValue = '';
   protected readonly quantity = new FormControl<number | null>(null, [
     Validators.required,
     Validators.min(1),
@@ -125,7 +186,7 @@ export class ParticipatePage {
     });
   }
 
-  protected reserve(): void {
+  protected async reserve(): Promise<void> {
     const wird = this.selected();
     if (!wird || this.reserved()) return;
     this.message.set('');
@@ -143,14 +204,23 @@ export class ParticipatePage {
       return;
     }
     this.reserved.set(true);
-    const part = this.store.reserve(
-      wird.id,
-      this.quantity.value ?? 0,
-      this.useName() ? this.name.value : '',
-    );
-    if (!part) {
+    const name = this.useName() ? this.name.value : '';
+    const value = JSON.stringify([wird.id, this.quantity.value, name]);
+    if (value !== this.requestValue) {
+      this.requestValue = value;
+      this.requestId = crypto.randomUUID();
+    }
+    try {
+      const part = await this.store.reservePart(
+        wird.id,
+        this.quantity.value ?? 0,
+        name,
+        this.requestId,
+      );
+      if (!part) throw new Error('Invalid quantity');
+    } catch {
       this.reserved.set(false);
-      this.message.set(`Choisissez un nombre entier entre 1 et ${this.store.available(wird.id)}.`);
+      this.message.set('La part n’a pas pu être réservée. Vérifiez votre connexion et réessayez.');
       return;
     }
     void this.router.navigate(['/mes-parts']).catch(() => {

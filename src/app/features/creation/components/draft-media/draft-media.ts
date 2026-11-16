@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
@@ -5,7 +6,7 @@ import { LocalMedia } from '../../data-access/creation-draft';
 
 @Component({
   selector: 'app-draft-media',
-  imports: [Icon, AudioPlayer],
+  imports: [Translate, Icon, AudioPlayer],
   templateUrl: './draft-media.html',
   styleUrl: './draft-media.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

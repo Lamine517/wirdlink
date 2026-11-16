@@ -3,8 +3,8 @@
     <div class="thank-you__badge" aria-hidden="true">
       <app-icon name="check" [size]="28" />
     </div>
-    <h1>Merci !</h1>
-    <p class="thank-you__message">Qu’Allah accepte votre part.</p>
+    <h1>{{ 'Merci !' | t }}</h1>
+    <p class="thank-you__message">{{ 'Qu’Allah accepte votre part.' | t }}</p>
     <div class="thank-you__progress">
       <app-circular-progress
         [title]="wird.title"
@@ -13,28 +13,28 @@
       />
     </div>
     @if (store.completed(wird.id) >= wird.target) {
-      <p class="thank-you__status">Objectif atteint !</p>
+      <p class="thank-you__status">{{ 'Objectif atteint !' | t }}</p>
     } @else if (store.available(wird.id) > 0) {
       <p class="thank-you__status">{{ store.available(wird.id) | number }} lectures à prendre</p>
     } @else {
-      <p class="thank-you__status">Toutes les parts sont prises.</p>
+      <p class="thank-you__status">{{ 'Toutes les parts sont prises.' | t }}</p>
     }
     <div class="thank-you__actions">
       @if (store.available(wird.id) > 0) {
         <a class="button button--accent" [routerLink]="['/wird', wird.id]">
-          <app-icon name="hand" [size]="24" />Je participe encore
-        </a>
+          <app-icon name="hand" [size]="24" />{{ 'Je participe encore' | t }}</a
+        >
       } @else {
-        <a class="button button--accent" routerLink="/">Voir les autres wirds</a>
+        <a class="button button--accent" routerLink="/">{{ 'Voir les autres wirds' | t }}</a>
       }
-      <a class="button button--outline" routerLink="/mes-parts">Mes parts</a>
+      <a class="button button--outline" routerLink="/mes-parts">{{ 'Mes parts' | t }}</a>
     </div>
   </section>
 } @else {
   <app-empty-state
-    title="Wird introuvable"
-    description="Ce wird n’est pas disponible sur cet appareil."
-    actionLabel="Retour à l’accueil"
+    [title]="'Wird introuvable' | t"
+    [description]="'Ce wird n’est pas disponible sur cet appareil.' | t"
+    [actionLabel]="'Retour à l’accueil' | t"
     actionLink="/"
   />
 }

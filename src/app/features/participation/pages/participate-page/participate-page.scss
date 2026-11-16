@@ -90,3 +90,12 @@ input[aria-invalid='true'] {
   white-space: pre-line;
   font-size: var(--font-size-small);
 }
+
+.wird-image {
+  display: block;
+  width: 100%;
+  max-height: 28rem;
+  object-fit: contain;
+  border-radius: var(--radius-large);
+  margin-block: var(--space-16);
+}

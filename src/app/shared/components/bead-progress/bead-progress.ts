@@ -1,6 +1,8 @@
+import { Translate } from '../../pipes/translate';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 @Component({
+  imports: [Translate],
   selector: 'app-bead-progress',
   templateUrl: './bead-progress.html',
   styleUrl: './bead-progress.scss',

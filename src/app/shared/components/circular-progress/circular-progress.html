@@ -1,7 +1,7 @@
 <div
   class="progress-ring"
   role="progressbar"
-  [attr.aria-label]="title() + ' : lectures terminées'"
+  [attr.aria-label]="title() + ' : ' + ('Lectures terminées' | t)"
   aria-valuemin="0"
   [attr.aria-valuenow]="completed()"
   [attr.aria-valuemax]="target()"
@@ -12,6 +12,6 @@
       <span class="progress-ring__title">{{ title() }}</span>
     }
     <strong class="progress-ring__value">{{ completed() | number }}</strong>
-    <span class="progress-ring__caption">lus sur {{ target() | number }}</span>
+    <span class="progress-ring__caption">{{ 'lus sur {target}' | t: { target: target() } }}</span>
   </div>
 </div>

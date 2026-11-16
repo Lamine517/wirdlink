@@ -1,3 +1,5 @@
+import { I18nService } from './core/services/i18n';
+import { Translate } from './shared/pipes/translate';
 import { Appearance } from './core/services/appearance';
 import { NavigationHistory } from './core/services/navigation-history';
 import { DeviceInstall } from './core/services/device-install';
@@ -23,12 +25,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, Icon, DesktopIntro, DesktopShare],
+  imports: [Translate, RouterOutlet, RouterLink, Icon, DesktopIntro, DesktopShare],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
+  protected readonly i18n = inject(I18nService);
   protected readonly homeEntered = signal(false);
   protected readonly navigation = inject(NavigationHistory);
   private readonly router = inject(Router);

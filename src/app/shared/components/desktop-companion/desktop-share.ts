@@ -1,9 +1,10 @@
+import { Translate } from '../../pipes/translate';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ShareActions } from '../share-actions/share-actions';
 
 @Component({
   selector: 'app-desktop-share',
-  imports: [ShareActions],
+  imports: [Translate, ShareActions],
   templateUrl: './desktop-share.html',
   styles: ':host { display:block; max-width:300px; }',
   changeDetection: ChangeDetectionStrategy.OnPush,

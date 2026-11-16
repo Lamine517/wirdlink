@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon, IconName } from '../../../../shared/components/icon/icon';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +15,7 @@ import { CreationSteps } from '../../components/creation-steps/creation-steps';
 
 @Component({
   selector: 'app-schedule-page',
-  imports: [ReactiveFormsModule, CreationSteps, Icon],
+  imports: [Translate, ReactiveFormsModule, CreationSteps, Icon],
   templateUrl: './schedule-page.html',
   styleUrl: './schedule-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

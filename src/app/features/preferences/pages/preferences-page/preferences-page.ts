@@ -1,15 +1,15 @@
+import { I18nService } from '../../../../core/services/i18n';
+import { Translate } from '../../../../shared/pipes/translate';
+import { Icon } from '../../../../shared/components/icon/icon';
 import { Appearance, ThemePreference } from '../../../../core/services/appearance';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeviceInstall } from '../../../../core/services/device-install';
-import { NetworkStatus } from '../../../../core/services/network-status';
-import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
-import { RequestState } from '../../../../shared/components/request-state/request-state';
 
 @Component({
   selector: 'app-preferences-page',
-  imports: [BackButton, RouterLink, RequestState],
+  imports: [Translate, Icon, BackButton, RouterLink],
   templateUrl: './preferences-page.html',
   styles: `
     :host {
@@ -19,6 +19,9 @@ import { RequestState } from '../../../../shared/components/request-state/reques
       margin-bottom: 24px;
     }
     .preferences-card h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 1.125rem;
     }
     .preferences-card p {
@@ -48,6 +51,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreferencesPage {
+  protected readonly i18n = inject(I18nService);
   protected readonly appearance = inject(Appearance);
   protected readonly themes: { value: ThemePreference; label: string }[] = [
     { value: 'auto', label: 'Automatique' },
@@ -55,29 +59,7 @@ export class PreferencesPage {
     { value: 'dark', label: 'Sombre' },
   ];
   protected readonly install = inject(DeviceInstall);
-  protected readonly network = inject(NetworkStatus);
-  private readonly gateway = inject(FRONTEND_GATEWAY);
   protected readonly ios =
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
-  protected readonly notificationSupport = 'Notification' in window;
-  protected readonly blocked = this.notificationSupport && Notification.permission === 'denied';
-  protected readonly reminders = signal(false);
-  protected readonly busy = signal(false);
-  protected readonly error = signal('');
-
-  protected async toggleReminders(): Promise<void> {
-    if (this.busy() || this.blocked || !this.notificationSupport || !this.network.online()) return;
-    this.busy.set(true);
-    this.error.set('');
-    const enabled = !this.reminders();
-    try {
-      await this.gateway.setReminders(enabled);
-      this.reminders.set(enabled);
-    } catch {
-      this.error.set('Les rappels ne sont pas encore disponibles. Aucun rappel n’a été activé.');
-    } finally {
-      this.busy.set(false);
-    }
-  }
 }

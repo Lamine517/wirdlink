@@ -59,3 +59,15 @@
     font-size: 1rem;
   }
 }
+
+// On phones the application uses the viewport, rather than the desktop frame.
+@media (max-width: 699px) {
+  .bottom-sheet {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+  }
+}

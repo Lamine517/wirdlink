@@ -26,6 +26,7 @@ export const WIRD_TEMPLATES = [
   { id: 'tahlil', title: 'Tahlil', target: 1000 },
   { id: 'custom', title: 'Mon propre wird', target: null },
 ] as const;
+export const MAX_WIRD_TARGET = 2147483647;
 const STORAGE_KEY = 'wirdlink.creation.v1';
 const RECURRENCES: readonly string[] = [
   'Une fois',
@@ -52,7 +53,8 @@ export function isContentValid(draft: DraftContent): boolean {
     (draft.instructions ?? '').length <= 1000 &&
     typeof draft.target === 'number' &&
     Number.isSafeInteger(draft.target) &&
-    draft.target > 0
+    draft.target > 0 &&
+    draft.target <= MAX_WIRD_TARGET
   );
 }
 export function isScheduleValid(draft: DraftSchedule): boolean {

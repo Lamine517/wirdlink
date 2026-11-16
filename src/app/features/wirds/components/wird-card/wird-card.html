@@ -2,25 +2,28 @@
   <h2>
     <a class="wird-card__title" [routerLink]="['/wird', wird().id]">{{ wird().title }}</a>
   </h2>
-  <p class="text-secondary">{{ wird().recurrence }}</p>
+  <p class="text-secondary">{{ wird().recurrence | t }}</p>
   @if (wird().audioUrl; as source) {
     <app-audio-player [source]="source" [title]="wird().title" />
   }
   <app-bead-progress [completed]="completed()" [target]="wird().target" />
-  <p class="text-strong">Il reste {{ available() | number }} sur {{ wird().target | number }}</p>
+  <p class="text-strong">
+    {{ 'Il reste {available} sur {target}' | t: { available: available(), target: wird().target } }}
+  </p>
   @if (reserved() > 0) {
-    <p class="text-secondary">{{ reserved() }} lectures en cours</p>
+    <p class="text-secondary">{{ '{count} lectures en cours' | t: { count: reserved() } }}</p>
   }
   @if (available() > 0) {
     <a class="button button--accent" [routerLink]="['/wird', wird().id]"
-      ><app-icon name="hand" [size]="28" />Je participe</a
+      ><app-icon name="hand" [size]="28" />{{ 'Je participe' | t }}</a
     >
   } @else {
     <p>
       {{
-        completed() >= wird().target
-          ? 'Ce wird est terminé. Merci !'
-          : 'Toutes les parts sont prises.'
+        (completed() >= wird().target
+          ? ('Ce wird est terminé. Merci !' | t)
+          : ('Toutes les parts sont prises.' | t)
+        ) | t
       }}
     </p>
   }

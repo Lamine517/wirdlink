@@ -120,4 +120,25 @@ describe('Tasbih interaction', () => {
     expect(goal).not.toHaveBeenCalled();
     expect(TestBed.inject(WirdStore).parts()[0].finished).toBeFalse();
   });
+  it('keeps confirmation explicit and prevents repeated actions while it is pending', async () => {
+    const store = TestBed.inject(WirdStore);
+    let resolveConfirmation: (value: boolean) => void = () => undefined;
+    const confirmation = new Promise<boolean>((resolve) => {
+      resolveConfirmation = resolve;
+    });
+    const finish = spyOn(store, 'finishPart').and.returnValue(confirmation);
+    const harness = await RouterTestingHarness.create('/mes-parts/' + part.id + '/compteur');
+    for (let count = 0; count < 3; count++) click(harness, '.tasbih__circle');
+    click(harness, '.tasbih__finish');
+    const button = harness.routeNativeElement!.querySelector<HTMLButtonElement>('.tasbih__finish')!;
+    expect(button.disabled).toBeTrue();
+    expect(button.textContent).toContain('Confirmation');
+    click(harness, '.tasbih__finish');
+    expect(finish).toHaveBeenCalledTimes(1);
+    resolveConfirmation(false);
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    expect(button.disabled).toBeFalse();
+    expect(TestBed.inject(TasbihStore).count(part.id)).toBe(3);
+  });
 });

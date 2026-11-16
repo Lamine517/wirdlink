@@ -7,7 +7,9 @@ describe('Responsible session lifecycle', () => {
   let gateway: ReturnType<typeof gatewayStub>;
   beforeEach(() => {
     gateway = gatewayStub();
-    TestBed.configureTestingModule({ providers: [{ provide: FRONTEND_GATEWAY, useValue: gateway }] });
+    TestBed.configureTestingModule({
+      providers: [{ provide: FRONTEND_GATEWAY, useValue: gateway }],
+    });
   });
 
   it('restores a session after reload without requesting another code', async () => {
@@ -22,7 +24,7 @@ describe('Responsible session lifecycle', () => {
 
   it('does not overwrite a newer verified sign-in with a delayed restoration', async () => {
     let resolve!: (value: ResponsibleSession | null) => void;
-    gateway.restoreSession.and.returnValue(new Promise((result) => resolve = result));
+    gateway.restoreSession.and.returnValue(new Promise((result) => (resolve = result)));
     gateway.requestCode.and.resolveTo();
     gateway.verifyCode.and.resolveTo({ id: 'new-session' });
     const flow = TestBed.inject(AuthFlow);
@@ -36,7 +38,10 @@ describe('Responsible session lifecycle', () => {
   it('clears the identity on a sign-out event and unsubscribes on destruction', async () => {
     let notify!: (session: ResponsibleSession | null) => void;
     const stop = jasmine.createSpy('stop');
-    gateway.watchSession.and.callFake((listener) => { notify = listener; return stop; });
+    gateway.watchSession.and.callFake((listener) => {
+      notify = listener;
+      return stop;
+    });
     gateway.restoreSession.and.resolveTo({ id: 'responsible' });
     const flow = TestBed.inject(AuthFlow);
     await flow.ready;
@@ -52,5 +57,13 @@ describe('Responsible session lifecycle', () => {
     await flow.ready;
     expect(flow.session()).toBeNull();
     expect(flow.restoring()).toBeFalse();
+  });
+  it('delegates an email link request without creating a session', async () => {
+    gateway.signInWithEmail.and.resolveTo();
+    const flow = TestBed.inject(AuthFlow);
+    await flow.ready;
+    await flow.email('awa@example.com');
+    expect(gateway.signInWithEmail).toHaveBeenCalledOnceWith('awa@example.com');
+    expect(flow.session()).toBeNull();
   });
 });

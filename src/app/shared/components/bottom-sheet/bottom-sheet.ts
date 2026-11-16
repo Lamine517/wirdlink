@@ -1,3 +1,4 @@
+import { Translate } from '../../pipes/translate';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +9,7 @@ import {
 } from '@angular/core';
 
 @Component({
+  imports: [Translate],
   selector: 'app-bottom-sheet',
   templateUrl: './bottom-sheet.html',
   styleUrl: './bottom-sheet.scss',

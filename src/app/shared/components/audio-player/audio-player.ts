@@ -1,3 +1,4 @@
+import { Translate } from '../../pipes/translate';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,7 +18,7 @@ export function formatAudioTime(value: number): string {
 }
 @Component({
   selector: 'app-audio-player',
-  imports: [Icon],
+  imports: [Translate, Icon],
   templateUrl: './audio-player.html',
   styleUrl: './audio-player.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,10 +1,12 @@
-<a class="back-link" [routerLink]="backLink()"><app-icon name="back" [size]="24" />Retour</a>
+<a class="back-link" [routerLink]="backLink()"
+  ><app-icon name="back" [size]="24" />{{ 'Retour' | t }}</a
+>
 <div class="creation-steps">
-  <span>Étape {{ step() }} sur 3</span>
+  <span>{{ 'Étape {step} sur 3' | t: { step: step() } }}</span>
   <div
     class="creation-steps__track"
     role="progressbar"
-    aria-label="Création du wird"
+    [attr.aria-label]="'Création du wird' | t"
     aria-valuemin="0"
     aria-valuemax="3"
     [attr.aria-valuenow]="step()"

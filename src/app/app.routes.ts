@@ -1,3 +1,6 @@
+import { AuthFlow } from './features/auth/data-access/auth-flow';
+import { inject } from '@angular/core';
+import { WirdStore } from './core/wird-store';
 import { contentReady, scheduleReady } from './features/creation/guards/draft-guards';
 import { Routes } from '@angular/router';
 import { readableWird } from './features/access/data-access/wird-access';
@@ -19,9 +22,25 @@ export const routes: Routes = [
   },
   {
     path: 'mes-parts/:id/compteur',
+    canActivate: [
+      async () => {
+        const store = inject(WirdStore);
+        const auth = inject(AuthFlow);
+        await auth.ready;
+        await store.refresh();
+        return true;
+      },
+    ],
     loadComponent: () =>
       import('./features/tasbih/pages/tasbih-page/tasbih-page').then((m) => m.TasbihPage),
     title: 'Mon tasbih · WirdLink',
+  },
+  {
+    path: 'wird/:id/modifier',
+    canActivate: [readableWird],
+    loadComponent: () =>
+      import('./features/wirds/pages/edit-wird-page/edit-wird-page').then((m) => m.EditWirdPage),
+    title: 'Modifier le wird · WirdLink',
   },
   {
     path: 'wird/:id',
@@ -132,7 +151,10 @@ export const routes: Routes = [
       paragraphs: [
         'Choisissez un wird, puis Je participe. Choisissez votre quantité et confirmez avec Je commence.',
         'Retrouvez vos engagements dans Mes parts. Touchez J’ai fini après votre lecture.',
-        'Dans cette démonstration, vos parts restent sur ce navigateur. La création prépare un brouillon, sans publication.',
+        'Pour créer un wird, choisissez Créer, renseignez son nom et son objectif, puis vérifiez l’aperçu. Connectez-vous pour le publier.',
+        'Dans le menu Plus de votre wird, vous pouvez le modifier, le partager, le dupliquer ou le supprimer.',
+        'Dans Réglages, vous pouvez choisir la langue et le thème, ou installer l’application sur votre écran d’accueil.',
+        'Pour compter vos lectures, ouvrez Mes parts puis le compteur. Chaque appui ajoute une lecture. À la fin, confirmez avec J’ai fini.',
       ],
     },
   },
@@ -144,12 +166,12 @@ export const routes: Routes = [
     data: {
       title: 'Vos informations',
       paragraphs: [
-        'Les brouillons et les parts enregistrées sur cet appareil utilisent le stockage de votre navigateur.',
-        'La connexion Google et votre profil sont gérés par Supabase. Les informations du profil restent facultatives.',
+        'Votre brouillon et votre compteur restent sur cet appareil. Vos wirds et vos parts sont enregistrés avec votre session.',
+        'Vous pouvez vous connecter avec Google ou un lien reçu par email. Votre profil est facultatif.',
         'Votre prénom, votre nom et votre organisation peuvent apparaître comme auteur de vos wirds. ',
         'Depuis Mon profil, vous pouvez modifier vos informations, vous déconnecter ou supprimer votre compte et vos wirds.',
-        'Les photos et fichiers audio choisis restent dans la session et ne sont pas envoyés à un serveur.',
-        'Le partage ouvre le service choisi. Les textes de confidentialité définitifs seront relus avant la publication du service.',
+        'À la publication, vos photos et fichiers audio sont enregistrés dans un espace protégé et accessibles aux personnes autorisées à voir le wird.',
+        'Un wird public est visible par toute personne qui possède son lien. Un wird avec un code demande ce code. Partagez-le seulement avec les personnes de votre choix.',
       ],
     },
   },
@@ -162,8 +184,8 @@ export const routes: Routes = [
       title: 'Règles d’utilisation',
       paragraphs: [
         'WirdLink est un projet bénévole et gratuit.',
-        'Les compteurs ne sont pas encore partagés entre appareils. Aucun brouillon n’est publié.',
-        'Les conditions définitives restent à faire valider avant ouverture du service.',
+        'Les parts sont réservées au moment de leur confirmation. Confirmez vos lectures terminées pour actualiser la progression collective.',
+        'Publiez seulement les textes, images et audios que vous avez le droit de partager. Ne publiez pas les informations personnelles d’une autre personne sans son accord.',
       ],
     },
   },
