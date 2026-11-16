@@ -1,3 +1,4 @@
+import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeviceInstall } from '../../../../core/services/device-install';
@@ -7,7 +8,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
 
 @Component({
   selector: 'app-preferences-page',
-  imports: [RouterLink, RequestState],
+  imports: [BackButton, RouterLink, RequestState],
   templateUrl: './preferences-page.html',
   styles: `
     :host {

@@ -1,3 +1,4 @@
+import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -9,7 +10,7 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
 
 @Component({
   selector: 'app-share-page',
-  imports: [RouterLink, ShareActions, Icon, EmptyState],
+  imports: [BackButton, RouterLink, ShareActions, Icon, EmptyState],
   templateUrl: './share-page.html',
   styleUrl: './share-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

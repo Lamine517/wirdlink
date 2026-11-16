@@ -210,6 +210,26 @@ try {
   });
   await wait("!document.querySelector('dialog').open");
   assert.equal(await run("document.activeElement?.getAttribute('aria-controls')"), 'filters');
+  // Exercise the real browser history; direct entry is intentionally a separate case.
+  await navigate('/', 'app-home-page');
+  await run("document.querySelector('.settings-link').click();true");
+  await wait("!!document.querySelector('app-preferences-page')");
+  await run('document.querySelector(\'a.preferences-link[href="/aide"]\').click();true');
+  await wait("!!document.querySelector('app-information-page')");
+  await run("document.querySelector('app-back-button button').click();true");
+  await wait("!!document.querySelector('app-preferences-page')");
+  await cdp('Page.reload');
+  await wait("!!document.querySelector('app-preferences-page')");
+  await run("document.querySelector('app-back-button button').click();true");
+  await wait("!!document.querySelector('app-home-page')");
+  await navigate('/mes-parts', 'app-my-parts-page');
+  await run("document.querySelector('a.device-options-link').click();true");
+  await wait("!!document.querySelector('app-preferences-page')");
+  await run("document.querySelector('app-back-button button').click();true");
+  await wait("!!document.querySelector('app-my-parts-page')");
+  await navigate('/preferences', 'app-preferences-page');
+  await run("document.querySelector('app-back-button button').click();true");
+  await wait("!!document.querySelector('app-home-page')");
   await navigate('/wird/salat-nabi', '#quantity');
   await checkLayout('Participation');
   assert.ok(await run("document.querySelector('button[type=submit]').disabled"));
