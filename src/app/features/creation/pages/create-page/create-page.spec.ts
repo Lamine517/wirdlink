@@ -1,3 +1,4 @@
+import { I18nService } from '../../../../core/services/i18n';
 import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -5,6 +6,14 @@ import { appConfig } from '../../../../app.config';
 import { CreationDraftStore } from '../../data-access/creation-draft';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
+
+function templateButton(harness: RouterTestingHarness, title: string): HTMLButtonElement {
+  const button = [
+    ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('.template-card'),
+  ].find((item) => item.querySelector('strong')?.textContent?.trim() === title);
+  if (!button) throw new Error(`Template not found: ${title}`);
+  return button;
+}
 
 describe('Creation flow', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [WIRD_TEST_PROVIDER] }));
@@ -30,9 +39,24 @@ describe('Creation flow', () => {
     harness.detectChanges();
   }
 
+  it('offers the custom template first without pre-filling its title or target', async () => {
+    const harness = await RouterTestingHarness.create('/creer');
+    const first = harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!;
+    expect(first.querySelector('strong')?.textContent?.trim()).toBe('Mon propre wird');
+    first.click();
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    expect(TestBed.inject(CreationDraftStore).draft().title).toBe('');
+    expect(TestBed.inject(CreationDraftStore).draft().target).toBeNull();
+    expect(
+      harness.routeNativeElement!.querySelector<HTMLButtonElement>('button[type="submit"]')!
+        .disabled,
+    ).toBeTrue();
+  });
+
   it('takes a template through content, dates and private preview without publishing', async () => {
     const harness = await RouterTestingHarness.create('/creer');
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!.click();
+    templateButton(harness, 'Salat ala Nabi').click();
     await harness.fixture.whenStable();
     harness.detectChanges();
     expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Mon wird');
@@ -81,7 +105,7 @@ describe('Creation flow', () => {
 
   it('blocks an end date before the start and allows correction', async () => {
     const harness = await RouterTestingHarness.create('/creer');
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!.click();
+    templateButton(harness, 'Salat ala Nabi').click();
     await harness.fixture.whenStable();
     harness.detectChanges();
     await submit(harness);
@@ -151,7 +175,7 @@ describe('Draft replacement confirmation', () => {
       instructions: 'Fatiha ×1',
     });
     const harness = await RouterTestingHarness.create('/creer');
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!.click();
+    templateButton(harness, 'Salat ala Nabi').click();
     harness.detectChanges();
     expect(
       harness.routeNativeElement!.querySelector<HTMLDialogElement>('#replace-draft')!.open,
@@ -166,5 +190,53 @@ describe('Draft replacement confirmation', () => {
     expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Mon wird');
     expect(draft.draft().instructions).toBe('');
     expect(draft.draft().target).toBe(1000);
+  });
+});
+
+describe('Translated creation templates', () => {
+  beforeEach(() => {
+    localStorage.removeItem('wirdlink.creation.v1');
+    localStorage.removeItem('wirdlink.language.v1');
+    TestBed.configureTestingModule({
+      providers: [
+        WIRD_TEST_PROVIDER,
+        ...appConfig.providers,
+        { provide: FRONTEND_GATEWAY, useValue: gatewayStub() },
+      ],
+    });
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('wirdlink.creation.v1');
+    localStorage.removeItem('wirdlink.language.v1');
+    document.documentElement.lang = 'fr';
+    document.documentElement.dir = 'ltr';
+  });
+
+  it('updates the first custom card in the existing DOM when switching to English', async () => {
+    const harness = await RouterTestingHarness.create('/creer');
+    const first = harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!;
+    expect(first.querySelector('strong')?.textContent?.trim()).toBe('Mon propre wird');
+    TestBed.inject(I18nService).setLocale('en');
+    harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector('.template-card')).toBe(first);
+    expect(first.querySelector('strong')?.textContent?.trim()).toBe('My own wird');
+    expect(first.textContent).toContain('Your own way');
+    expect(first.textContent).not.toContain('Mon propre wird');
+    expect(first.textContent).not.toContain('À votre façon');
+    expect(document.documentElement.dir).toBe('ltr');
+  });
+
+  it('renders the custom title and description in Arabic with RTL direction', async () => {
+    const harness = await RouterTestingHarness.create('/creer');
+    TestBed.inject(I18nService).setLocale('ar');
+    harness.detectChanges();
+    const first = harness.routeNativeElement!.querySelector<HTMLButtonElement>('.template-card')!;
+    expect(first.querySelector('strong')?.textContent?.trim()).toBe('وردي الخاص');
+    expect(first.textContent).toContain('بطريقتك');
+    expect(first.textContent).not.toContain('Mon propre wird');
+    expect(first.textContent).not.toContain('À votre façon');
+    expect(document.documentElement.lang).toBe('ar');
+    expect(document.documentElement.dir).toBe('rtl');
   });
 });

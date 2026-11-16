@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +15,7 @@ import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-tasbih-page',
-  imports: [DecimalPipe, BackButton, BottomSheet, EmptyState, Icon],
+  imports: [Translate, DecimalPipe, BackButton, BottomSheet, EmptyState, Icon],
   templateUrl: './tasbih-page.html',
   styleUrl: './tasbih-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,7 +81,7 @@ export class TasbihPage {
       this.counter.setHapticPreference(key, event.target.checked);
   }
 
-  protected finish(): void {
+  protected async finish(): Promise<void> {
     const part = this.part();
     if (!part || !this.wird() || part.finished || !this.reached() || this.finishing()) return;
     if (!this.network.online() || !navigator.onLine) {
@@ -88,8 +89,14 @@ export class TasbihPage {
       return;
     }
     this.finishing.set(true);
-    if (!this.store.finish(part.id)) {
+    try {
+      if (!(await this.store.finishPart(part.id))) {
+        this.finishing.set(false);
+        return;
+      }
+    } catch {
       this.finishing.set(false);
+      this.error.set('La confirmation a échoué. Votre compteur est conservé. Réessayez.');
       return;
     }
     this.counter.forget(part.id);

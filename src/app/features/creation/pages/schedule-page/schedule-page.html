@@ -1,21 +1,21 @@
 <app-creation-steps [step]="2" backLink="/creer/contenu" />
-<h1>Quand ?</h1>
+<h1>{{ 'Quand ?' | t }}</h1>
 <form class="form-stack" [formGroup]="form" (ngSubmit)="continue()">
   <fieldset>
-    <legend>À quelle fréquence ?</legend>
+    <legend>{{ 'À quelle fréquence ?' | t }}</legend>
     <div class="option-grid recurrence-options">
       @for (recurrence of recurrences; track recurrence) {
         <label class="option-choice"
           ><input type="radio" formControlName="recurrence" [value]="recurrence" /><span
             class="button button--outline"
-            >{{ recurrence }}</span
+            >{{ recurrence | t }}</span
           ></label
         >
       }
     </div>
   </fieldset>
   <div class="field-group">
-    <label for="draft-start">Premier jour</label>
+    <label for="draft-start">{{ 'Premier jour' | t }}</label>
     <div class="date-field">
       <app-icon name="calendar" [size]="24" /><input
         id="draft-start"
@@ -27,7 +27,9 @@
     </div>
   </div>
   <div class="field-group">
-    <label for="draft-end">Dernier jour <span class="text-secondary">facultatif</span></label>
+    <label for="draft-end"
+      >{{ 'Dernier jour' | t }}<span class="text-secondary">{{ 'facultatif' | t }}</span></label
+    >
     <div class="date-field">
       <app-icon name="calendar" [size]="24" /><input
         id="draft-end"
@@ -39,26 +41,28 @@
   </div>
   @if (!canContinue()) {
     <p class="field-error" role="alert">
-      Choisissez un début à partir d’aujourd’hui et une fin après le début, ou le même jour.
+      {{
+        'Choisissez un début à partir d’aujourd’hui et une fin après le début, ou le même jour.' | t
+      }}
     </p>
   }
   <fieldset>
-    <legend>Qui peut voir ?</legend>
+    <legend>{{ 'Qui peut voir ?' | t }}</legend>
     <div class="option-grid segmented-choice">
       @for (option of visibilityOptions; track option.value) {
         <label class="option-choice"
           ><input type="radio" formControlName="visibility" [value]="option.value" /><span
             class="button button--outline"
-            ><app-icon [name]="option.icon" [size]="20" />{{ option.title }}</span
+            ><app-icon [name]="option.icon" [size]="20" />{{ option.title | t }}</span
           ></label
         >
       }
     </div>
   </fieldset>
   @if (form.controls.visibility.value === 'private') {
-    <p class="text-secondary">L’accès par code sera activé lors de la publication.</p>
+    <p class="text-secondary">{{ 'L’accès par code sera activé lors de la publication.' | t }}</p>
   }
   <button type="submit" class="button button--primary" [disabled]="!canContinue()">
-    Voir l’aperçu
+    {{ 'Voir l’aperçu' | t }}
   </button>
 </form>

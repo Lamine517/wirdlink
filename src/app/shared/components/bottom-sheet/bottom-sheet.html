@@ -10,8 +10,10 @@
   <section #panel class="bottom-sheet__panel">
     <div class="bottom-sheet__handle" aria-hidden="true"></div>
     <header class="bottom-sheet__header">
-      <h2 [id]="panelId() + '-title'">{{ title() }}</h2>
-      <button type="button" class="bottom-sheet__close" (click)="close()">Fermer</button>
+      <h2 [id]="panelId() + '-title'">{{ title() | t }}</h2>
+      <button type="button" class="bottom-sheet__close" (click)="close()">
+        {{ 'Fermer' | t }}
+      </button>
     </header>
     <ng-content />
   </section>

@@ -1,3 +1,6 @@
+import { I18nService } from '../../../../core/services/i18n';
+import { inject } from '@angular/core';
+import { Translate } from '../../../../shared/pipes/translate';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { suggestQuantities } from './quantity-suggestions';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
@@ -5,12 +8,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quantity-picker',
-  imports: [Icon, ReactiveFormsModule],
+  imports: [Translate, Icon, ReactiveFormsModule],
   templateUrl: './quantity-picker.html',
   styleUrl: './quantity-picker.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuantityPicker {
+  private readonly i18n = inject(I18nService);
   readonly control = input.required<FormControl<number | null>>();
   readonly target = input.required<number>();
   protected readonly suggestions = computed(() => suggestQuantities(this.target(), this.maximum()));
@@ -25,7 +29,9 @@ export class QuantityPicker {
       return 'Écrivez un nombre entier supérieur ou égal à 1.';
     }
     if (value > this.maximum()) {
-      return `Il ne reste que ${new Intl.NumberFormat('fr-FR').format(this.maximum())}. Écrivez un nombre plus petit.`;
+      return this.i18n.translate('Il ne reste que {count}. Écrivez un nombre plus petit.', {
+        count: this.maximum(),
+      });
     }
     return '';
   });

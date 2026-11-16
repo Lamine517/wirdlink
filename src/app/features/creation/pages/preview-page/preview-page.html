@@ -1,22 +1,27 @@
 <app-creation-steps [step]="3" backLink="/creer/calendrier" />
-<h1>Votre aperçu</h1>
+<h1>{{ 'Votre aperçu' | t }}</h1>
 <article class="surface-card preview-card">
   @if (store.image(); as media) {
-    <img class="preview-card__image" [src]="media.url" alt="Photo choisie pour le wird" />
+    <img
+      class="preview-card__image"
+      [src]="media.url"
+      [attr.alt]="'Photo choisie pour le wird' | t"
+    />
   }
   <h2>{{ draft().title }}</h2>
   <p class="text-secondary">
-    {{ draft().recurrence }} · {{ draft().visibility === 'public' ? 'Public' : 'Avec un code' }}
+    {{ draft().recurrence }} ·
+    {{ draft().visibility === 'public' ? ('Public' | t) : ('Avec un code' | t) }}
   </p>
   @if (draft().description.trim()) {
     <section class="preview-card__text">
-      <h3>Description</h3>
+      <h3>{{ 'Description' | t }}</h3>
       <p>{{ draft().description }}</p>
     </section>
   }
   @if (draft().instructions?.trim()) {
     <section class="preview-card__text">
-      <h3>Consignes</h3>
+      <h3>{{ 'Consignes' | t }}</h3>
       <p>{{ draft().instructions }}</p>
     </section>
   }
@@ -26,24 +31,27 @@
   <app-bead-progress [completed]="0" [target]="draft().target ?? 1" />
   <p class="text-strong">{{ draft().target | number }} lectures à partager</p>
 </article>
-<a class="button button--outline" routerLink="/creer/contenu">Modifier</a>
+<a class="button button--outline" routerLink="/creer/contenu">{{ 'Modifier' | t }}</a>
 <p id="publish-hint" class="text-secondary publication-notice">
-  Votre brouillon reste enregistré jusqu’à la publication.
+  {{ 'Votre brouillon reste enregistré jusqu’à la publication.' | t }}
 </p>
 <app-request-state
   [loading]="publication.busy()"
-  loadingLabel="Publication en cours…"
+  [loadingLabel]="'Publication en cours…' | t"
   [error]="error()"
 />
 @if (auth.restoring()) {
-  <app-request-state [loading]="true" loadingLabel="Vérification de votre connexion…" />
+  <app-request-state [loading]="true" [loadingLabel]="'Vérification de votre connexion…' | t" />
 }
 <button
   class="button button--primary preview-publish"
   type="button"
   [disabled]="
-    !store.contentValid() || !store.scheduleValid() || publication.busy() ||
-    !network.online() || auth.restoring()
+    !store.contentValid() ||
+    !store.scheduleValid() ||
+    publication.busy() ||
+    !network.online() ||
+    auth.restoring()
   "
   aria-describedby="publish-hint"
   (click)="publish()"

@@ -1,3 +1,5 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { WirdAccess } from '../../../access/data-access/wird-access';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
@@ -17,7 +19,17 @@ import {
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, EmptyState, WirdCard, WirdFilters, Icon, UserAvatar, InstallApp],
+  imports: [
+    Translate,
+    RequestState,
+    RouterLink,
+    EmptyState,
+    WirdCard,
+    WirdFilters,
+    Icon,
+    UserAvatar,
+    InstallApp,
+  ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +54,10 @@ export class HomePage {
       );
     }),
   );
+
+  constructor() {
+    void this.store.refresh();
+  }
 
   protected resetFilters(): void {
     this.visibility.set('all');

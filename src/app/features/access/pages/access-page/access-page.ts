@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import {
   ChangeDetectionStrategy,
@@ -22,7 +23,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
 
 @Component({
   selector: 'app-access-page',
-  imports: [BackButton, ReactiveFormsModule, Icon, RequestState],
+  imports: [Translate, BackButton, ReactiveFormsModule, Icon, RequestState],
   templateUrl: './access-page.html',
   styleUrl: './access-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

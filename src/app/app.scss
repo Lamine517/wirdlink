@@ -154,3 +154,13 @@
   min-width: 0;
   display: flow-root;
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .bottom-nav__link:hover {
+    background: transparent;
+    transform: none;
+  }
+  .bottom-nav__link:hover .bottom-nav__icon {
+    background: var(--color-bg-muted);
+  }
+}

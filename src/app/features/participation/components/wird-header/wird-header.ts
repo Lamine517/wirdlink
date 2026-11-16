@@ -1,3 +1,6 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
+import { output } from '@angular/core';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { isShareableAddress } from '../../../../shared/components/desktop-companion/share-address';
@@ -6,25 +9,66 @@ import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-wird-header',
-  imports: [BackButton, Icon],
+  imports: [Translate, BackButton, Icon, BottomSheet],
   template: `<header>
-    <div class="wird-header__toolbar">
-      <app-back-button />
-      @if (shareLink(); as link) {
+      <div class="wird-header__toolbar">
+        <app-back-button />
         <button
           type="button"
           class="wird-header__share"
+          (click)="menu.open()"
+          [attr.aria-label]="'Plus d’options' | t"
+          [title]="'Plus d’options' | t"
+        >
+          <app-icon name="more" />
+        </button>
+      </div>
+      <h1>{{ title() }}</h1>
+    </header>
+    <app-bottom-sheet #menu panelId="wird-options" [title]="'Ce wird' | t">
+      <div class="wird-menu">
+        @if (canManage()) {
+          <button
+            type="button"
+            class="button button--outline"
+            (click)="menu.close(); editRequested.emit()"
+          >
+            <app-icon name="edit" />{{ 'Modifier' | t }}
+          </button>
+        }
+        <button
+          type="button"
+          class="button button--outline"
           [disabled]="sharing()"
-          (click)="share(link)"
-          aria-label="Partager ce wird"
-          title="Partager ce wird"
-          ><app-icon name="share" [size]="24"
-        /></button>
-      }
-    </div>
-    <h1>{{ title() }}</h1>
-  </header>`,
+          (click)="share(shareLink() ?? ''); menu.close()"
+        >
+          <app-icon name="share" />{{ 'Partager' | t }}
+        </button>
+        @if (allowDuplicate()) {
+          <button
+            type="button"
+            class="button button--outline"
+            (click)="menu.close(); duplicateRequested.emit()"
+          >
+            <app-icon name="copy" />{{ 'Dupliquer' | t }}
+          </button>
+        }
+        @if (canManage()) {
+          <button
+            type="button"
+            class="button button--danger"
+            (click)="menu.close(); deleteRequested.emit()"
+          >
+            <app-icon name="trash" />{{ 'Supprimer' | t }}
+          </button>
+        }
+      </div>
+    </app-bottom-sheet>`,
   styles: `
+    .wird-menu {
+      display: grid;
+      gap: 12px;
+    }
     :host {
       display: block;
     }
@@ -55,6 +99,11 @@ import { Icon } from '../../../../shared/components/icon/icon';
 })
 export class WirdHeader {
   private readonly router = inject(Router);
+  readonly allowDuplicate = input(false);
+  readonly canManage = input(false);
+  readonly editRequested = output<void>();
+  readonly deleteRequested = output<void>();
+  readonly duplicateRequested = output<void>();
   readonly title = input.required<string>();
   readonly shareLink = input<string>();
   readonly shareUrl = input<string>();
@@ -64,9 +113,13 @@ export class WirdHeader {
     if (this.sharing()) return;
     const url = this.shareUrl();
     const data = { title: this.title(), url };
-    if (!url || !isShareableAddress(url) || typeof navigator.share !== 'function' ||
-      (navigator.canShare && !navigator.canShare(data))) {
-      await this.router.navigateByUrl(fallback);
+    if (
+      !url ||
+      !isShareableAddress(url) ||
+      typeof navigator.share !== 'function' ||
+      (navigator.canShare && !navigator.canShare(data))
+    ) {
+      if (fallback) await this.router.navigateByUrl(fallback);
       return;
     }
     this.sharing.set(true);
@@ -74,7 +127,7 @@ export class WirdHeader {
       await navigator.share(data);
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError'))
-        await this.router.navigateByUrl(fallback);
+        if (fallback) await this.router.navigateByUrl(fallback);
     } finally {
       this.sharing.set(false);
     }

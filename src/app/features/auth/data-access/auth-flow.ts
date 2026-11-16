@@ -63,6 +63,10 @@ export class AuthFlow {
     this.pendingPhone.set('');
   }
 
+  async email(email: string): Promise<void> {
+    await this.gateway.signInWithEmail(email);
+  }
+
   async oauth(provider: SignInProvider): Promise<void> {
     await this.gateway.signInWithProvider(provider);
   }

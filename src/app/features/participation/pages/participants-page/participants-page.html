@@ -6,11 +6,10 @@
   />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />
   <p class="text-strong">
-    {{ store.completed(wird.id) | number }} lus sur {{ wird.target | number }}
+    {{ '{count} lus sur {target}' | t: { count: store.completed(wird.id), target: wird.target } }}
   </p>
-  <p class="text-secondary">
-    Participations sur cet appareil. Seuls les noms choisis sont affichés.
-  </p>
+  <p class="text-secondary">{{ 'Seuls les noms choisis sont affichés.' | t }}</p>
+  <app-request-state [skeleton]="true" [loading]="loading()" [error]="error()" />
   @for (group of groups(); track group.key) {
     <article class="surface-card participant">
       <div class="participant__identity">
@@ -22,39 +21,45 @@
           }
         </span>
         <div>
-          <h2>{{ group.name || 'Sans nom' }}</h2>
+          <h2>{{ group.name || ('Sans nom' | t) }}</h2>
           <p class="text-secondary">
-            {{ group.count }} {{ group.count > 1 ? 'participations' : 'participation' }}
+            {{ group.count }}
+            {{ (group.count > 1 ? ('participations' | t) : ('participation' | t)) | t }}
           </p>
         </div>
       </div>
       <div class="participant__counts">
         @if (group.completed > 0) {
-          <span><app-icon name="check" [size]="18" />{{ group.completed | number }} lus</span>
+          <span
+            ><app-icon name="check" [size]="18" />{{ group.completed | number }}
+            {{ 'lus' | t }}</span
+          >
         }
         @if (group.pending > 0) {
-          <span>{{ group.pending | number }} à lire</span>
+          <span>{{ group.pending | number }} {{ 'à lire' | t }}</span>
         }
       </div>
     </article>
   } @empty {
-    <app-empty-state
-      title="Aucune participation ici"
-      description="Les participations enregistrées sur cet appareil apparaîtront ici."
-    />
+    @if (!loading() && !error()) {
+      <app-empty-state
+        [title]="'Aucune participation ici' | t"
+        [description]="'Les participations apparaîtront ici.' | t"
+      />
+    }
   }
   @if (store.available(wird.id) > 0) {
     <a class="button button--accent" [routerLink]="['/wird', wird.id]"
-      ><app-icon name="hand" [size]="24" />Je participe</a
+      ><app-icon name="hand" [size]="24" />{{ 'Je participe' | t }}</a
     >
   }
 } @else {
   <app-back-button />
-  <h1>Participants</h1>
+  <h1>{{ 'Participants' | t }}</h1>
   <app-empty-state
-    title="Wird indisponible"
-    description="Retrouvez ce wird depuis son lien d’accès."
-    actionLabel="Retour à l’accueil"
+    [title]="'Wird indisponible' | t"
+    [description]="'Retrouvez ce wird depuis son lien d’accès.' | t"
+    [actionLabel]="'Retour à l’accueil' | t"
     actionLink="/"
   />
 }

@@ -1,9 +1,10 @@
+import { Translate } from '../../pipes/translate';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-circular-progress',
-  imports: [DecimalPipe],
+  imports: [Translate, DecimalPipe],
   templateUrl: './circular-progress.html',
   styleUrl: './circular-progress.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

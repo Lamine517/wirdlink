@@ -13,11 +13,11 @@
   type="button"
   class="audio-player"
   [class.audio-player--playing]="playing()"
-  [attr.aria-label]="(playing() ? 'Mettre en pause : ' : 'Écouter : ') + title()"
+  [attr.aria-label]="((playing() ? 'Pause' : 'Écouter') | t) + ' : ' + title()"
   (click)="toggle()"
 >
   <app-icon [name]="playing() ? 'pause' : 'play'" [size]="24" />
-  <span>{{ playing() ? 'Pause' : 'Écouter' }}</span>
+  <span>{{ playing() ? ('Pause' | t) : ('Écouter' | t) }}</span>
   <span class="audio-player__wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
   @if (duration() > 0) {
     <span class="audio-player__time"
@@ -26,5 +26,5 @@
   }
 </button>
 @if (error()) {
-  <p class="audio-player__error" role="alert">{{ error() }}</p>
+  <p class="audio-player__error" role="alert">{{ error() | t }}</p>
 }

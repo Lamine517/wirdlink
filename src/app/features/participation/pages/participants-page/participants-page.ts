@@ -1,10 +1,19 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { WirdHeader } from '../../components/wird-header/wird-header';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { WirdStore } from '../../../../core/wird-store';
+import { Part, WirdStore } from '../../../../core/wird-store';
 import { groupParticipants } from '../../data-access/participant-groups';
 import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
 import { Icon } from '../../../../shared/components/icon/icon';
@@ -13,7 +22,17 @@ import { WirdAccess } from '../../../access/data-access/wird-access';
 
 @Component({
   selector: 'app-participants-page',
-  imports: [BackButton, WirdHeader, RouterLink, DecimalPipe, WirdTabs, Icon, EmptyState],
+  imports: [
+    Translate,
+    RequestState,
+    BackButton,
+    WirdHeader,
+    RouterLink,
+    DecimalPipe,
+    WirdTabs,
+    Icon,
+    EmptyState,
+  ],
   templateUrl: './participants-page.html',
   styleUrl: './participants-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +51,35 @@ export class ParticipantsPage {
       .find((wird) => wird.id === this.params().get('id') && this.access.canRead(wird.id)),
   );
   protected readonly parts = computed(() =>
-    this.store.parts().filter((part) => part.wirdId === this.selected()?.id),
+    this.store.remote
+      ? this.remoteParts()
+      : this.store.parts().filter((part) => part.wirdId === this.selected()?.id),
   );
+  private readonly remoteParts = signal<Part[]>([]);
+  protected readonly loading = signal(false);
+  protected readonly error = signal('');
+  constructor() {
+    effect((onCleanup) => {
+      const id = this.selected()?.id;
+      if (!id || !this.store.remote) return;
+      let active = true;
+      onCleanup(() => {
+        active = false;
+      });
+      this.loading.set(true);
+      this.error.set('');
+      void this.store
+        .participants(id)
+        .then((parts) => {
+          if (active) this.remoteParts.set(parts);
+        })
+        .catch(() => {
+          if (active) this.error.set('Impossible de charger les participations.');
+        })
+        .finally(() => {
+          if (active) this.loading.set(false);
+        });
+    });
+  }
   protected readonly groups = computed(() => groupParticipants(this.parts()));
 }

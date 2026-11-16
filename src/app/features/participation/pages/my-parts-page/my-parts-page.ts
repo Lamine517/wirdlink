@@ -1,3 +1,5 @@
+import { Translate } from '../../../../shared/pipes/translate';
+import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { TasbihStore } from '../../../tasbih/data-access/tasbih-store';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -12,13 +14,13 @@ import { PartCard } from '../../components/part-card/part-card';
 
 @Component({
   selector: 'app-my-parts-page',
-  imports: [EmptyState, PartCard, ReactiveFormsModule, Icon, RouterLink],
+  imports: [Translate, RequestState, EmptyState, PartCard, ReactiveFormsModule, Icon, RouterLink],
   templateUrl: './my-parts-page.html',
   styleUrl: './my-parts-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyPartsPage {
-  private readonly store = inject(WirdStore);
+  protected readonly store = inject(WirdStore);
   private readonly router = inject(Router);
   protected readonly network = inject(NetworkStatus);
   protected readonly counter = inject(TasbihStore);
@@ -30,14 +32,27 @@ export class MyPartsPage {
     this.groups().filter((group) => matchesPartSearch(group, this.query())),
   );
 
-  protected finish(part: Part): void {
+  protected readonly finishing = signal(false);
+  constructor() {
+    void this.store.refresh();
+  }
+
+  protected async finish(part: Part): Promise<void> {
+    if (this.finishing()) return;
     if (!navigator.onLine) {
       this.message.set('Reconnectez-vous pour confirmer votre lecture terminée.');
       return;
     }
-    if (this.store.finish(part.id)) {
-      this.counter.forget(part.id);
-      void this.router.navigate(['/merci', part.wirdId]);
+    this.finishing.set(true);
+    try {
+      if (await this.store.finishPart(part.id)) {
+        this.counter.forget(part.id);
+        await this.router.navigate(['/merci', part.wirdId]);
+      }
+    } catch {
+      this.message.set('La confirmation a échoué. Réessayez.');
+    } finally {
+      this.finishing.set(false);
     }
   }
 }

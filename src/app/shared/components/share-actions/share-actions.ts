@@ -1,3 +1,4 @@
+import { Translate } from '../../pipes/translate';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { Icon } from '../icon/icon';
 import { isShareableAddress } from '../desktop-companion/share-address';
@@ -20,7 +21,7 @@ export function socialShareUrl(channel: ShareChannel, url: string): string | nul
 
 @Component({
   selector: 'app-share-actions',
-  imports: [Icon],
+  imports: [Translate, Icon],
   templateUrl: './share-actions.html',
   styleUrl: './share-actions.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

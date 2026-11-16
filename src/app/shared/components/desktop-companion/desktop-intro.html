@@ -1,19 +1,20 @@
-<section class="desktop-intro" aria-label="Ouvrir WirdLink sur le téléphone">
+<section class="desktop-intro" [attr.aria-label]="'Ouvrir WirdLink sur le téléphone' | t">
   <img src="assets/brand/wirdlink-logo-desktop.svg" width="104" height="113" alt="" />
   <h2>WirdLink</h2>
-  <p>À ouvrir sur le téléphone.<br />Pas de compte pour participer.</p>
+  <p>{{ 'À ouvrir sur le téléphone.' | t }}<br />{{ 'Pas de compte pour participer.' | t }}</p>
   <div class="desktop-intro__qr">
     @if (shareable()) {
       <app-qr-code [value]="url()" />
     } @else {
-      <app-icon name="phone" [size]="48" /><span>Accès local</span>
+      <app-icon name="phone" [size]="48" /><span>{{ 'Accès local' | t }}</span>
     }
   </div>
   <p class="desktop-caption">
     {{
-      shareable()
-        ? 'Scannez pour ouvrir sur votre téléphone.'
-        : 'Le QR sera disponible sur une adresse accessible au téléphone.'
+      (shareable()
+        ? ('Scannez pour ouvrir sur votre téléphone.' | t)
+        : ('Le QR sera disponible sur une adresse accessible au téléphone.' | t)
+      ) | t
     }}
   </p>
 </section>

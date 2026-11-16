@@ -1,9 +1,32 @@
 <app-back-button />
-<h1>Réglages</h1>
+<h1>{{ 'Réglages' | t }}</h1>
 <section class="surface-card preferences-card">
-  <h2>Apparence</h2>
+  <h2>{{ 'Langue' | t }}</h2>
+  <h2><app-icon name="sparkle" />{{ 'Langue' | t }}</h2>
   <fieldset>
-    <legend class="visually-hidden">Choisir le thème</legend>
+    <legend class="visually-hidden">{{ 'Choisir la langue' | t }}</legend>
+    <div class="appearance-options segmented-choice">
+      @for (language of i18n.languages; track language.value) {
+        <label class="option-choice">
+          <input
+            type="radio"
+            name="language"
+            [value]="language.value"
+            [checked]="i18n.locale() === language.value"
+            (change)="i18n.setLocale(language.value)"
+          />
+          <span class="button button--outline" [attr.lang]="language.value" dir="auto">{{
+            language.label
+          }}</span>
+        </label>
+      }
+    </div>
+  </fieldset>
+</section>
+<section class="surface-card preferences-card">
+  <h2><app-icon name="sparkle" />{{ 'Apparence' | t }}</h2>
+  <fieldset>
+    <legend class="visually-hidden">{{ 'Choisir le thème' | t }}</legend>
     <div class="appearance-options segmented-choice">
       @for (theme of themes; track theme.value) {
         <label class="option-choice"
@@ -13,48 +36,27 @@
             [value]="theme.value"
             [checked]="appearance.preference() === theme.value"
             (change)="appearance.setPreference(theme.value)"
-          /><span class="button button--outline">{{ theme.label }}</span></label
+          /><span class="button button--outline">{{ theme.label | t }}</span></label
         >
       }
     </div>
   </fieldset>
   @if (appearance.preference() === 'auto') {
-    <p>Suit le thème de votre appareil.</p>
+    <p>{{ 'Suit le thème de votre appareil.' | t }}</p>
   }
   @if (appearance.warning()) {
-    <p role="status">{{ appearance.warning() }}</p>
+    <p role="status">{{ appearance.warning() | t }}</p>
   }
 </section>
 <section class="surface-card preferences-card">
-  <h2>Les rappels</h2>
-  <p>Recevez un rappel pour vos lectures. Ce choix reste facultatif.</p>
-  @if (!notificationSupport) {
-    <p>Ce navigateur ne propose pas les notifications. Vous pouvez continuer sans rappel.</p>
-  } @else if (blocked) {
-    <p>
-      Les notifications sont bloquées. Vous pouvez modifier ce choix dans les réglages du
-      navigateur.
-    </p>
-  } @else {
-    <button
-      class="button button--outline"
-      type="button"
-      [attr.aria-pressed]="reminders()"
-      [disabled]="busy() || !network.online()"
-      (click)="toggleReminders()"
-    >
-      {{ reminders() ? 'Désactiver les rappels' : 'Activer les rappels' }}
-    </button>
-    @if (reminders()) {
-      <p role="status" class="preferences-status">Rappels activés sur cet appareil.</p>
-    }
-  }
-  <app-request-state [loading]="busy()" loadingLabel="Mise à jour des rappels…" [error]="error()" />
+  <h2><app-icon name="calendar" />{{ 'Les rappels' | t }}</h2>
+  <p>{{ 'Recevez un rappel pour vos lectures. Ce choix reste facultatif.' | t }}</p>
+  <p>{{ 'Bientôt' | t }}</p>
 </section>
 <section class="surface-card preferences-card">
-  <h2>Retrouver WirdLink facilement</h2>
+  <h2><app-icon name="phone" />{{ 'Retrouver WirdLink facilement' | t }}</h2>
   @if (install.installed()) {
-    <p>WirdLink est ouvert depuis votre écran d’accueil.</p>
+    <p>{{ 'WirdLink est ouvert depuis votre écran d’accueil.' | t }}</p>
   } @else if (install.available()) {
     <button
       class="button button--primary"
@@ -62,25 +64,29 @@
       [disabled]="install.busy()"
       (click)="install.install()"
     >
-      Ajouter à mon écran d’accueil
+      {{ 'Ajouter à mon écran d’accueil' | t }}
     </button>
   } @else if (ios) {
     <p>
-      Dans Safari, ouvrez le menu Partager, puis choisissez « Sur l’écran d’accueil » si cette
-      option est proposée.
+      {{
+        'Dans Safari, ouvrez le menu Partager, puis choisissez « Sur l’écran d’accueil » si cette option est proposée.'
+          | t
+      }}
     </p>
   } @else {
     <p>
-      Ouvrez le menu de votre navigateur, puis choisissez l’option d’ajout à l’écran d’accueil si
-      elle est proposée. Vous pouvez aussi garder ce lien dans vos favoris.
+      {{
+        'Ouvrez le menu de votre navigateur, puis choisissez l’option d’ajout à l’écran d’accueil si elle est proposée. Vous pouvez aussi garder ce lien dans vos favoris.'
+          | t
+      }}
     </p>
   }
-  <p role="status">{{ install.message() }}</p>
+  <p role="status">{{ install.message() | t }}</p>
 </section>
 
 <section class="surface-card preferences-card">
-  <h2>À propos de WirdLink</h2>
-  <a class="preferences-link" routerLink="/aide">Aide</a>
-  <a class="preferences-link" routerLink="/confidentialite">Vos informations</a>
-  <a class="preferences-link" routerLink="/conditions">Règles d’utilisation</a>
+  <h2><app-icon name="book" />{{ 'À propos de WirdLink' | t }}</h2>
+  <a class="preferences-link" routerLink="/aide">{{ 'Aide' | t }}</a>
+  <a class="preferences-link" routerLink="/confidentialite">{{ 'Vos informations' | t }}</a>
+  <a class="preferences-link" routerLink="/conditions">{{ 'Règles d’utilisation' | t }}</a>
 </section>

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /profil
+Disallow: /preferences
+Disallow: /connexion
+Disallow: /mes-parts
+Disallow: /merci
+Disallow: /wird
+Disallow: /partage
+Disallow: /creer
+Sitemap: https://wirdlink.vercel.app/sitemap.xml

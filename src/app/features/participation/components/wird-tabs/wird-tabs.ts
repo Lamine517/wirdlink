@@ -1,20 +1,21 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-wird-tabs',
-  imports: [RouterLink],
+  imports: [Translate, RouterLink],
   template: `<nav class="wird-tabs" aria-label="Vues du wird">
     <a
       [routerLink]="['/wird', wirdId()]"
       [class.wird-tabs__active]="active() === 'wird'"
       [attr.aria-current]="active() === 'wird' ? 'page' : null"
-      >Le wird</a
+      >{{ 'Le wird' | t }}</a
     ><a
       [routerLink]="['/wird', wirdId(), 'participants']"
       [class.wird-tabs__active]="active() === 'participants'"
       [attr.aria-current]="active() === 'participants' ? 'page' : null"
-      >Les participants</a
+      >{{ 'Les participants' | t }}</a
     >
   </nav>`,
   styles: `

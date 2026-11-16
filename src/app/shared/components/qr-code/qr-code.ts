@@ -1,6 +1,8 @@
+import { Translate } from '../../pipes/translate';
 import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
 
 @Component({
+  imports: [Translate],
   selector: 'app-qr-code',
   template: `@if (image(); as source) {
       <img
@@ -10,7 +12,7 @@ import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angu
         alt="QR code pour ouvrir WirdLink sur le téléphone"
       />
     } @else {
-      <p role="status">{{ error() ? 'QR indisponible' : 'Préparation du QR…' }}</p>
+      <p role="status">{{ error() ? 'QR indisponible' : ('Préparation du QR…' | t) }}</p>
     }`,
   styles: `
     :host {

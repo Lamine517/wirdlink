@@ -99,10 +99,36 @@ describe('Profile and account actions', () => {
       ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('button'),
     ].find((button) => button.textContent?.includes('Se déconnecter'))!;
     button.click();
+    harness.detectChanges();
+    expect(gateway.signOut).not.toHaveBeenCalled();
+    expect(TestBed.inject(AuthFlow).session()).not.toBeNull();
+    expect(
+      harness.routeNativeElement!.querySelector<HTMLDialogElement>('#sign-out')!.open,
+    ).toBeTrue();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('#sign-out .button--primary')!
+      .click();
     await harness.fixture.whenStable();
     harness.detectChanges();
     expect(TestBed.inject(AuthFlow).session()).toBeNull();
     expect(draft.hasDraft()).toBeTrue();
     expect(harness.routeNativeElement!.textContent).toContain('Vous êtes déconnecté');
+  });
+  it('retains the session when sign-out confirmation is cancelled', async () => {
+    spyOn(window, 'matchMedia').and.returnValue({ matches: true } as MediaQueryList);
+    const harness = await profile();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('.profile-actions > .button--outline')!
+      .click();
+    harness.detectChanges();
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('#sign-out .button--outline')!
+      .click();
+    harness.detectChanges();
+    expect(
+      harness.routeNativeElement!.querySelector<HTMLDialogElement>('#sign-out')!.open,
+    ).toBeFalse();
+    expect(gateway.signOut).not.toHaveBeenCalled();
+    expect(TestBed.inject(AuthFlow).session()).not.toBeNull();
   });
 });

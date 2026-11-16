@@ -1,7 +1,7 @@
 <div
   class="beads"
   role="progressbar"
-  aria-label="Lectures terminées"
+  [attr.aria-label]="'Lectures terminées' | t"
   [attr.aria-valuenow]="completed()"
   [attr.aria-valuemax]="target()"
   aria-valuemin="0"

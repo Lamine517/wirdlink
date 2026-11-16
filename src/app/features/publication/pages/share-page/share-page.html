@@ -1,41 +1,49 @@
 <app-back-button />
+<app-request-state
+  [skeleton]="true"
+  [loading]="loading()"
+  [loadingLabel]="'Chargement du partage…' | t"
+  [error]="error()"
+/>
 @if (title()) {
   @if (receipt()) {
     <header class="share-page__header">
       <span class="share-page__success"><app-icon name="check" [size]="32" /></span>
-      <h1>C’est fait !</h1>
+      <h1>{{ 'C’est fait !' | t }}</h1>
     </header>
   } @else {
-    <h1>Partager ce wird</h1>
+    <h1>{{ 'Partager ce wird' | t }}</h1>
   }
   <p class="share-page__title">{{ title() }}</p>
   @if (receipt()?.visibility === 'private') {
-    <section class="surface-card share-page__private" aria-label="Accès privé">
+    <section class="surface-card share-page__private" [attr.aria-label]="'Accès privé' | t">
       <app-icon name="lock" [size]="24" />
-      <h2>Votre code d’accès</h2>
+      <h2>{{ 'Votre code d’accès' | t }}</h2>
       <strong class="share-page__code">{{ receipt()?.accessCode }}</strong>
       <button type="button" class="button button--outline button--compact" (click)="copyCode()">
-        <app-icon name="copy" [size]="20" />Copier le code
+        <app-icon name="copy" [size]="20" />{{ 'Copier le code' | t }}
       </button>
       <p role="status">{{ copyMessage() }}</p>
-      <p>Envoyez le lien et ce code uniquement aux personnes invitées.</p>
+      <p>{{ 'Envoyez le lien et ce code uniquement aux personnes invitées.' | t }}</p>
     </section>
   }
   <app-share-actions
     panelId="mobile-share"
     [url]="shareUrl()"
-    title="Invitez vos proches"
+    [title]="'Invitez vos proches' | t"
     [mobileOptions]="true"
   />
   @if (receipt()) {
-    <a class="button button--outline share-page__home" routerLink="/">Revenir à l’accueil</a>
+    <a class="button button--outline share-page__home" routerLink="/">{{
+      'Revenir à l’accueil' | t
+    }}</a>
   }
-} @else {
-  <h1>Partager un wird</h1>
+} @else if (!loading()) {
+  <h1>{{ 'Partager un wird' | t }}</h1>
   <app-empty-state
-    title="Lien indisponible"
-    description="Retrouvez le wird depuis l’accueil pour le partager."
-    actionLabel="Retour à l’accueil"
+    [title]="'Lien indisponible' | t"
+    [description]="'Retrouvez le wird depuis l’accueil pour le partager.' | t"
+    [actionLabel]="'Retour à l’accueil' | t"
     actionLink="/"
   />
 }

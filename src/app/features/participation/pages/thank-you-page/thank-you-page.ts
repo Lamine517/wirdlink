@@ -1,3 +1,4 @@
+import { Translate } from '../../../../shared/pipes/translate';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -9,7 +10,7 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
 
 @Component({
   selector: 'app-thank-you-page',
-  imports: [RouterLink, DecimalPipe, CircularProgress, Icon, EmptyState],
+  imports: [Translate, RouterLink, DecimalPipe, CircularProgress, Icon, EmptyState],
   templateUrl: './thank-you-page.html',
   styleUrl: './thank-you-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

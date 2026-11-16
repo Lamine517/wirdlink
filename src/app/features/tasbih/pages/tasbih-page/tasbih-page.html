@@ -4,8 +4,8 @@
     <button
       class="tasbih-options"
       type="button"
-      aria-label="Options du compteur"
-      title="Options du compteur"
+      [attr.aria-label]="'Options du compteur' | t"
+      [title]="'Options du compteur' | t"
       (click)="confirmReset.set(false); options.open()"
     >
       <app-icon name="settings" [size]="24" />
@@ -15,17 +15,19 @@
 @if (part(); as part) {
   @if (wird(); as wird) {
     <header class="tasbih-header">
-      <p>Mon tasbih</p>
-      <h1>{{ wird.title }}</h1>
+      <p><app-icon name="prayer" [size]="18" />{{ 'Mon tasbih' | t }}</p>
+      <h1 dir="auto">{{ wird.title }}</h1>
       @if (part.name) {
-        <span>{{ part.name }}</span>
+        <span
+          >{{ 'Ma part ·' | t }}<bdi>{{ part.name }}</bdi></span
+        >
       }
     </header>
     @if (!part.finished) {
       @if (counter.warning()) {
-        <p class="feedback" role="status">{{ counter.warning() }}</p>
+        <p class="feedback" role="status">{{ counter.warning() | t }}</p>
       }
-      <section class="tasbih" aria-label="Compter ma part">
+      <section class="tasbih" [attr.aria-label]="'Compter ma part' | t">
         <button
           class="tasbih__circle"
           [class.tasbih__circle--complete]="reached()"
@@ -33,33 +35,39 @@
           type="button"
           [disabled]="reached() || finishing()"
           [attr.aria-label]="
-            'Ajouter une lecture. ' + count() + ' sur ' + part.quantity + ' comptées.'
+            'Ajouter une lecture. {count} sur {target} comptées.'
+              | t: { count: count(), target: part.quantity }
           "
           (click)="increment()"
           (keydown)="preventRepeat($event)"
         >
           <span class="tasbih__center" aria-hidden="true">
             <strong class="tasbih__value">{{ count() | number }}</strong>
-            <span class="tasbih__target">sur {{ part.quantity | number }}</span>
+            <span class="tasbih__target">{{ 'sur {target}' | t: { target: part.quantity } }}</span>
             <span class="tasbih__tap">
               @if (reached()) {
-                <app-icon name="check" [size]="24" />
+                <app-icon name="check" [size]="22" /><span>{{ 'Terminé' | t }}</span>
               } @else {
-                <app-icon name="tap" [size]="24" /><span>+1</span>
+                <app-icon name="tap" [size]="22" /><span>{{ '+1 lecture' | t }}</span>
               }
             </span>
           </span>
         </button>
         <p class="tasbih__guidance" role="status">
-          {{ reached() ? 'Objectif atteint !' : 'Touchez le cercle pour compter' }}
+          {{ reached() ? ('Objectif atteint !' | t) : 'Touchez le grand cercle pour compter' }}
         </p>
+        @if (!reached()) {
+          <p class="tasbih__remaining">
+            {{ 'Encore {count} à lire' | t: { count: part.quantity - count() } }}
+          </p>
+        }
         <button
           type="button"
           class="tasbih__undo"
           [disabled]="count() === 0 || finishing()"
           (click)="undo()"
         >
-          <app-icon name="undo" [size]="20" />Annuler le dernier appui
+          <app-icon name="undo" [size]="20" />{{ 'Annuler le dernier appui' | t }}
         </button>
         <button
           type="button"
@@ -67,46 +75,52 @@
           [disabled]="!reached() || !network.online() || finishing()"
           (click)="finish()"
         >
-          <app-icon name="check" [size]="24" />J’ai fini
+          <app-icon name="check" [size]="22" />{{
+            finishing() ? ('Confirmation…' | t) : ('J’ai fini' | t)
+          }}
         </button>
         @if (reached()) {
           <p class="tasbih__hint">
             {{
               network.online()
-                ? 'Confirmez pour terminer votre part.'
-                : 'Votre compteur est conservé. Reconnectez-vous pour confirmer.'
+                ? ('Confirmez pour terminer votre part.' | t)
+                : ('Votre compteur est conservé. Reconnectez-vous pour confirmer.' | t)
             }}
+          </p>
+        } @else {
+          <p class="tasbih__hint">
+            {{ 'Vous pourrez confirmer une fois votre objectif atteint.' | t }}
           </p>
         }
       </section>
     } @else {
       <app-empty-state
-        title="Cette part est terminée"
-        description="Votre lecture a déjà été confirmée. Merci !"
-        actionLabel="Mes parts"
+        [title]="'Cette part est terminée' | t"
+        [description]="'Votre lecture a déjà été confirmée. Merci !' | t"
+        [actionLabel]="'Mes parts' | t"
         actionLink="/mes-parts"
       />
     }
   } @else {
-    <h1>Compteur indisponible</h1>
+    <h1>{{ 'Compteur indisponible' | t }}</h1>
     <app-empty-state
-      title="Ouvrez d’abord le wird"
-      description="Utilisez le lien d’accès du responsable pour retrouver cette lecture."
-      actionLabel="Mes parts"
+      [title]="'Ouvrez d’abord le wird' | t"
+      [description]="'Utilisez le lien d’accès du responsable pour retrouver cette lecture.' | t"
+      [actionLabel]="'Mes parts' | t"
       actionLink="/mes-parts"
     />
   }
 } @else {
-  <h1>Part introuvable</h1>
+  <h1>{{ 'Part introuvable' | t }}</h1>
   <app-empty-state
-    title="Retrouvez vos lectures"
-    description="Ce compteur n’est pas disponible sur cet appareil."
-    actionLabel="Mes parts"
+    [title]="'Retrouvez vos lectures' | t"
+    [description]="'Ce compteur n’est pas disponible sur cet appareil.' | t"
+    [actionLabel]="'Mes parts' | t"
     actionLink="/mes-parts"
   />
 }
 @if (error()) {
-  <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  <p class="feedback feedback--error" role="alert">{{ error() | t }}</p>
 }
 <app-bottom-sheet
   #options
@@ -115,19 +129,19 @@
 >
   @if (confirmReset()) {
     <div class="tasbih-settings">
-      <p>Seul ce compteur revient à zéro. Votre part reste réservée.</p>
+      <p>{{ 'Seul ce compteur revient à zéro. Votre part reste réservée.' | t }}</p>
       <button type="button" class="button button--outline" (click)="confirmReset.set(false)">
-        Garder le compteur
+        {{ 'Garder le compteur' | t }}
       </button>
       <button type="button" class="button button--danger" (click)="reset(options)">
-        Recommencer à zéro
+        {{ 'Recommencer à zéro' | t }}
       </button>
     </div>
   } @else {
     <div class="tasbih-settings">
       @if (vibration.supported) {
         <label class="tasbih-switch"
-          ><span>Vibrer à l’objectif</span
+          ><span>{{ 'Vibrer à l’objectif' | t }}</span
           ><input
             type="checkbox"
             role="switch"
@@ -135,22 +149,27 @@
             (change)="changeVibration('atGoal', $event)"
         /></label>
         <label class="tasbih-switch"
-          ><span>Vibrer à chaque appui</span
+          ><span>{{ 'Vibrer à chaque appui' | t }}</span
           ><input
             type="checkbox"
             role="switch"
             [checked]="counter.haptics().onTap"
             (change)="changeVibration('onTap', $event)"
         /></label>
-        <p class="text-secondary">La vibration dépend de votre appareil et de ses réglages.</p>
+        <p class="text-secondary">
+          {{ 'La vibration dépend de votre appareil et de ses réglages.' | t }}
+        </p>
       } @else {
         <p class="text-secondary">
-          Ce navigateur ne propose pas la vibration. L’objectif est toujours signalé à l’écran.
+          {{
+            'Ce navigateur ne propose pas la vibration. L’objectif est toujours signalé à l’écran.'
+              | t
+          }}
         </p>
       }
       @if (vibration.unavailable()) {
         <p class="text-secondary">
-          La vibration n’a pas pu démarrer. Le compteur reste utilisable.
+          {{ 'La vibration n’a pas pu démarrer. Le compteur reste utilisable.' | t }}
         </p>
       }
       <button
@@ -159,7 +178,7 @@
         [disabled]="count() === 0"
         (click)="confirmReset.set(true)"
       >
-        Remettre à zéro
+        <app-icon name="undo" [size]="20" />{{ 'Remettre à zéro' | t }}
       </button>
     </div>
   }

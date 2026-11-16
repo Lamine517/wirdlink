@@ -11,12 +11,16 @@ export class WirdAccess {
 
   canRead(id: string): boolean {
     const wird = this.store.wirds().find((item) => item.id === id);
-    return Boolean(wird && (wird.visibility === 'public' || this.allowed().has(id)));
+    return Boolean(
+      wird && (this.store.remote || wird.visibility === 'public' || this.allowed().has(id)),
+    );
   }
 
   async unlock(id: string, code: string): Promise<void> {
     if (!id || !/^\d{4}$/.test(code)) throw new Error('Invalid access request');
-    const wird = await this.gateway.unlock(id, code);
+    const wird = await (this.store.remote
+      ? this.store.unlock(id, code)
+      : this.gateway.unlock(id, code));
     if (
       wird.id !== id ||
       wird.visibility !== 'private' ||
@@ -28,21 +32,30 @@ export class WirdAccess {
       !wird.title.trim()
     )
       throw new Error('Invalid access response');
-    this.store.wirds.update((items) => [...items.filter((item) => item.id !== id), wird]);
+    if (!this.store.remote)
+      this.store.wirds.update((items) => [...items.filter((item) => item.id !== id), wird]);
     this.allowed.update((items) => new Set([...items, id]));
   }
 }
 
-export const readableWird: CanActivateFn = (route) => {
+export const readableWird: CanActivateFn = async (route) => {
   const store = inject(WirdStore);
   const access = inject(WirdAccess);
+  const router = inject(Router);
   const id = route.paramMap.get('id') ?? '';
+  if (store.remote) {
+    try {
+      await store.ensure(id);
+    } catch {
+      return router.createUrlTree(['/'], { queryParams: { retry: 'true' } });
+    }
+  }
   const wird = store.wirds().find((item) => item.id === id);
   // Unknown local examples use the existing not-found screen; no content is disclosed.
   return (
-    !wird ||
+    (!wird && !store.remote) ||
     access.canRead(id) ||
-    inject(Router).createUrlTree(['/acces', id], {
+    router.createUrlTree(['/acces', id], {
       queryParams: route.routeConfig?.path?.endsWith('/participants')
         ? { view: 'participants' }
         : {},

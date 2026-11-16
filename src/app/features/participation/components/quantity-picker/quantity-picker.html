@@ -2,7 +2,7 @@
   <button
     type="button"
     class="quantity-counter__button"
-    aria-label="Diminuer la quantité"
+    [attr.aria-label]="'Diminuer la quantité' | t"
     (click)="adjust(-1)"
   >
     <app-icon name="minus" [size]="24" />
@@ -12,7 +12,7 @@
     id="quantity"
     type="number"
     inputmode="numeric"
-    placeholder="Ex. 10"
+    [placeholder]="'Ex. 10' | t"
     (blur)="hasInteracted.set(true)"
     min="1"
     [max]="maximum()"
@@ -26,7 +26,7 @@
   <button
     type="button"
     class="quantity-counter__button"
-    aria-label="Augmenter la quantité"
+    [attr.aria-label]="'Augmenter la quantité' | t"
     (click)="adjust(1)"
   >
     <app-icon name="plus" [size]="28" />
@@ -34,10 +34,10 @@
 </div>
 @if (validationMessage()) {
   <p class="quantity-error" id="quantity-error" role="alert">
-    <app-icon name="warning" [size]="24" />{{ validationMessage() }}
+    <app-icon name="warning" [size]="24" />{{ validationMessage() | t }}
   </p>
 }
-<p id="quantity-hint">lectures</p>
+<p id="quantity-hint">{{ 'lectures' | t }}</p>
 <div class="choice-list">
   @for (amount of suggestions(); track $index) {
     <button
@@ -55,9 +55,9 @@
     class="button button--outline button--compact"
     value="all"
     [disabled]="maximum() < 1"
-    [attr.aria-label]="'Prendre les ' + maximum() + ' lectures disponibles'"
+    [attr.aria-label]="'Prendre les {count} lectures disponibles' | t: { count: maximum() }"
     (click)="setQuantity(maximum())"
   >
-    Tout
+    {{ 'Tout' | t }}
   </button>
 </div>

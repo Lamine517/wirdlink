@@ -1,31 +1,35 @@
-<h1>Créer un wird</h1>
+<h1>{{ 'Créer un wird' | t }}</h1>
 @if (store.warning()) {
-  <p class="feedback" role="status">{{ store.warning() }}</p>
+  <p class="feedback" role="status">{{ store.warning() | t }}</p>
 }
 @if (store.hasDraft()) {
   <section class="surface-card draft-resume">
-    <h2>Votre brouillon</h2>
-    <p>{{ store.draft().title || 'Mon wird' }}</p>
-    <a class="button button--primary" routerLink="/creer/contenu">Reprendre</a>
+    <h2>{{ 'Votre brouillon' | t }}</h2>
+    <p>{{ store.draft().title || ('Mon wird' | t) }}</p>
+    <a class="button button--primary" routerLink="/creer/contenu">{{ 'Reprendre' | t }}</a>
     <button type="button" class="draft-delete" (click)="deleteSheet.open()">
-      Supprimer le brouillon
+      {{ 'Supprimer le brouillon' | t }}
     </button>
   </section>
 }
-<p class="text-secondary">Choisissez un modèle, puis adaptez-le.</p>
+<p class="text-secondary">{{ 'Choisissez un modèle, puis adaptez-le.' | t }}</p>
 <div class="template-list">
   @for (template of templates; track template.id) {
     <button type="button" class="template-card" (click)="choose(template)">
-      <span class="template-card__icon" aria-hidden="true">
+      <span
+        class="template-card__icon"
+        [class.template-card__icon--custom]="template.id === 'custom'"
+        aria-hidden="true"
+      >
         <app-icon [name]="templateIcons[template.id]" [size]="24" />
       </span>
       <span class="template-card__content"
-        ><strong>{{ template.title }}</strong
-        ><span>
+        ><strong>{{ template.id === 'custom' ? ('Mon propre wird' | t) : template.title }}</strong>
+        <span>
           @if (template.target) {
-            {{ template.target | number }} lectures
+            {{ template.target | number }} {{ 'lectures' | t }}
           } @else {
-            À votre façon
+            {{ 'À votre façon' | t }}
           }
         </span></span
       >
@@ -34,33 +38,42 @@
   }
 </div>
 @if (store.hasDraft()) {
-  <p class="text-secondary">Choisir un modèle remplace le brouillon actuel.</p>
+  <p class="text-secondary">{{ 'Choisir un modèle remplace le brouillon actuel.' | t }}</p>
 }
 
-<app-bottom-sheet #deleteSheet panelId="delete-draft" title="Supprimer le brouillon ?">
+<app-bottom-sheet #deleteSheet panelId="delete-draft" [title]="'Supprimer le brouillon ?' | t">
   <div class="draft-delete-confirmation">
-    <p>Le texte, la photo et la voix de ce brouillon seront retirés de cet appareil.</p>
+    <p>{{ 'Le texte, la photo et la voix de ce brouillon seront retirés de cet appareil.' | t }}</p>
     <button type="button" class="button button--outline" (click)="deleteSheet.close()">
-      Garder le brouillon
+      {{ 'Garder le brouillon' | t }}
     </button>
     <button
       type="button"
       class="button button--danger"
       (click)="store.discard(); deleteSheet.close()"
     >
-      Supprimer
+      {{ 'Supprimer' | t }}
     </button>
   </div>
 </app-bottom-sheet>
 
-<app-bottom-sheet #replacementSheet panelId="replace-draft" title="Remplacer le brouillon ?">
+<app-bottom-sheet
+  #replacementSheet
+  panelId="replace-draft"
+  [title]="'Remplacer le brouillon ?' | t"
+>
   <div class="draft-delete-confirmation">
-    <p>Le modèle choisi remplacera le texte, les consignes et les fichiers du brouillon actuel.</p>
+    <p>
+      {{
+        'Le modèle choisi remplacera le texte, les consignes et les fichiers du brouillon actuel.'
+          | t
+      }}
+    </p>
     <button type="button" class="button button--outline" (click)="replacementSheet.close()">
-      Garder le brouillon
+      {{ 'Garder le brouillon' | t }}
     </button>
     <button type="button" class="button button--primary" (click)="replaceDraft()">
-      Utiliser ce modèle
+      {{ 'Utiliser ce modèle' | t }}
     </button>
   </div>
 </app-bottom-sheet>

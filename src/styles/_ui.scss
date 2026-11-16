@@ -130,8 +130,8 @@ button {
 }
 
 .segmented-choice {
-  padding: 2px;
-  gap: 2px;
+  padding: var(--space-4);
+
   border-radius: var(--radius-medium);
   background: var(--color-bg-muted);
 

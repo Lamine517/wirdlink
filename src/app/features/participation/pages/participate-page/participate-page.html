@@ -1,22 +1,27 @@
 @if (message()) {
-  <p class="feedback feedback--error" role="alert">{{ message() }}</p>
+  <p class="feedback feedback--error" role="alert">{{ message() | t }}</p>
 }
 @if (selected(); as wird) {
   <app-wird-header
+    [allowDuplicate]="true"
+    [canManage]="wird.isOwner === true"
+    (editRequested)="edit()"
+    (deleteRequested)="openDelete()"
+    (duplicateRequested)="duplicate()"
     [title]="wird.title"
-    [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
+    [shareLink]="'/partage/' + wird.id"
     [shareUrl]="shareOrigin + '/wird/' + wird.id"
   />
   <app-wird-tabs [wirdId]="wird.id" />
   @if (author(); as author) {
     <p class="text-secondary">
-      Publié par {{ author.displayName }}
+      {{ 'Publié par' | t }} {{ author.displayName }}
       @if (author.organization) {
         · {{ author.organization }}
       }
     </p>
   }
-  <section class="participation-summary" aria-label="Avancement du wird">
+  <section class="participation-summary" [attr.aria-label]="'Avancement du wird' | t">
     <app-circular-progress
       [title]="wird.title"
       [showTitle]="false"
@@ -27,7 +32,7 @@
       <div class="participation-summary__stat">
         <span class="participation-summary__dot" aria-hidden="true"></span>
         <strong>{{ store.available(wird.id) | number }}</strong
-        ><span>à prendre</span>
+        ><span>{{ 'à prendre' | t }}</span>
       </div>
       @if (wird.target - store.completed(wird.id) - store.available(wird.id) > 0) {
         <div class="participation-summary__stat">
@@ -38,34 +43,40 @@
           <strong>{{
             wird.target - store.completed(wird.id) - store.available(wird.id) | number
           }}</strong
-          ><span>en cours</span>
+          ><span>{{ 'en cours' | t }}</span>
         </div>
       }
     </div>
   </section>
+  @if (wird.imageUrl; as image) {
+    <img class="wird-image" [src]="image" [alt]="wird.title" />
+  }
+  @if (wird.audioUrl; as source) {
+    <app-audio-player [source]="source" [title]="wird.title" />
+  }
   @if (wird.description?.trim()) {
     <section class="wird-text">
-      <h2>Description</h2>
+      <h2>{{ 'Description' | t }}</h2>
       <p>{{ wird.description }}</p>
     </section>
   }
   @if (wird.instructions?.trim()) {
     <section class="wird-text">
-      <h2>Consignes</h2>
+      <h2>{{ 'Consignes' | t }}</h2>
       <p>{{ wird.instructions }}</p>
     </section>
   }
 
   @if (store.available(wird.id) > 0) {
     <form [formGroup]="form" (ngSubmit)="reserve()" class="participation-form">
-      <label class="participation-form__label" for="quantity">Ma part</label>
+      <label class="participation-form__label" for="quantity">{{ 'Ma part' | t }}</label>
       <app-quantity-picker
         [target]="wird.target"
         [control]="quantity"
         [maximum]="store.available(wird.id)"
       />
       <fieldset>
-        <legend>Mon nom</legend>
+        <legend>{{ 'Mon nom' | t }}</legend>
         <div class="choice-list segmented-choice">
           <button
             type="button"
@@ -74,7 +85,7 @@
             [attr.aria-pressed]="!useName()"
             (click)="useName.set(false)"
           >
-            Sans nom</button
+            {{ 'Sans nom' | t }}</button
           ><button
             type="button"
             class="button button--outline"
@@ -82,17 +93,17 @@
             [attr.aria-pressed]="useName()"
             (click)="useName.set(true)"
           >
-            Mon nom
+            {{ 'Mon nom' | t }}
           </button>
         </div>
       </fieldset>
       @if (useName()) {
-        <label for="name">Votre nom affiché</label
+        <label for="name">{{ 'Votre nom affiché' | t }}</label
         ><input
           id="name"
           autocomplete="given-name"
           maxlength="60"
-          placeholder="Ex. Awa"
+          [placeholder]="'Ex. Awa' | t"
           [formControl]="name"
           aria-describedby="name-hint"
           [attr.aria-invalid]="nameError()"
@@ -107,8 +118,8 @@
         >
           {{
             nameError()
-              ? 'Écrivez votre nom, ou choisissez « Sans nom ».'
-              : 'Ce nom sera visible avec votre part. Vous pouvez rester sans nom.'
+              ? ('Écrivez votre nom, ou choisissez « Sans nom ».' | t)
+              : ('Ce nom sera visible avec votre part. Vous pouvez rester sans nom.' | t)
           }}
         </p>
       }
@@ -119,10 +130,12 @@
           [disabled]="!canReserve()"
           [attr.aria-describedby]="!canReserve() ? 'participation-guidance' : null"
         >
-          Je commence
+          {{ 'Je commence' | t }}
         </button>
         @if (!canReserve()) {
-          <p id="participation-guidance" class="participation-form__guidance">{{ guidance() }}</p>
+          <p id="participation-guidance" class="participation-form__guidance">
+            {{ guidance() | t }}
+          </p>
         }
       </div>
     </form>
@@ -138,12 +151,38 @@
           ? 'Merci à toutes les personnes qui ont participé.'
           : 'Des lectures sont encore en cours. Vous pouvez voir les participations.'
       "
-      actionLabel="Voir les autres wirds"
+      [actionLabel]="'Voir les autres wirds' | t"
       actionLink="/"
     />
   }
 } @else {
   <app-back-button />
-  <h1>Wird introuvable</h1>
-  <p>Ce lien ne correspond à aucun exemple disponible.</p>
+  <h1>{{ 'Wird introuvable' | t }}</h1>
+  <p>{{ 'Ce wird est indisponible. Retrouvez-le depuis son lien de partage.' | t }}</p>
 }
+
+<app-bottom-sheet #deleteSheet panelId="delete-wird" [title]="'Supprimer ce wird ?' | t">
+  <div class="form-stack">
+    <p>
+      {{
+        'Ce wird et toutes ses participations seront supprimés. Cette action est définitive.' | t
+      }}
+    </p>
+    <button
+      type="button"
+      class="button button--outline"
+      [disabled]="deleting()"
+      (click)="deleteSheet.close()"
+    >
+      {{ 'Garder ce wird' | t }}
+    </button>
+    <button
+      type="button"
+      class="button button--danger"
+      [disabled]="deleting()"
+      (click)="deleteWird()"
+    >
+      {{ 'Supprimer ce wird' | t }}
+    </button>
+  </div>
+</app-bottom-sheet>

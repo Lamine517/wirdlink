@@ -152,14 +152,23 @@ describe('Stable wird header', () => {
     TestBed.configureTestingModule({ providers: appConfig.providers });
   });
   afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
-  it('keeps the same title on both views and exposes an icon-only share action in the toolbar', async () => {
+  it('keeps the same title on both views and exposes an icon-only options menu before sharing', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
     const share = harness.routeNativeElement!.querySelector<HTMLButtonElement>(
-      'app-wird-header button[aria-label="Partager ce wird"]',
+      'app-wird-header button[aria-label="Plus d’options"]',
     )!;
     expect(share.textContent!.trim()).toBe('');
     expect(share.querySelector('app-icon')).not.toBeNull();
+    share.click();
+    harness.detectChanges();
+    expect(
+      harness.routeNativeElement!.querySelector<HTMLDialogElement>('#wird-options')!.open,
+    ).toBeTrue();
+    expect(harness.routeNativeElement!.querySelector('#wird-options')!.textContent).toContain(
+      'Partager',
+    );
+    harness.routeNativeElement!.querySelector<HTMLDialogElement>('#wird-options')!.close();
     expect(harness.routeNativeElement!.querySelector('.participation-share')).toBeNull();
     await harness.navigateByUrl('/wird/salat-nabi/participants');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');

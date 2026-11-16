@@ -1,11 +1,11 @@
 <app-back-button />
 <header class="access-header">
   <span class="access-header__icon"><app-icon name="lock" [size]="32" /></span>
-  <h1>Ce wird est privé</h1>
-  <p>Saisissez le code transmis par le responsable.</p>
+  <h1>{{ 'Ce wird est privé' | t }}</h1>
+  <p>{{ 'Saisissez le code transmis par le responsable.' | t }}</p>
 </header>
 <form class="form-stack" (submit)="$event.preventDefault(); unlock()" [attr.aria-busy]="busy()">
-  <label for="access-code">Code d’accès à 4 chiffres</label>
+  <label for="access-code">{{ 'Code d’accès à 4 chiffres' | t }}</label>
   <input
     id="access-code"
     class="access-code"
@@ -33,4 +33,8 @@
     {{ cooldown() > 0 ? 'Réessayer dans ' + cooldown() + ' s' : 'Ouvrir le wird' }}
   </button>
 </form>
-<app-request-state [loading]="busy()" loadingLabel="Vérification du code…" [error]="error()" />
+<app-request-state
+  [loading]="busy()"
+  [loadingLabel]="'Vérification du code…' | t"
+  [error]="error()"
+/>

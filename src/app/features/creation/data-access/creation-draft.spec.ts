@@ -46,7 +46,8 @@ describe('Creation draft', () => {
 
   it('checks content, real calendar dates and date ordering', () => {
     expect(isContentValid({ title: 'Wird', description: '', target: 1000 })).toBeTrue();
-    for (const target of [null, 0, -1, 1.5, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+    expect(isContentValid({ title: 'Wird', description: '', target: 2147483647 })).toBeTrue();
+    for (const target of [null, 0, -1, 1.5, Infinity, 2147483648, Number.MAX_SAFE_INTEGER + 1]) {
       expect(isContentValid({ title: 'Wird', description: '', target })).toBeFalse();
     }
     expect(isContentValid({ title: '   ', description: '', target: 10 })).toBeFalse();
