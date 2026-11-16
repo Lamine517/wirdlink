@@ -10,7 +10,6 @@ export interface ResponsibleSession {
 export interface UserProfile {
   firstName: string;
   lastName: string;
-  address: string;
   organization: string;
 }
 export interface WirdAuthor {

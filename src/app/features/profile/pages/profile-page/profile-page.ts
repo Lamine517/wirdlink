@@ -40,7 +40,6 @@ export class ProfilePage {
   protected readonly form = new FormGroup({
     firstName: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(60)] }),
     lastName: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(60)] }),
-    address: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(240)] }),
     organization: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(120)],

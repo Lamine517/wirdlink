@@ -14,7 +14,6 @@ describe('Profile and account actions', () => {
     gateway.loadProfile.and.resolveTo({
       firstName: 'Aminata',
       lastName: 'Ndiaye',
-      address: '',
       organization: '',
     });
     TestBed.configureTestingModule({
@@ -58,7 +57,6 @@ describe('Profile and account actions', () => {
     expect(gateway.saveProfile).toHaveBeenCalledWith({
       firstName: 'Aminata',
       lastName: 'Ndiaye',
-      address: '',
       organization: 'Dahira du quartier',
     });
     expect(harness.routeNativeElement!.textContent).toContain('Profil enregistré');

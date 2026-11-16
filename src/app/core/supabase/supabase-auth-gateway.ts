@@ -165,19 +165,17 @@ export class SupabaseAuthGateway implements FrontendGateway {
     if (identityError || !responsibleSession(identity.user)) throw new ServiceUnavailableError();
     const { data, error } = await client
       .from('profiles')
-      .select('first_name,last_name,address,organization')
+      .select('first_name,last_name,organization')
       .eq('id', identity.user!.id)
       .maybeSingle<{
         first_name: string;
         last_name: string;
-        address: string;
         organization: string;
       }>();
     if (error) throw new ServiceUnavailableError();
     return {
       firstName: data?.first_name ?? '',
       lastName: data?.last_name ?? '',
-      address: data?.address ?? '',
       organization: data?.organization ?? '',
     };
   }
@@ -190,7 +188,6 @@ export class SupabaseAuthGateway implements FrontendGateway {
       id: data.user!.id,
       first_name: profile.firstName.trim(),
       last_name: profile.lastName.trim(),
-      address: profile.address.trim(),
       organization: profile.organization.trim(),
     });
     if (error) throw new ServiceUnavailableError();
