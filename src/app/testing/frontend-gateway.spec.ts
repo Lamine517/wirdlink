@@ -2,6 +2,9 @@ import { FrontendGateway, ServiceUnavailableError } from '../core/services/front
 
 export function gatewayStub(): jasmine.SpyObj<FrontendGateway> {
   const stub = jasmine.createSpyObj<FrontendGateway>('FrontendGateway', [
+    'restoreSession',
+    'watchSession',
+    'signOut',
     'requestCode',
     'verifyCode',
     'signInWithProvider',
@@ -10,6 +13,8 @@ export function gatewayStub(): jasmine.SpyObj<FrontendGateway> {
     'unlock',
     'setReminders',
   ]);
+  stub.restoreSession.and.resolveTo(null);
+  stub.watchSession.and.returnValue(() => undefined);
   for (const method of [
     stub.requestCode,
     stub.verifyCode,
@@ -18,6 +23,7 @@ export function gatewayStub(): jasmine.SpyObj<FrontendGateway> {
     stub.publish,
     stub.unlock,
     stub.setReminders,
+    stub.signOut,
   ]) {
     method.and.callFake((): Promise<never> => Promise.reject(new ServiceUnavailableError()));
   }

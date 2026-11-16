@@ -40,8 +40,14 @@ dédié, avec l’historique distant comme référence de version.
 
 ## Raccordement restant
 
-L’application conserve sa démonstration locale et son adaptateur indisponible.
-Ne pas remplacer celui-ci par un simple succès après insertion : les lectures
+L’application conserve sa démonstration locale pour les wirds et réservations.
+L’adaptateur `SupabaseAuthGateway` raccorde maintenant téléphone et OAuth PKCE,
+valide la reprise de session auprès d’Auth et propose la déconnexion dans Réglages.
+Le SDK est chargé à la demande. Seuls l’URL et la clé publiable sont dans le client.
+Les paramètres publics Auth sont vérifiés avant l’envoi d’un code ou une redirection :
+un fournisseur désactivé reste indisponible, sans simuler de connexion.
+
+La publication reste fermée. Ne pas la remplacer par un simple succès après insertion : les lectures
 distantes, médias autorisés, reprise de session et erreurs doivent être raccordés
 ensemble. Aucun secret serveur ne doit être ajouté au bundle Angular.
 
@@ -54,7 +60,32 @@ Avant activation des parcours réels :
 4. Exposer uniquement les compteurs agrégés et les noms volontairement choisis,
    sans identifiants utilisateur ni téléphone.
 5. Donner accès aux médias joints via des URL signées après contrôle du wird.
-6. Raccorder le client Supabase et conserver une séparation explicite du mode démo.
+6. Raccorder les opérations de données du client et conserver une séparation explicite du mode démo.
 
 La fréquence est enregistrée ; aucun cycle, rappel, expiration ou coût de service
 n’est activé par cette migration.
+
+## Connexion : configuration du projet hébergé
+
+Contrôle du 16 novembre 2026 : l’API Auth répond, mais téléphone, Google et Apple
+sont désactivés. Le connecteur disponible gère SQL et Storage ; il ne propose pas
+de modification des fournisseurs Auth. Le fichier `config.toml` configure le
+développement local et ne modifie pas les paramètres du projet hébergé.
+
+Dans le tableau de bord du projet :
+
+- Authentication → URL Configuration : site local `http://localhost:4200` et
+  retour autorisé `http://localhost:4200/connexion/retour`. Ajouter le domaine
+  final une fois choisi ; éviter les autorisations de redirection trop larges.
+- Authentication → Sign In / Providers : activer le fournisseur retenu avec ses
+  identifiants dans le tableau de bord, sans les placer dans le dépôt ou le chat.
+- Pour Google/Apple, le callback à déclarer chez le fournisseur est
+  `https://unhcqgwexwmxkwkwvgbl.supabase.co/auth/v1/callback` ; le retour Angular
+  `/connexion/retour` est configuré séparément dans Supabase.
+- Le parcours téléphone utilise le canal SMS du SDK. Aucun fournisseur SMS ni
+  abonnement n’a été créé. L’envoi exige un fournisseur configuré et une action
+  de l’utilisateur. L’intégration WhatsApp reste distincte et non activée.
+
+Les tests unitaires remplacent le client Auth et les tests navigateur bloquent
+les requêtes Supabase. La validation réelle OTP/OAuth reste à effectuer après
+configuration ; aucun envoi de code n’a été effectué pendant ces contrôles.

@@ -163,6 +163,9 @@ try {
   });
   await cdp('Runtime.enable');
   await cdp('Page.enable');
+  // Browser smoke checks must never send SMS or use a real authenticated session.
+  await cdp('Network.enable');
+  await cdp('Network.setBlockedURLs', { urls: ['*://*.supabase.co/*'] });
   await viewport(390);
   await navigate('/', 'app-home-page');
   await wait('[...document.images].every(image=>image.complete&&image.naturalWidth>0)');

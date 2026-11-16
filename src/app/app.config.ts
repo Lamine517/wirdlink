@@ -9,11 +9,14 @@ import {
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
+import { FRONTEND_GATEWAY } from './core/services/frontend-gateway';
+import { SupabaseAuthGateway } from './core/supabase/supabase-auth-gateway';
 
 registerLocaleData(localeFr);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: FRONTEND_GATEWAY, useExisting: SupabaseAuthGateway },
     { provide: LOCALE_ID, useValue: 'fr' },
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),

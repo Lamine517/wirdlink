@@ -35,11 +35,15 @@
   loadingLabel="Publication en cours…"
   [error]="error()"
 />
+@if (auth.restoring()) {
+  <app-request-state [loading]="true" loadingLabel="Vérification de votre connexion…" />
+}
 <button
   class="button button--primary preview-publish"
   type="button"
   [disabled]="
-    !store.contentValid() || !store.scheduleValid() || publication.busy() || !network.online()
+    !store.contentValid() || !store.scheduleValid() || publication.busy() ||
+    !network.online() || auth.restoring()
   "
   aria-describedby="publish-hint"
   (click)="publish()"

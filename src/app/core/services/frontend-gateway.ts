@@ -20,11 +20,14 @@ export interface PublicationRequest {
   audio: LocalMedia | null;
 }
 
-/** Frontend boundary: the server must verify authentication, permissions and counts.
- * Production intentionally fails closed until an adapter is connected and verified.
+/** Frontend boundary: the server verifies authentication, permissions and counts.
+ * appConfig connects real Supabase authentication. Other operations stay closed.
  * Tests replace this port; no successful sign-in/publication is simulated in the app.
  */
 export interface FrontendGateway {
+  restoreSession(): Promise<ResponsibleSession | null>;
+  watchSession(listener: (session: ResponsibleSession | null) => void): () => void;
+  signOut(): Promise<void>;
   requestCode(phone: string): Promise<void>;
   verifyCode(phone: string, code: string): Promise<ResponsibleSession>;
   signInWithProvider(provider: SignInProvider): Promise<void>;
@@ -57,6 +60,9 @@ const unavailable = (): Promise<never> => Promise.reject(new ServiceUnavailableE
 export const FRONTEND_GATEWAY = new InjectionToken<FrontendGateway>('FRONTEND_GATEWAY', {
   providedIn: 'root',
   factory: () => ({
+    restoreSession: () => Promise.resolve(null),
+    watchSession: () => () => undefined,
+    signOut: unavailable,
     requestCode: unavailable,
     verifyCode: unavailable,
     signInWithProvider: unavailable,
