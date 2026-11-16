@@ -1,0 +1,9 @@
+.recurrence-options .button {
+  min-height: 48px;
+}
+
+.recurrence-options input:checked + .button {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: none;
+}

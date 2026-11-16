@@ -16,6 +16,7 @@ import { CreationSteps } from '../../components/creation-steps/creation-steps';
   selector: 'app-schedule-page',
   imports: [ReactiveFormsModule, CreationSteps, Icon],
   templateUrl: './schedule-page.html',
+  styleUrl: './schedule-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchedulePage {
