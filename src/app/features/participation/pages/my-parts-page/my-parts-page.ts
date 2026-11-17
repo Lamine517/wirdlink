@@ -5,12 +5,28 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Icon } from '../../../../shared/components/icon/icon';
 import {
+  PART_PERIODS,
+  PartGroup,
+  PartPeriod,
+  PartPeriodFilter,
   PartStateFilter,
   groupParts,
   groupState,
+  lastPartDay,
+  matchesPartPeriod,
   matchesPartSearch,
+  partPeriod,
   sortByState,
 } from '../../data-access/part-groups';
+import { dakarToday } from '../../../../core/wird-cycle';
+
+const PERIOD_LABELS: Record<PartPeriod, string> = {
+  today: 'Aujourd’hui',
+  yesterday: 'Hier',
+  week: 'Cette semaine',
+  month: 'Ce mois-ci',
+  older: 'Plus ancien',
+};
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -41,22 +57,48 @@ export class MyPartsPage {
     { value: 'progress', label: 'En cours' },
     { value: 'done', label: 'Terminé' },
   ];
+  protected readonly period = signal<PartPeriodFilter>('all');
+  protected readonly periodOptions: { value: PartPeriodFilter; label: string }[] = [
+    { value: 'all', label: 'Toutes' },
+    { value: 'today', label: 'Aujourd’hui' },
+    { value: 'week', label: 'Cette semaine' },
+    { value: 'month', label: 'Ce mois-ci' },
+  ];
+  private readonly today = dakarToday();
+  protected readonly filtered = computed(() => this.state() !== 'all' || this.period() !== 'all');
   protected readonly groups = computed(() => groupParts(this.store.wirds(), this.store.parts()));
   protected readonly visibleGroups = computed(() => {
     const progress = this.counter.progress();
-    return sortByState(
-      this.groups().filter(
-        (group) =>
-          matchesPartSearch(group, this.query()) &&
-          (this.state() === 'all' || groupState(group, progress) === this.state()),
-      ),
-      progress,
+    return this.groups().filter(
+      (group) =>
+        matchesPartSearch(group, this.query()) &&
+        matchesPartPeriod(group, this.period(), this.today) &&
+        (this.state() === 'all' || groupState(group, progress) === this.state()),
     );
+  });
+  protected readonly sections = computed(() => {
+    const progress = this.counter.progress();
+    const byPeriod = new Map<PartPeriod, PartGroup[]>();
+    for (const group of this.visibleGroups()) {
+      const period = partPeriod(group, this.today);
+      byPeriod.set(period, [...(byPeriod.get(period) ?? []), group]);
+    }
+    return PART_PERIODS.filter((period) => byPeriod.has(period)).map((period) => ({
+      period,
+      label: PERIOD_LABELS[period],
+      groups: sortByState(
+        byPeriod
+          .get(period)!
+          .sort((a, b) => (lastPartDay(b) ?? '').localeCompare(lastPartDay(a) ?? '')),
+        progress,
+      ),
+    }));
   });
 
   protected clearFilters(): void {
     this.search.setValue('');
     this.state.set('all');
+    this.period.set('all');
   }
 
   protected readonly finishing = signal(false);

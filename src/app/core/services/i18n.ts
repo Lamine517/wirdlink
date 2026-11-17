@@ -843,6 +843,13 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'J’ai déjà fini': ['I already finished', 'أتممت بالفعل'],
   'Tout afficher': ['Show all', 'عرض الكل'],
   Toutes: ['All', 'الكل'],
+  'Aujourd’hui': ['Today', 'اليوم'],
+  Hier: ['Yesterday', 'أمس'],
+  'Cette semaine': ['This week', 'هذا الأسبوع'],
+  'Ce mois-ci': ['This month', 'هذا الشهر'],
+  'Plus ancien': ['Earlier', 'أقدم'],
+  État: ['Status', 'الحالة'],
+  Date: ['Date', 'التاريخ'],
   'Voir mes parts': ['Show my shares', 'عرض حصصي'],
   'À propos de ce wird': ['About this wird', 'عن هذا الورد'],
   'Visible avec votre part. Laissez vide pour rester anonyme.': [

@@ -24,7 +24,7 @@
     <button
       type="button"
       class="icon-button"
-      [class.icon-button--active]="state() !== 'all'"
+      [class.icon-button--active]="filtered()"
       [attr.aria-label]="'Filtrer' | t"
       [title]="'Filtrer' | t"
       [attr.aria-expanded]="filterSheet.isOpen()"
@@ -35,13 +35,18 @@
     </button>
   </div>
 }
-@for (group of visibleGroups(); track group.wirdId) {
-  <app-part-card
-    [group]="group"
-    [progress]="counter.progress()"
-    [disabled]="!network.online() || finishing()"
-    (finishRequested)="finish($event)"
-  />
+@for (section of sections(); track section.period) {
+  <section class="parts-section" [attr.aria-labelledby]="'parts-' + section.period">
+    <h2 class="parts-section__title" [id]="'parts-' + section.period">{{ section.label | t }}</h2>
+    @for (group of section.groups; track group.wirdId) {
+      <app-part-card
+        [group]="group"
+        [progress]="counter.progress()"
+        [disabled]="!network.online() || finishing()"
+        (finishRequested)="finish($event)"
+      />
+    }
+  </section>
 } @empty {
   @if (groups().length) {
     <app-empty-state
@@ -63,7 +68,7 @@
 <app-bottom-sheet #filterSheet panelId="parts-filters" [title]="'Filtrer' | t">
   <div class="form-stack">
     <fieldset>
-      <legend>{{ 'Mes parts' | t }}</legend>
+      <legend>{{ 'État' | t }}</legend>
       <div class="parts-filter">
         @for (option of stateOptions; track option.value) {
           <button
@@ -78,8 +83,29 @@
         }
       </div>
     </fieldset>
+    <fieldset>
+      <legend>{{ 'Date' | t }}</legend>
+      <div class="parts-filter">
+        @for (option of periodOptions; track option.value) {
+          <button
+            type="button"
+            class="button button--outline button--compact"
+            [class.button--selected]="period() === option.value"
+            [attr.aria-pressed]="period() === option.value"
+            (click)="period.set(option.value)"
+          >
+            {{ option.label | t }}
+          </button>
+        }
+      </div>
+    </fieldset>
     <button type="button" class="button button--primary" (click)="filterSheet.close()">
       {{ 'Voir mes parts' | t }} ({{ visibleGroups().length }})
     </button>
+    @if (filtered()) {
+      <button type="button" class="button button--outline" (click)="state.set('all'); period.set('all')">
+        {{ 'Tout effacer' | t }}
+      </button>
+    }
   </div>
 </app-bottom-sheet>
