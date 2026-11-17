@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Icon } from '../../../../shared/components/icon/icon';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import {
   AppConfig,
   TEMPLATE_ICONS,
@@ -46,7 +47,7 @@ function templateGroup(template: WirdTemplate) {
 
 @Component({
   selector: 'app-admin-templates',
-  imports: [ReactiveFormsModule, Icon],
+  imports: [ReactiveFormsModule, Icon, EmptyState],
   templateUrl: './admin-templates.html',
   styleUrls: ['../../admin-form.scss', './admin-templates.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +60,7 @@ export class AdminTemplates {
   protected readonly iconLabels = ICON_LABELS;
   protected readonly max = MAX_TEMPLATES;
   protected readonly items = new FormArray<ReturnType<typeof templateGroup>>([]);
+  protected readonly ready = signal(false);
   protected readonly busy = signal(false);
   protected readonly message = signal('');
   protected readonly error = signal('');
@@ -70,6 +72,7 @@ export class AdminTemplates {
   private fill(templates: WirdTemplate[]): void {
     this.items.clear();
     for (const template of templates) this.items.push(templateGroup(template));
+    this.ready.set(true);
     this.changes.markForCheck();
   }
 

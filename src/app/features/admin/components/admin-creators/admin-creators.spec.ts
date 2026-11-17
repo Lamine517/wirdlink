@@ -65,6 +65,15 @@ describe('Admin creators', () => {
     fixture.detectChanges();
     expect(element.querySelectorAll('.admin-list:first-of-type li.surface-card').length).toBe(1);
     expect(element.textContent).toContain('Awa Ndiaye');
+
+    search.value = 'zzzz';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    const empty = element.querySelector('app-empty-state');
+    expect(empty?.textContent).toContain('Aucun créateur trouvé');
+    empty?.querySelector('button')?.click();
+    fixture.detectChanges();
+    expect(element.querySelectorAll('.admin-list:first-of-type li.surface-card').length).toBe(2);
   });
 
   it('grants a pass with the configured price and reports full founder places', async () => {

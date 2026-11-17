@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   computed,
   inject,
   input,
@@ -13,6 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { PassError, PassKind, PassService } from '../../../../core/pass/pass-service';
 import { AdminApi, AdminCreator, AdminOverview, AdminPass } from '../../data-access/admin-api';
 
@@ -25,13 +27,14 @@ export const PASS_LABELS: Record<PassKind, string> = {
 
 @Component({
   selector: 'app-admin-creators',
-  imports: [DecimalPipe, ReactiveFormsModule, BottomSheet, Icon, UserAvatar],
+  imports: [DecimalPipe, ReactiveFormsModule, BottomSheet, Icon, UserAvatar, EmptyState],
   templateUrl: './admin-creators.html',
   styleUrl: './admin-creators.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminCreators {
   private readonly api = inject(AdminApi);
+  private readonly host = inject(ElementRef);
   protected readonly settings = inject(PassService).settings;
   readonly overview = input.required<AdminOverview>();
   readonly changed = output<void>();
@@ -39,6 +42,7 @@ export class AdminCreators {
   protected readonly kinds: PassKind[] = ['month', 'year', 'founder', 'trial'];
   protected readonly search = new FormControl('', { nonNullable: true });
   private readonly query = toSignal(this.search.valueChanges, { initialValue: '' });
+  protected readonly searching = computed(() => this.query().trim().length > 0);
   protected readonly creators = computed(() => {
     const query = this.query().trim().toLocaleLowerCase('fr');
     return this.overview().creators.filter(
@@ -63,6 +67,16 @@ export class AdminCreators {
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly revoking = signal<AdminPass | null>(null);
+
+  protected clearSearch(): void {
+    this.search.setValue('');
+  }
+
+  protected focusCreators(): void {
+    const field = this.host.nativeElement.querySelector('#admin-search') as HTMLElement | null;
+    field?.scrollIntoView({ block: 'center' });
+    field?.focus();
+  }
 
   protected priceOf(kind: PassKind): number {
     const settings = this.settings();

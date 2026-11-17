@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Icon } from '../../../../shared/components/icon/icon';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { PassError } from '../../../../core/pass/pass-service';
 import { AdminApi, AdminWird } from '../../data-access/admin-api';
 
@@ -15,13 +23,14 @@ export function wirdIdFromLink(value: string): string | null {
 
 @Component({
   selector: 'app-admin-wirds',
-  imports: [ReactiveFormsModule, BottomSheet, Icon],
+  imports: [ReactiveFormsModule, BottomSheet, Icon, EmptyState],
   templateUrl: './admin-wirds.html',
   styleUrls: ['../../admin-form.scss', './admin-wirds.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminWirds {
   private readonly api = inject(AdminApi);
+  private readonly host = inject(ElementRef);
   protected readonly wirds = signal<AdminWird[]>([]);
   protected readonly loaded = signal(false);
   protected readonly search = new FormControl('', { nonNullable: true });
@@ -63,6 +72,18 @@ export class AdminWirds {
     } finally {
       this.loaded.set(true);
     }
+  }
+
+  protected showAll(): void {
+    this.search.setValue('');
+    this.onlyHidden.set(false);
+  }
+
+  /** The reported-link field stays available even when the list is empty. */
+  protected focusLink(): void {
+    const field = this.host.nativeElement.querySelector('#admin-wird-link') as HTMLElement | null;
+    field?.scrollIntoView({ block: 'center' });
+    field?.focus();
   }
 
   protected label(wird: AdminWird): string {

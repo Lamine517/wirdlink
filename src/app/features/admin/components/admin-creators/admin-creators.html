@@ -6,7 +6,9 @@
     [formControl]="search"
     placeholder="Nom, dahira, e-mail ou téléphone"
 /></label>
-<p class="admin-count">{{ creators().length }} créateur{{ creators().length > 1 ? 's' : '' }}</p>
+@if (creators().length > 0) {
+  <p class="admin-count">{{ creators().length }} créateur{{ creators().length > 1 ? 's' : '' }}</p>
+}
 
 <ul class="admin-list">
   @for (creator of creators(); track creator.id) {
@@ -53,7 +55,23 @@
       </div>
     </li>
   } @empty {
-    <li class="admin-muted">Aucun créateur trouvé.</li>
+    <li>
+      @if (searching()) {
+        <app-empty-state
+          title="Aucun créateur trouvé"
+          description="Essayez un autre nom, une dahira, un e-mail ou un téléphone."
+          icon="assets/icons/phosphor/magnifying-glass.svg"
+          actionLabel="Effacer la recherche"
+          (actionRequested)="clearSearch()"
+        />
+      } @else {
+        <app-empty-state
+          title="Aucun créateur pour l’instant"
+          description="Une personne apparaît ici après avoir créé un compte."
+          icon="assets/icons/phosphor/users-three.svg"
+        />
+      }
+    </li>
   }
 </ul>
 
@@ -81,7 +99,15 @@
       </button>
     </li>
   } @empty {
-    <li class="admin-muted">Aucun pass pour l’instant.</li>
+    <li>
+      <app-empty-state
+        title="Aucun pass pour l’instant"
+        description="Donnez un pass à un créateur : il apparaîtra ici."
+        icon="assets/icons/phosphor/ticket.svg"
+        actionLabel="Voir les créateurs"
+        (actionRequested)="focusCreators()"
+      />
+    </li>
   }
 </ul>
 

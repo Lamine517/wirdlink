@@ -66,6 +66,15 @@ describe('Admin wirds', () => {
     element.querySelectorAll<HTMLButtonElement>('.admin-wirds__filters button')[0].click();
     fixture.detectChanges();
 
+    const search = element.querySelector<HTMLInputElement>('#admin-wird-search')!;
+    search.value = 'aucun-match';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(element.querySelector('app-empty-state')?.textContent).toContain('Aucun wird trouvé');
+    element.querySelector<HTMLButtonElement>('app-empty-state button')!.click();
+    fixture.detectChanges();
+    expect(element.querySelectorAll('.admin-list li.surface-card').length).toBe(2);
+
     const hideButton = element.querySelector<HTMLButtonElement>('.wird-row__action--hide')!;
     expect(hideButton.getAttribute('aria-label')).toBe('Masquer Salat du vendredi');
     hideButton.click();

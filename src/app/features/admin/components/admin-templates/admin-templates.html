@@ -49,6 +49,16 @@
   }
 </ol>
 
+@if (ready() && items.length === 0) {
+  <app-empty-state
+    title="Aucun modèle"
+    description="« Mon propre wird » reste toujours proposé. Ajoutez un modèle pour le proposer à la création."
+    icon="assets/icons/phosphor/squares-four.svg"
+    actionLabel="Ajouter un modèle"
+    (actionRequested)="add()"
+  />
+}
+
 <div class="form-stack admin-templates__footer">
   <button
     type="button"

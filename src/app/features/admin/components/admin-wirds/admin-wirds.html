@@ -87,7 +87,25 @@
     </li>
   } @empty {
     @if (loaded()) {
-      <li class="admin-muted">Aucun wird trouvé.</li>
+      <li>
+        @if (wirds().length === 0) {
+          <app-empty-state
+            title="Aucun wird publié"
+            description="Les wirds publics apparaissent ici. Pour un wird avec code, indiquez son lien."
+            icon="assets/icons/phosphor/book-open.svg"
+            actionLabel="Indiquer un lien"
+            (actionRequested)="focusLink()"
+          />
+        } @else {
+          <app-empty-state
+            title="Aucun wird trouvé"
+            description="Essayez un autre titre, un auteur, ou affichez toute la liste."
+            icon="assets/icons/phosphor/magnifying-glass.svg"
+            actionLabel="Tout afficher"
+            (actionRequested)="showAll()"
+          />
+        }
+      </li>
     }
   }
 </ul>
