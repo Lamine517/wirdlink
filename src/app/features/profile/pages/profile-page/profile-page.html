@@ -43,7 +43,7 @@
       >
     }
     @if (pass.isAdmin) {
-      <a class="button button--outline profile-link" routerLink="/admin"
+      <a class="button button--outline profile-link" [routerLink]="adminLink"
         ><app-icon name="settings" [size]="22" />{{ 'Administration' | t }}</a
       >
     }

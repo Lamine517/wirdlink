@@ -13,9 +13,10 @@ confiance qu’il ajoute lui-même.
 ## Décisions
 
 - Équipe : table privée `wirdlink_private.admins`. Aucun accès direct depuis le client ;
-  chaque fonction `admin_*` revérifie l’appartenance dans la base. La route `/admin` est
-  seulement masquée côté client (`adminGuard`). Le dernier membre ne peut pas être retiré.
-  Le premier membre est ajouté à la main en SQL ; ensuite l’équipe se gère depuis `/admin`.
+  chaque fonction `admin_*` revérifie l’appartenance dans la base. Le back office a une adresse non
+  listée (`ADMIN_PATH` dans `admin-guard.ts`), seulement masquée côté client : un visiteur qui
+  n’est pas de l’équipe est renvoyé à l’accueil, comme pour une adresse inconnue. Le dernier membre ne peut pas être retiré.
+  Le premier membre est ajouté à la main en SQL ; ensuite l’équipe se gère depuis le back office.
 - Ajout d’un membre par e-mail ou téléphone d’un compte existant (non anonyme).
 - Réglages : table `public.app_settings` lisible par tous, modifiable seulement par
   `admin_set_setting`, qui valide le contenu. Seule la clé `pass` existe pour l’instant ;
@@ -29,7 +30,7 @@ confiance qu’il ajoute lui-même.
   à la fin du précédent. Essai : une fois par compte, lancé par le créateur. Places fondateur
   limitées par le réglage, comptées par compte ; un fondateur peut renouveler à ce prix.
 - Paiement manuel : le créateur paie par Wave ou Orange Money (même numéro que les dons),
-  puis un membre de l’équipe enregistre le pass depuis `/admin` avec le montant et une note.
+  puis un membre de l’équipe enregistre le pass depuis le back office avec le montant et une note.
 - Avantages livrés : wirds avec code au-delà de la limite, historique complet du suivi de
   chaque wird. Rappel dans Mon profil pendant les derniers jours (réglage « Rappel »).
 - L’offre n’est montrée qu’à la limite : message à la publication, mention sous le suivi

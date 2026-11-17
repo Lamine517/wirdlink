@@ -4,7 +4,7 @@ import { WirdStore } from './core/wird-store';
 import { contentReady, scheduleReady } from './features/creation/guards/draft-guards';
 import { Routes } from '@angular/router';
 import { readableWird } from './features/access/data-access/wird-access';
-import { adminGuard } from './features/admin/data-access/admin-guard';
+import { ADMIN_PATH, adminGuard } from './features/admin/data-access/admin-guard';
 
 export const routes: Routes = [
   {
@@ -113,7 +113,7 @@ export const routes: Routes = [
     title: 'Pass dahira · WirdLink',
   },
   {
-    path: 'admin',
+    path: ADMIN_PATH,
     canActivate: [adminGuard],
     loadComponent: () =>
       import('./features/admin/pages/admin-page/admin-page').then((m) => m.AdminPage),
