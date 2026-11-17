@@ -25,6 +25,29 @@
       <app-creator-stats [stats]="stats" [wirds]="ownedWirds()" />
     }
   }
+  @if (passes.status(); as pass) {
+    @if (passes.endingIn() !== null) {
+      <p class="feedback profile-pass-reminder" role="status">
+        {{
+          (passes.endingIn() === 0
+            ? 'Votre Pass dahira se termine aujourd’hui.'
+            : 'Votre Pass dahira se termine dans {days} jours.'
+          ) | t: { days: passes.endingIn() ?? 0 }
+        }}
+        <a routerLink="/pass">{{ 'Renouveler' | t }}</a>
+      </p>
+    }
+    @if (pass.isAdmin || (passes.settings().enabled && (pass.hadPass || !pass.privateAllowed))) {
+      <a class="button button--outline profile-link" routerLink="/pass"
+        ><app-icon name="heart" [size]="22" />{{ 'Pass dahira' | t }}</a
+      >
+    }
+    @if (pass.isAdmin) {
+      <a class="button button--outline profile-link" routerLink="/admin"
+        ><app-icon name="settings" [size]="22" />{{ 'Administration' | t }}</a
+      >
+    }
+  }
   <div class="profile-actions">
     <button
       class="button button--outline"

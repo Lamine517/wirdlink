@@ -42,6 +42,22 @@
   [loadingLabel]="'Publication en cours…' | t"
   [error]="error()"
 />
+@if (privateLimit()) {
+  <div class="feedback preview-limit" role="alert">
+    <p>
+      {{
+        'Vous avez déjà {count} wirds avec code en cours. Le Pass dahira permet d’en créer davantage.'
+          | t: { count: passes.settings().freePrivateLimit }
+      }}
+    </p>
+    <a class="button button--accent" routerLink="/pass"
+      ><app-icon name="heart" [size]="22" />{{ 'Découvrir le Pass dahira' | t }}</a
+    >
+    <p class="text-secondary">
+      {{ 'Vous pouvez aussi publier ce wird pour tout le monde.' | t }}
+    </p>
+  </div>
+}
 @if (startPassed()) {
   <p class="feedback feedback--error" role="alert">
     {{ 'La date de début est passée. Choisissez aujourd’hui ou une date à venir.' | t }}

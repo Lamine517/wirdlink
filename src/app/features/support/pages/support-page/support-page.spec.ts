@@ -11,7 +11,7 @@ describe('Support page', () => {
     const fixture = TestBed.createComponent(SupportPage);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
-    const wave = () => element.querySelector<HTMLButtonElement>('.support-method--wave')!;
+    const wave = () => element.querySelector<HTMLButtonElement>('.payment-method--wave')!;
     return { fixture, element, wave };
   }
 
@@ -37,11 +37,11 @@ describe('Support page', () => {
     it(`gives the ${method} number with the chosen amount`, () => {
       const { fixture, element } = setup();
       element.querySelectorAll<HTMLButtonElement>('.support-amounts button')[3].click();
-      element.querySelector<HTMLButtonElement>('.support-method--' + method)!.click();
+      element.querySelector<HTMLButtonElement>('.payment-method--' + method)!.click();
       fixture.detectChanges();
-      expect(element.querySelector('.support-number')?.textContent).toContain('76 557 83 79');
-      expect(element.querySelector('.support-step')?.textContent).toContain('5');
-      expect(element.querySelector('.support-hint')?.textContent).toContain(
+      expect(element.querySelector('.payment-number')?.textContent).toContain('76 557 83 79');
+      expect(element.querySelector('.payment-step')?.textContent).toContain('5');
+      expect(element.querySelector('.payment-hint')?.textContent).toContain(
         method === 'wave' ? 'Wave' : 'Max it',
       );
     });

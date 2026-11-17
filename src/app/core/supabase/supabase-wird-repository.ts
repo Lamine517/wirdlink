@@ -4,6 +4,7 @@ import type { LocalMedia } from '../../features/creation/data-access/creation-dr
 import {
   GuestAccessError,
   InvalidCodeError,
+  PrivateLimitError,
   RateLimitError,
   ServiceUnavailableError,
 } from '../services/frontend-gateway';
@@ -81,7 +82,8 @@ export class SupabaseWirdRepository implements WirdRepository {
       if (
         error instanceof InvalidCodeError ||
         error instanceof RateLimitError ||
-        error instanceof GuestAccessError
+        error instanceof GuestAccessError ||
+        error instanceof PrivateLimitError
       )
         throw error;
       throw new ServiceUnavailableError();
@@ -93,6 +95,7 @@ export class SupabaseWirdRepository implements WirdRepository {
     args?: Record<string, unknown>,
   ): Promise<unknown> {
     const { data, error } = await client.rpc(name, args);
+    if (error?.message === 'private_limit') throw new PrivateLimitError();
     if (error) throw new ServiceUnavailableError();
     return data;
   }

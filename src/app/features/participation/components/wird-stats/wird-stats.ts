@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Translate } from '../../../../shared/pipes/translate';
+import { RouterLink } from '@angular/router';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { I18nService } from '../../../../core/services/i18n';
 import type { WirdStats as Stats } from '../../../../core/services/wird-repository';
@@ -11,7 +12,7 @@ const SHOWN_CYCLES = 7;
 
 @Component({
   selector: 'app-wird-stats',
-  imports: [Translate, Icon, DecimalPipe],
+  imports: [Translate, Icon, DecimalPipe, RouterLink],
   templateUrl: './wird-stats.html',
   styleUrl: './wird-stats.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,11 @@ export class WirdStats {
   private readonly i18n = inject(I18nService);
   readonly wird = input.required<Wird>();
   readonly stats = input.required<Stats>();
+  /** Shows every cycle instead of the latest ones (Pass dahira). */
+  readonly full = input(false);
+  /** Points to the Pass dahira when older cycles are hidden. */
+  readonly offer = input(false);
+  protected readonly shown = SHOWN_CYCLES;
   private readonly today = dakarToday();
 
   protected readonly finished = computed(() =>
@@ -41,8 +47,9 @@ export class WirdStats {
       month: 'short',
       timeZone: 'UTC',
     });
-    return this.cycles()
-      .slice(-SHOWN_CYCLES)
+    const cycles = this.cycles();
+    return (this.full() ? cycles : cycles.slice(-SHOWN_CYCLES))
+      .slice()
       .reverse()
       .map((cycle) => ({
         ...cycle,

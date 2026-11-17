@@ -30,5 +30,11 @@
         </li>
       }
     </ol>
+    @if (!full() && offer() && total() > shown) {
+      <p class="wird-stats__more">
+        {{ 'Les {count} dernières périodes sont affichées.' | t: { count: shown } }}
+        <a routerLink="/pass">{{ 'Tout l’historique avec le Pass dahira' | t }}</a>
+      </p>
+    }
   }
 </section>

@@ -4,6 +4,7 @@ import { WirdStore } from './core/wird-store';
 import { contentReady, scheduleReady } from './features/creation/guards/draft-guards';
 import { Routes } from '@angular/router';
 import { readableWird } from './features/access/data-access/wird-access';
+import { adminGuard } from './features/admin/data-access/admin-guard';
 
 export const routes: Routes = [
   {
@@ -104,6 +105,19 @@ export const routes: Routes = [
         (m) => m.ProfileEditPage,
       ),
     title: 'Modifier mon profil · WirdLink',
+  },
+  {
+    path: 'pass',
+    loadComponent: () =>
+      import('./features/pass/pages/pass-page/pass-page').then((m) => m.PassPage),
+    title: 'Pass dahira · WirdLink',
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./features/admin/pages/admin-page/admin-page').then((m) => m.AdminPage),
+    title: 'Administration · WirdLink',
   },
   {
     path: 'connexion',

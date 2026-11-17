@@ -15,6 +15,8 @@ import { CreationSteps } from '../../components/creation-steps/creation-steps';
 import { BeadProgress } from '../../../../shared/components/bead-progress/bead-progress';
 import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
 import { Icon } from '../../../../shared/components/icon/icon';
+import { PrivateLimitError } from '../../../../core/services/frontend-gateway';
+import { PassService } from '../../../../core/pass/pass-service';
 
 @Component({
   selector: 'app-preview-page',
@@ -30,6 +32,8 @@ export class PreviewPage {
   protected readonly publication = inject(PublicationFlow);
   protected readonly network = inject(NetworkStatus);
   protected readonly error = signal('');
+  protected readonly privateLimit = signal(false);
+  protected readonly passes = inject(PassService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -67,6 +71,7 @@ export class PreviewPage {
       return;
     }
     this.error.set('');
+    this.privateLimit.set(false);
     if (!this.auth.session()) {
       rememberAuthReturn('/creer/apercu');
       await this.router.navigateByUrl('/connexion');
@@ -83,7 +88,12 @@ export class PreviewPage {
         await this.router.navigateByUrl(
           '/partage/' + encodeURIComponent(this.publication.receipt()!.id),
         );
-    } catch {
+    } catch (error) {
+      if (error instanceof PrivateLimitError) {
+        void this.passes.loadSettings();
+        this.privateLimit.set(true);
+        return;
+      }
       this.error.set(
         'La publication a échoué. Votre brouillon est conservé, vous pouvez réessayer.',
       );

@@ -17,6 +17,7 @@ import { RequestState } from '../../../../shared/components/request-state/reques
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { WirdStore } from '../../../../core/wird-store';
+import { PassService } from '../../../../core/pass/pass-service';
 import type { CreatorStats as CreatorStatsData } from '../../../../core/services/wird-repository';
 import { CreatorStats } from '../../components/creator-stats/creator-stats';
 
@@ -50,6 +51,7 @@ export class ProfilePage {
   protected readonly deleting = signal(false);
   protected readonly deletionError = signal('');
   private readonly store = inject(WirdStore);
+  protected readonly passes = inject(PassService);
   protected readonly stats = signal<CreatorStatsData | null>(null);
   protected readonly ownedWirds = computed(() =>
     this.store.wirds().filter((wird) => wird.isOwner === true),
@@ -64,7 +66,12 @@ export class ProfilePage {
         active = false;
       });
       this.stats.set(null);
-      if (!id) return;
+      if (!id) {
+        this.passes.clear();
+        return;
+      }
+      void this.passes.loadSettings();
+      void this.passes.loadStatus();
       this.store
         .creatorStats()
         .then((stats) => {

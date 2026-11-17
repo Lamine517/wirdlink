@@ -16,6 +16,7 @@ import { relativeTime } from '../../../../core/relative-time';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { PassService } from '../../../../core/pass/pass-service';
 import { Part, WirdStore } from '../../../../core/wird-store';
 import { groupParticipants } from '../../data-access/participant-groups';
 import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
@@ -46,6 +47,7 @@ import type { WirdStats as WirdStatsData } from '../../../../core/services/wird-
 export class ParticipantsPage {
   protected readonly shareOrigin = window.location.origin;
   protected readonly store = inject(WirdStore);
+  protected readonly passes = inject(PassService);
   private readonly access = inject(WirdAccess);
   private readonly route = inject(ActivatedRoute);
   private readonly params = toSignal(this.route.paramMap, {
@@ -96,6 +98,8 @@ export class ParticipantsPage {
       const id = this.ownedId();
       this.stats.set(null);
       if (!id) return;
+      void this.passes.loadSettings();
+      void this.passes.loadStatus();
       let active = true;
       onCleanup(() => {
         active = false;

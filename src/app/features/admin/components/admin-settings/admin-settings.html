@@ -1,0 +1,109 @@
+<form class="form-stack" [formGroup]="form" (ngSubmit)="save()">
+  <section class="surface-card">
+    <h2>Pass dahira</h2>
+    <label class="switch-field"
+      ><span>Proposer le Pass dahira aux créateurs</span
+      ><input type="checkbox" role="switch" formControlName="enabled"
+    /></label>
+    <p class="admin-hint">Désactivé, la page Pass reste cachée et aucune limite ne s’applique.</p>
+  </section>
+
+  <section class="surface-card">
+    <h2>Prix (F CFA)</h2>
+    <div class="admin-grid">
+      <div>
+        <label for="setting-month">Un mois</label>
+        <input
+          id="setting-month"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="monthPrice"
+        />
+      </div>
+      <div>
+        <label for="setting-year">Une année</label>
+        <input
+          id="setting-year"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="yearPrice"
+        />
+      </div>
+      <div>
+        <label for="setting-founder">Fondateur (an)</label>
+        <input
+          id="setting-founder"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="founderPrice"
+        />
+      </div>
+      <div>
+        <label for="setting-slots">Places fondateur</label>
+        <input
+          id="setting-slots"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="founderSlots"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-card">
+    <h2>Règles</h2>
+    <div class="admin-grid">
+      <div>
+        <label for="setting-trial">Essai (jours)</label>
+        <input
+          id="setting-trial"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="trialDays"
+        />
+      </div>
+      <div>
+        <label for="setting-reminder">Rappel avant la fin (jours)</label>
+        <input
+          id="setting-reminder"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="reminderDays"
+        />
+      </div>
+      <div>
+        <label for="setting-limit">Wirds avec code gratuits</label>
+        <input
+          id="setting-limit"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          formControlName="freePrivateLimit"
+        />
+      </div>
+      <div>
+        <label for="setting-start">Limite appliquée à partir du</label>
+        <input id="setting-start" type="date" formControlName="limitStartsOn" />
+      </div>
+    </div>
+    <p class="admin-hint">
+      Sans date, la limite n’est pas appliquée. Les wirds déjà publiés ne sont jamais bloqués.
+    </p>
+  </section>
+
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback" role="status">{{ message() }}</p>
+  }
+  <button type="submit" class="button button--primary" [disabled]="busy()">
+    <app-icon name="check" [size]="22" />Enregistrer les réglages
+  </button>
+</form>

@@ -1,6 +1,7 @@
 # 0020 — Statistiques du créateur et offre organisateur
 
-Date : 17 novembre 2026. Statut : statistiques livrées ; offre organisateur validée, implémentation reportée.
+Date : 17 novembre 2026. Statut : statistiques livrées ; Pass dahira livré désactivé, pilotable
+depuis le back office (voir 0021).
 
 ## Statistiques globales du créateur
 

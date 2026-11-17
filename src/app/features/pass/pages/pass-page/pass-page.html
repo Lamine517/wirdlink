@@ -1,0 +1,110 @@
+<app-back-button fallback="/profil" />
+<h1>{{ 'Pass dahira' | t }}</h1>
+
+@if (loaded()) {
+  @if (!settings().enabled && !status()?.isAdmin) {
+    <p>{{ 'Le Pass dahira n’est pas encore proposé. WirdLink reste gratuit.' | t }}</p>
+  } @else {
+    @if (!settings().enabled) {
+      <p class="feedback" role="status">
+        {{ 'Offre désactivée : cette page n’est visible que par l’équipe.' | t }}
+      </p>
+    }
+    <p class="pass-intro">
+      {{
+        'Pour les dahiras et les organisateurs qui font beaucoup de wirds. Participer et créer des wirds pour tout le monde restent gratuits.'
+          | t
+      }}
+    </p>
+
+    <ul class="pass-benefits">
+      <li>
+        <app-icon name="lock" [size]="22" />{{
+          'Plus de {count} wirds avec code en même temps.'
+            | t: { count: settings().freePrivateLimit }
+        }}
+      </li>
+      <li>
+        <app-icon name="calendar" [size]="22" />{{
+          'Tout l’historique des lectures de vos wirds.' | t
+        }}
+      </li>
+      <li>
+        <app-icon name="check" [size]="22" />{{
+          'Sans engagement : rien n’est prélevé automatiquement.' | t
+        }}
+      </li>
+    </ul>
+
+    @if (!auth.session() || status()) {
+      <section class="surface-card pass-status" aria-live="polite">
+        @if (!auth.session()) {
+          <p>{{ 'Connectez-vous pour voir ou essayer votre pass.' | t }}</p>
+          <a class="button button--outline" routerLink="/connexion">{{ 'Se connecter' | t }}</a>
+        } @else if (status(); as current) {
+          @if (current.active && current.kind && current.endsOn) {
+            <p>
+              <strong>{{ names[current.kind] | t }}</strong>
+              {{ 'actif jusqu’au {date}.' | t: { date: date(current.endsOn) } }}
+            </p>
+          } @else if (canTry()) {
+            <p>
+              {{
+                'Essayez le pass gratuitement pendant {days} jours, sans payer.'
+                  | t: { days: settings().trialDays }
+              }}
+            </p>
+            <button
+              type="button"
+              class="button button--primary"
+              [disabled]="busy()"
+              (click)="startTrial()"
+            >
+              {{ 'Commencer l’essai gratuit' | t }}
+            </button>
+          } @else {
+            <p>{{ 'Votre pass est terminé. Choisissez une formule pour continuer.' | t }}</p>
+          }
+          @if (error()) {
+            <p class="feedback feedback--error" role="alert">{{ error() | t }}</p>
+          }
+        }
+      </section>
+    }
+
+    <h2>{{ 'Choisir une formule' | t }}</h2>
+    <div class="pass-formulas" role="group" [attr.aria-label]="'Formules' | t">
+      @for (item of formulas(); track item.id) {
+        <button
+          type="button"
+          class="pass-formula"
+          [class.pass-formula--selected]="formula() === item.id"
+          [attr.aria-pressed]="formula() === item.id"
+          (click)="formula.set(item.id)"
+        >
+          <span>{{ names[item.id] | t }}</span>
+          <strong>{{ item.price | number }} F</strong>
+          <small>{{ item.period | t }}</small>
+        </button>
+      }
+    </div>
+    @if (formula() === 'founder') {
+      <p class="pass-hint">
+        {{
+          'Prix réservé aux {count} premiers dahiras, gardé tant que vous renouvelez.'
+            | t: { count: settings().founderSlots }
+        }}
+      </p>
+    }
+
+    <h2>{{ 'Payer avec' | t }}</h2>
+    <app-payment-methods
+      panelId="pass-payment"
+      [amount]="price()"
+      [note]="
+        'Gardez votre reçu : l’équipe WirdLink active votre pass après vérification du paiement.'
+          | t
+      "
+    />
+  }
+}

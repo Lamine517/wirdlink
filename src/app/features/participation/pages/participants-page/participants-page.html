@@ -9,7 +9,12 @@
   />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />
   @if (stats(); as stats) {
-    <app-wird-stats [wird]="wird" [stats]="stats" />
+    <app-wird-stats
+      [wird]="wird"
+      [stats]="stats"
+      [full]="passes.status()?.active === true"
+      [offer]="passes.settings().enabled"
+    />
   }
   <p class="text-strong">
     {{ '{count} lus sur {target}' | t: { count: store.completed(wird.id), target: wird.target } }}

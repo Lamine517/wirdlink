@@ -1,0 +1,64 @@
+<p class="admin-hint">
+  Ces personnes peuvent donner des pass et changer les réglages. N’ajoutez que des personnes de
+  confiance.
+</p>
+
+<ul class="admin-team">
+  @for (member of members(); track member.id) {
+    <li class="surface-card">
+      <div>
+        <strong>{{ member.name || 'Sans nom' }}{{ member.isMe ? ' (vous)' : '' }}</strong>
+        <span class="admin-hint">{{ member.contact }}</span>
+      </div>
+      <button
+        type="button"
+        class="icon-button"
+        [attr.aria-label]="'Retirer ' + (member.name || member.contact)"
+        (click)="openRemove(member, removeSheet)"
+      >
+        <app-icon name="trash" [size]="22" />
+      </button>
+    </li>
+  }
+</ul>
+
+<form class="form-stack" (submit)="$event.preventDefault(); add()">
+  <div>
+    <label for="admin-contact">Ajouter une personne</label>
+    <input
+      id="admin-contact"
+      autocomplete="off"
+      placeholder="E-mail ou numéro de téléphone"
+      [formControl]="contact"
+    />
+  </div>
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback" role="status">{{ message() }}</p>
+  }
+  <button type="submit" class="button button--outline" [disabled]="busy() || contact.invalid">
+    <app-icon name="plus" [size]="22" />Ajouter à l’équipe
+  </button>
+</form>
+
+<app-bottom-sheet #removeSheet panelId="admin-remove" title="Retirer de l’équipe ?">
+  <div class="form-stack">
+    <p>
+      <strong>{{ removing()?.name || removing()?.contact }}</strong> n’aura plus accès à
+      l’administration.
+    </p>
+    <button type="button" class="button button--outline" (click)="removeSheet.close()">
+      Garder
+    </button>
+    <button
+      type="button"
+      class="button button--danger"
+      [disabled]="busy()"
+      (click)="remove(removeSheet)"
+    >
+      <app-icon name="trash" [size]="22" />Retirer
+    </button>
+  </div>
+</app-bottom-sheet>

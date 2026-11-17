@@ -77,6 +77,12 @@ export class InvalidCodeError extends Error {
     this.name = 'InvalidCodeError';
   }
 }
+export class PrivateLimitError extends Error {
+  constructor() {
+    super('Private wird limit reached');
+    this.name = 'PrivateLimitError';
+  }
+}
 export class RateLimitError extends Error {
   constructor(readonly retryAfterSeconds = 60) {
     super('Too many attempts');

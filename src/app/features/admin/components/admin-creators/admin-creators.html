@@ -1,0 +1,126 @@
+<label class="admin-search" for="admin-search"
+  ><app-icon name="search" [size]="20" /><span class="visually-hidden">Rechercher un créateur</span
+  ><input
+    id="admin-search"
+    type="search"
+    [formControl]="search"
+    placeholder="Nom, dahira, e-mail ou téléphone"
+/></label>
+
+<ul class="admin-list">
+  @for (creator of creators(); track creator.id) {
+    <li class="surface-card">
+      <strong>{{ creator.name || 'Sans nom' }}</strong>
+      @if (creator.organization) {
+        <span>{{ creator.organization }}</span>
+      }
+      <span class="admin-muted">{{ creator.contact }}</span>
+      <span class="admin-muted"
+        >{{ creator.wirds }} wirds · {{ creator.privateInProgress }} avec code en cours</span
+      >
+      @if (creator.passKind && creator.passEndsOn) {
+        <span class="admin-pass"
+          >{{ labels[creator.passKind] }} jusqu’au {{ date(creator.passEndsOn) }}</span
+        >
+      } @else {
+        <span class="admin-muted">Sans pass</span>
+      }
+      <button
+        type="button"
+        class="button button--outline button--compact"
+        (click)="openGrant(creator, grantSheet)"
+      >
+        <app-icon name="plus" [size]="20" />Donner un pass
+      </button>
+    </li>
+  } @empty {
+    <li class="admin-muted">Aucun créateur trouvé.</li>
+  }
+</ul>
+
+<h2>Derniers pass</h2>
+<ul class="admin-list">
+  @for (pass of overview().passes; track pass.id) {
+    <li class="surface-card">
+      <strong>{{ pass.ownerName || 'Sans nom' }} · {{ labels[pass.kind] }}</strong>
+      <span class="admin-muted">Du {{ date(pass.startsOn) }} au {{ date(pass.endsOn) }}</span>
+      <span class="admin-muted"
+        >{{ pass.amount | number }} F{{ pass.note ? ' · ' + pass.note : '' }}</span
+      >
+      <button type="button" class="admin-link" (click)="openRevoke(pass, revokeSheet)">
+        Annuler ce pass
+      </button>
+    </li>
+  } @empty {
+    <li class="admin-muted">Aucun pass pour l’instant.</li>
+  }
+</ul>
+
+<app-bottom-sheet #grantSheet panelId="admin-grant" title="Donner un pass">
+  <div class="form-stack">
+    <p>
+      Pour <strong>{{ selected()?.name || 'ce créateur' }}</strong>, après réception du paiement. Le
+      pass commence aujourd’hui, ou à la fin de son pass actuel.
+    </p>
+    <div class="admin-kinds">
+      @for (item of kinds; track item) {
+        <button
+          type="button"
+          class="button button--outline button--compact"
+          [class.button--selected]="kind() === item"
+          [attr.aria-pressed]="kind() === item"
+          (click)="chooseKind(item)"
+        >
+          {{ labels[item] }}
+        </button>
+      }
+    </div>
+    <div>
+      <label for="admin-amount">Montant reçu (F CFA)</label>
+      <input id="admin-amount" type="number" inputmode="numeric" min="0" [formControl]="amount" />
+    </div>
+    <div>
+      <label for="admin-note">Note (facultatif)</label>
+      <input
+        id="admin-note"
+        maxlength="200"
+        placeholder="Ex. : Wave du 17/11"
+        [formControl]="note"
+      />
+    </div>
+    @if (error()) {
+      <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+    }
+    <button
+      type="button"
+      class="button button--primary"
+      [disabled]="busy() || amount.invalid"
+      (click)="grant(grantSheet)"
+    >
+      <app-icon name="check" [size]="22" />Enregistrer le pass
+    </button>
+  </div>
+</app-bottom-sheet>
+
+<app-bottom-sheet #revokeSheet panelId="admin-revoke" title="Annuler ce pass ?">
+  <div class="form-stack">
+    <p>
+      Le pass de <strong>{{ revoking()?.ownerName || 'ce créateur' }}</strong> sera supprimé. Ses
+      wirds restent en place.
+    </p>
+    @if (error()) {
+      <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+    }
+    <button type="button" class="button button--outline" (click)="revokeSheet.close()">
+      Garder le pass
+    </button>
+    <button
+      type="button"
+      class="button button--danger"
+      [disabled]="busy()"
+      (click)="revoke(revokeSheet)"
+    >
+      <app-icon name="trash" [size]="22" />Annuler le pass
+    </button>
+  </div>
+</app-bottom-sheet>

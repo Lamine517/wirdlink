@@ -40,38 +40,5 @@
 
 <section class="support-methods" aria-labelledby="support-methods">
   <h2 id="support-methods">{{ 'Payer avec' | t }}</h2>
-  @for (item of methods; track item.id) {
-    <button
-      type="button"
-      class="support-method support-method--{{ item.id }}"
-      [disabled]="!valid()"
-      (click)="select(item.id); paySheet.open()"
-    >
-      <img class="support-method__logo" [src]="item.logo" alt="" width="40" height="40" />
-      <span>{{ item.name }}</span>
-      @if (valid()) {
-        <strong>{{ amount() | number }} F</strong>
-      }
-    </button>
-  }
+  <app-payment-methods panelId="support-payment" [amount]="amount()" [disabled]="!valid()" />
 </section>
-
-<app-bottom-sheet #paySheet panelId="support-payment" [title]="current().name">
-  <div class="form-stack">
-    <p class="support-step">
-      {{ 'Envoyez {amount} F CFA à ce numéro :' | t: { amount: format(amount()) } }}
-    </p>
-    <p class="support-number">{{ number }}</p>
-    <button type="button" class="button button--primary" (click)="copyNumber()">
-      <app-icon [name]="copied() ? 'check' : 'copy'" [size]="22" />{{
-        (copied() ? 'Numéro copié' : 'Copier le numéro') | t
-      }}
-    </button>
-    @if (android && method() === 'orange') {
-      <a class="button button--outline" href="tel:%23144%23"
-        ><app-icon name="phone" [size]="22" />{{ 'Composer #144#' | t }}</a
-      >
-    }
-    <p class="support-hint">{{ current().hint | t }}</p>
-  </div>
-</app-bottom-sheet>

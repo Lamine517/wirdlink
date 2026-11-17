@@ -881,6 +881,97 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   Toutes: ['All', 'الكل'],
   'Suivi du wird': ['Wird overview', 'متابعة الورد'],
   'Mes wirds en chiffres': ['My wirds in numbers', 'أورادي بالأرقام'],
+  'Pass dahira': ['Dahira Pass', 'باقة الدائرة'],
+  Administration: ['Administration', 'الإدارة'],
+  'Se connecter': ['Sign in', 'تسجيل الدخول'],
+  Renouveler: ['Renew', 'تجديد'],
+  'Votre Pass dahira se termine aujourd’hui.': [
+    'Your Dahira Pass ends today.',
+    'تنتهي باقة الدائرة اليوم.',
+  ],
+  'Votre Pass dahira se termine dans {days} jours.': [
+    'Your Dahira Pass ends in {days} days.',
+    'تنتهي باقة الدائرة بعد {days} أيام.',
+  ],
+  'Vous avez déjà {count} wirds avec code en cours. Le Pass dahira permet d’en créer davantage.': [
+    'You already have {count} wirds with a code in progress. The Dahira Pass lets you create more.',
+    'لديك بالفعل {count} أوراد برمز جارية. تتيح لك باقة الدائرة إنشاء المزيد.',
+  ],
+  'Découvrir le Pass dahira': ['Discover the Dahira Pass', 'اكتشف باقة الدائرة'],
+  'Vous pouvez aussi publier ce wird pour tout le monde.': [
+    'You can also publish this wird for everyone.',
+    'يمكنك أيضًا نشر هذا الورد للجميع.',
+  ],
+  'Le Pass dahira n’est pas encore proposé. WirdLink reste gratuit.': [
+    'The Dahira Pass is not offered yet. WirdLink remains free.',
+    'باقة الدائرة غير متاحة بعد. يبقى WirdLink مجانيًا.',
+  ],
+  'Offre désactivée : cette page n’est visible que par l’équipe.': [
+    'Offer disabled: only the team can see this page.',
+    'العرض معطل: هذه الصفحة مرئية للفريق فقط.',
+  ],
+  'Pour les dahiras et les organisateurs qui font beaucoup de wirds. Participer et créer des wirds pour tout le monde restent gratuits.': [
+    'For dahiras and organizers who run many wirds. Joining and creating wirds for everyone stay free.',
+    'للدوائر والمنظمين الذين ينشئون أورادًا كثيرة. تبقى المشاركة وإنشاء الأوراد للجميع مجانية.',
+  ],
+  'Plus de {count} wirds avec code en même temps.': [
+    'More than {count} wirds with a code at the same time.',
+    'أكثر من {count} أوراد برمز في الوقت نفسه.',
+  ],
+  'Tout l’historique des lectures de vos wirds.': [
+    'The full reading history of your wirds.',
+    'سجل القراءات الكامل لأورادك.',
+  ],
+  'Sans engagement : rien n’est prélevé automatiquement.': [
+    'No commitment: nothing is charged automatically.',
+    'بلا التزام: لا يُقتطع أي مبلغ تلقائيًا.',
+  ],
+  'Connectez-vous pour voir ou essayer votre pass.': [
+    'Sign in to see or try your pass.',
+    'سجّل الدخول لرؤية باقتك أو تجربتها.',
+  ],
+  'actif jusqu’au {date}.': ['active until {date}.', 'سارية حتى {date}.'],
+  'Essayez le pass gratuitement pendant {days} jours, sans payer.': [
+    'Try the pass free for {days} days, without paying.',
+    'جرّب الباقة مجانًا لمدة {days} يومًا دون دفع.',
+  ],
+  'Commencer l’essai gratuit': ['Start the free trial', 'ابدأ التجربة المجانية'],
+  'Votre pass est terminé. Choisissez une formule pour continuer.': [
+    'Your pass has ended. Choose a plan to continue.',
+    'انتهت باقتك. اختر صيغة للمتابعة.',
+  ],
+  'L’essai gratuit n’est plus disponible pour ce compte.': [
+    'The free trial is no longer available for this account.',
+    'التجربة المجانية لم تعد متاحة لهذا الحساب.',
+  ],
+  'L’essai n’a pas pu démarrer. Réessayez.': [
+    'The trial could not start. Try again.',
+    'تعذر بدء التجربة. حاول مرة أخرى.',
+  ],
+  'Choisir une formule': ['Choose a plan', 'اختر صيغة'],
+  Formules: ['Plans', 'الصيغ'],
+  'Essai gratuit': ['Free trial', 'تجربة مجانية'],
+  'Pass mois': ['Monthly pass', 'باقة شهرية'],
+  'Pass année': ['Yearly pass', 'باقة سنوية'],
+  'Pass fondateur': ['Founder pass', 'باقة المؤسسين'],
+  'par mois': ['per month', 'شهريًا'],
+  'par an': ['per year', 'سنويًا'],
+  'Prix réservé aux {count} premiers dahiras, gardé tant que vous renouvelez.': [
+    'Price reserved for the first {count} dahiras, kept as long as you renew.',
+    'سعر مخصص لأول {count} دائرة، يبقى ما دمت تجدد.',
+  ],
+  'Gardez votre reçu : l’équipe WirdLink active votre pass après vérification du paiement.': [
+    'Keep your receipt: the WirdLink team activates your pass after checking the payment.',
+    'احتفظ بالإيصال: يفعّل فريق WirdLink باقتك بعد التحقق من الدفع.',
+  ],
+  'Les {count} dernières périodes sont affichées.': [
+    'The latest {count} periods are shown.',
+    'تُعرض آخر {count} فترات.',
+  ],
+  'Tout l’historique avec le Pass dahira': [
+    'Full history with the Dahira Pass',
+    'السجل الكامل مع باقة الدائرة',
+  ],
   'Filtres actifs': ['Active filters', 'عوامل التصفية النشطة'],
   'Retirer le filtre {label}': ['Remove the {label} filter', 'إزالة عامل التصفية {label}'],
   'wird publié': ['wird published', 'ورد منشور'],
