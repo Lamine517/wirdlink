@@ -259,7 +259,9 @@ export class SupabaseAuthGateway implements FrontendGateway {
       typeof author.organization !== 'string'
     )
       throw new ServiceUnavailableError();
-    return { displayName: author.display_name, organization: author.organization };
+    const displayName = author.display_name.trim();
+    const organization = author.organization.trim();
+    return displayName || organization ? { displayName, organization } : null;
   }
 
   publish(request: PublicationRequest): Promise<PublicationReceipt> {

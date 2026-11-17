@@ -6,7 +6,7 @@
   [error]="error()"
 />
 @if (title()) {
-  @if (receipt()) {
+  @if (justPublished()) {
     <header class="share-page__header">
       <span class="share-page__success"><app-icon name="check" [size]="32" /></span>
       <h1>{{ 'C’est fait !' | t }}</h1>
@@ -33,7 +33,7 @@
     [title]="'Invitez vos proches' | t"
     [mobileOptions]="true"
   />
-  @if (receipt()) {
+  @if (justPublished()) {
     <a class="button button--outline share-page__home" routerLink="/">{{
       'Revenir à l’accueil' | t
     }}</a>

@@ -55,7 +55,11 @@ import { Icon } from '../../../../shared/components/icon/icon';
           [disabled]="sharing()"
           (click)="share(shareLink() ?? ''); menu.close()"
         >
-          <app-icon name="share" />{{ 'Partager' | t }}
+          @if (accessCode()) {
+            <app-icon name="lock" />{{ 'Code d’accès et partage' | t }}
+          } @else {
+            <app-icon name="share" />{{ 'Partager' | t }}
+          }
         </button>
         @if (allowDuplicate()) {
           <button
@@ -103,6 +107,7 @@ export class WirdHeader {
   private readonly router = inject(Router);
   readonly allowDuplicate = input(false);
   readonly canManage = input(false);
+  readonly accessCode = input(false);
   readonly editRequested = output<void>();
   readonly deleteRequested = output<void>();
   readonly duplicateRequested = output<void>();
@@ -116,6 +121,7 @@ export class WirdHeader {
     const url = this.shareUrl();
     const data = { title: this.title(), url };
     if (
+      this.accessCode() ||
       !url ||
       !isShareableAddress(url) ||
       typeof navigator.share !== 'function' ||

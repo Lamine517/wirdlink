@@ -68,6 +68,16 @@ describe('Native wird sharing', () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
+  it('sends the owner of a private wird to the page that shows its access code', async () => {
+    const { fixture, navigate, button } = setup();
+    fixture.componentRef.setInput('accessCode', true);
+    fixture.detectChanges();
+    button.click();
+    await fixture.whenStable();
+    expect(share).not.toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledOnceWith('/partage/example');
+  });
+
   it('does nothing else when the user cancels the native share sheet', async () => {
     share.and.rejectWith(new DOMException('Cancelled', 'AbortError'));
     const { fixture, navigate, button } = setup();

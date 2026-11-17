@@ -1,7 +1,10 @@
 @if (selected(); as wird) {
   <app-wird-header
     [title]="wird.title"
-    [shareLink]="wird.visibility === 'public' ? '/partage/' + wird.id : undefined"
+    [shareLink]="
+      wird.visibility === 'public' || wird.isOwner ? '/partage/' + wird.id : undefined
+    "
+    [accessCode]="wird.isOwner === true && wird.visibility === 'private'"
     [shareUrl]="shareOrigin + '/wird/' + wird.id"
   />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />

@@ -5,6 +5,7 @@
   <app-wird-header
     [allowDuplicate]="wird.isOwner === true"
     [canManage]="wird.isOwner === true"
+    [accessCode]="wird.isOwner === true && wird.visibility === 'private'"
     (editRequested)="edit()"
     (deleteRequested)="openDelete()"
     (duplicateRequested)="duplicate()"
@@ -15,10 +16,12 @@
   <app-wird-tabs [wirdId]="wird.id" />
   @if (author(); as author) {
     <p class="wird-byline">
-      {{ 'Publié par' | t }} {{ author.displayName }}
-      @if (author.organization) {
-        · {{ author.organization }}
-      }
+      {{ 'Publié par' | t }}
+      {{
+        author.displayName && author.organization
+          ? author.displayName + ' · ' + author.organization
+          : author.displayName || author.organization
+      }}
     </p>
   }
   <section class="participation-summary" [attr.aria-label]="'Avancement du wird' | t">

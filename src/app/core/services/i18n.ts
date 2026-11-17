@@ -359,6 +359,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'تبقى مسودتك محفوظة حتى النشر.',
   ],
   'Votre code d’accès': ['Your access code', 'رمز الدخول الخاص بك'],
+  'Code d’accès et partage': ['Access code and sharing', 'رمز الدخول والمشاركة'],
   'Votre compte, vos wirds et toutes leurs participations seront supprimés définitivement. Vos parts dans d’autres wirds et votre brouillon sur cet appareil seront aussi supprimés.':
     [
       'Your account, your wirds and all their contributions will be permanently deleted. Your shares in other wirds and your draft on this device will also be deleted.',

@@ -93,6 +93,9 @@ export class SharePage {
     const current = this.publication.receipt();
     return !id || current?.id === id ? current : this.restoredReceipt();
   });
+  protected readonly justPublished = computed(
+    () => this.publication.receipt()?.id === this.params().get('id'),
+  );
   protected readonly wird = computed(() =>
     this.store
       .wirds()
