@@ -99,7 +99,7 @@
           [disabled]="!canReserve()"
           [attr.aria-describedby]="!canReserve() ? 'participation-guidance' : null"
         >
-          {{ 'Je commence' | t }}
+          <app-icon name="play" [size]="24" />{{ 'Je commence' | t }}
         </button>
         @if (!canReserve() && !reserved()) {
           <p id="participation-guidance" class="participation-form__guidance">
@@ -146,7 +146,7 @@
       {{ 'Garder le brouillon' | t }}
     </button>
     <button type="button" class="button button--primary" (click)="confirmDuplicate()">
-      {{ 'Remplacer le brouillon' | t }}
+      <app-icon name="copy" [size]="22" />{{ 'Remplacer le brouillon' | t }}
     </button>
   </div>
 </app-bottom-sheet>
@@ -172,7 +172,7 @@
       [disabled]="deleting()"
       (click)="deleteWird()"
     >
-      {{ 'Supprimer ce wird' | t }}
+      <app-icon name="trash" [size]="22" />{{ 'Supprimer ce wird' | t }}
     </button>
   </div>
 </app-bottom-sheet>

@@ -42,6 +42,7 @@ const ICON_FILES = {
   close: 'x',
   upload: 'upload-simple',
   stop: 'stop',
+  bell: 'bell',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

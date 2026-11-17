@@ -31,7 +31,9 @@
   <app-bead-progress [completed]="0" [target]="draft().target ?? 1" />
   <p class="text-strong">{{ '{count} lectures à partager' | t: { count: draft().target ?? 0 } }}</p>
 </article>
-<a class="button button--outline" routerLink="/creer/contenu">{{ 'Modifier' | t }}</a>
+<a class="button button--outline" routerLink="/creer/contenu"
+  ><app-icon name="edit" [size]="22" />{{ 'Modifier' | t }}</a
+>
 <p id="publish-hint" class="text-secondary publication-notice">
   {{ 'Votre brouillon reste enregistré jusqu’à la publication.' | t }}
 </p>
@@ -45,7 +47,7 @@
     {{ 'La date de début est passée. Choisissez aujourd’hui ou une date à venir.' | t }}
   </p>
   <button type="button" class="button button--outline" (click)="startToday()">
-    {{ 'Commencer aujourd’hui' | t }}
+    <app-icon name="calendar" [size]="22" />{{ 'Commencer aujourd’hui' | t }}
   </button>
 }
 @if (auth.restoring()) {
@@ -58,5 +60,7 @@
   aria-describedby="publish-hint"
   (click)="publish()"
 >
-  {{ (auth.session() ? 'Publier' : 'Continuer pour publier') | t }}
+  <app-icon name="share" [size]="24" />{{
+    (auth.session() ? 'Publier' : 'Continuer pour publier') | t
+  }}
 </button>

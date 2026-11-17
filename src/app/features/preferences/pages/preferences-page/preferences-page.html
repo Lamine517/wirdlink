@@ -74,7 +74,7 @@
     <p>{{ 'Le rappel reste affiché dans WirdLink la veille.' | t }}</p>
   } @else {
     <button class="button button--accent" type="button" (click)="reminders.enable()">
-      {{ 'Activer les rappels' | t }}
+      <app-icon name="bell" [size]="22" />{{ 'Activer les rappels' | t }}
     </button>
   }
 </section>
@@ -89,7 +89,7 @@
       [disabled]="install.busy()"
       (click)="install.install()"
     >
-      {{ 'Ajouter à mon écran d’accueil' | t }}
+      <app-icon name="plus" [size]="22" />{{ 'Ajouter à mon écran d’accueil' | t }}
     </button>
   } @else if (ios) {
     <p>

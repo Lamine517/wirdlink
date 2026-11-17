@@ -14,10 +14,11 @@ import {
 import { CreationSteps } from '../../components/creation-steps/creation-steps';
 import { BeadProgress } from '../../../../shared/components/bead-progress/bead-progress';
 import { AudioPlayer } from '../../../../shared/components/audio-player/audio-player';
+import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-preview-page',
-  imports: [Translate, RouterLink, CreationSteps, BeadProgress, AudioPlayer, RequestState],
+  imports: [Translate, RouterLink, CreationSteps, BeadProgress, AudioPlayer, RequestState, Icon],
   templateUrl: './preview-page.html',
   styleUrl: './preview-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

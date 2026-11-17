@@ -25,9 +25,13 @@
           <app-icon name="hand" [size]="24" />{{ 'Je participe encore' | t }}</a
         >
       } @else {
-        <a class="button button--accent" routerLink="/">{{ 'Voir les autres wirds' | t }}</a>
+        <a class="button button--accent" routerLink="/"
+          ><app-icon name="home" [size]="24" />{{ 'Voir les autres wirds' | t }}</a
+        >
       }
-      <a class="button button--outline" routerLink="/mes-parts">{{ 'Mes parts' | t }}</a>
+      <a class="button button--outline" routerLink="/mes-parts"
+        ><app-icon name="hand" [size]="24" />{{ 'Mes parts' | t }}</a
+      >
     </div>
   </section>
 } @else {

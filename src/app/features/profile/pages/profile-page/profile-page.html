@@ -57,7 +57,7 @@
         type="submit"
         [disabled]="busy() || deleting() || form.invalid || form.pristine || !network.online()"
       >
-        {{ 'Enregistrer' | t }}
+        <app-icon name="check" [size]="22" />{{ 'Enregistrer' | t }}
       </button>
     </form>
   }
@@ -68,7 +68,7 @@
       (click)="signOutSheet.open()"
       [disabled]="busy() || deleting() || !network.online()"
     >
-      {{ 'Se déconnecter' | t }}
+      <app-icon name="signOut" [size]="22" />{{ 'Se déconnecter' | t }}
     </button>
     <button
       class="profile-delete"
@@ -104,7 +104,7 @@
       (click)="deleteAccount(deleteSheet)"
       [disabled]="deleting() || !network.online()"
     >
-      {{ 'Supprimer définitivement' | t }}
+      <app-icon name="trash" [size]="22" />{{ 'Supprimer définitivement' | t }}
     </button>
     <app-request-state
       [loading]="deleting()"

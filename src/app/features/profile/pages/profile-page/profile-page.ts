@@ -16,10 +16,19 @@ import { BackButton } from '../../../../shared/components/back-button/back-butto
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
+import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [Translate, ReactiveFormsModule, BackButton, BottomSheet, RequestState, UserAvatar],
+  imports: [
+    Translate,
+    ReactiveFormsModule,
+    BackButton,
+    BottomSheet,
+    RequestState,
+    UserAvatar,
+    Icon,
+  ],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

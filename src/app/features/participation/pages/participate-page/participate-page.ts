@@ -29,6 +29,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { WirdStore } from '../../../../core/wird-store';
 import { QuantityPicker } from '../../components/quantity-picker/quantity-picker';
+import { Icon } from '../../../../shared/components/icon/icon';
 
 @Component({
   selector: 'app-participate-page',
@@ -44,6 +45,7 @@ import { QuantityPicker } from '../../components/quantity-picker/quantity-picker
     CircularProgress,
     WirdTabs,
     EmptyState,
+    Icon,
   ],
   templateUrl: './participate-page.html',
   styleUrl: './participate-page.scss',

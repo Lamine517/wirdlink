@@ -30,7 +30,7 @@
     type="submit"
     [disabled]="busy() || code.invalid || cooldown() > 0 || !network.online()"
   >
-    {{ (cooldown() > 0 ? 'Réessayer dans {seconds} s' : 'Ouvrir le wird') | t: { seconds: cooldown() } }}
+    <app-icon [name]="cooldown() > 0 ? 'clock' : 'lock'" [size]="22" />{{ (cooldown() > 0 ? 'Réessayer dans {seconds} s' : 'Ouvrir le wird') | t: { seconds: cooldown() } }}
   </button>
 </form>
 <app-request-state
