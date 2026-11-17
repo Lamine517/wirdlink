@@ -16,7 +16,13 @@ import {
   CreationDraftStore,
   DraftTemplate,
 } from '../../data-access/creation-draft';
-import { AppConfig, TemplateIcon } from '../../../../core/config/app-config';
+import {
+  AppConfig,
+  TemplateIcon,
+  templateDescription,
+  templateMeaning,
+} from '../../../../core/config/app-config';
+import { I18nService } from '../../../../core/services/i18n';
 
 type TemplateChoice = DraftTemplate & { icon: TemplateIcon | 'plus' };
 
@@ -30,6 +36,7 @@ type TemplateChoice = DraftTemplate & { icon: TemplateIcon | 'plus' };
 export class CreatePage {
   protected readonly store = inject(CreationDraftStore);
   private readonly config = inject(AppConfig);
+  private readonly locale = inject(I18nService).locale;
   protected readonly templates = computed<TemplateChoice[]>(() => [
     { ...CUSTOM_TEMPLATE, icon: 'plus' },
     ...this.config.templates(),
@@ -54,8 +61,15 @@ export class CreatePage {
     this.start(template);
   }
 
+  protected meaning(template: DraftTemplate): string {
+    return template.text ? templateMeaning(template.text, this.locale()) : '';
+  }
+
   private start(template: DraftTemplate): void {
-    this.store.chooseTemplate(template);
+    this.store.chooseTemplate({
+      ...template,
+      description: template.text ? templateDescription(template.text, this.locale()) : '',
+    });
     void this.router.navigate(['/creer/contenu']);
   }
 }

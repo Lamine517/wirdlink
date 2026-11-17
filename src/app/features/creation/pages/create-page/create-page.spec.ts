@@ -57,16 +57,26 @@ describe('Creation flow', () => {
 
   it('offers the templates set in the back office', async () => {
     TestBed.inject(AppConfig).templates.set([
-      { id: 'dalail', title: 'Dalail al Khayrat', target: 41, icon: 'book' },
+      {
+        id: 'dalail',
+        title: 'Dalail al Khayrat',
+        target: 41,
+        icon: 'book',
+        text: { fr: 'Recueil de prières sur le Prophète', en: '', ar: 'دلائل الخيرات' },
+      },
     ]);
     const harness = await RouterTestingHarness.create('/creer');
     const titles = [...harness.routeNativeElement!.querySelectorAll('.template-card strong')].map(
       (item) => item.textContent?.trim(),
     );
     expect(titles).toEqual(['Mon propre wird', 'Dalail al Khayrat']);
-    templateButton(harness, 'Dalail al Khayrat').click();
+    const card = templateButton(harness, 'Dalail al Khayrat');
+    expect(card.textContent).toContain('Recueil de prières sur le Prophète');
+    card.click();
     await harness.fixture.whenStable();
-    expect(TestBed.inject(CreationDraftStore).draft().target).toBe(41);
+    const draft = TestBed.inject(CreationDraftStore).draft();
+    expect(draft.target).toBe(41);
+    expect(draft.description).toBe('دلائل الخيرات\n\nRecueil de prières sur le Prophète');
   });
 
   it('takes a template through content, dates and private preview without publishing', async () => {

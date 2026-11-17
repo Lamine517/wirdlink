@@ -32,6 +32,8 @@ export interface WirdTemplate {
   title: string;
   target: number;
   icon: TemplateIcon;
+  /** Invocation and its explanation. Empty texts stay hidden. */
+  text: LocalizedText;
 }
 
 export interface FeatureSettings {
@@ -58,11 +60,13 @@ export const DEFAULT_DONATIONS: DonationSettings = {
   orange: true,
 };
 
+const EMPTY_TEMPLATE_TEXT: LocalizedText = { fr: '', en: '', ar: '' };
+
 export const DEFAULT_TEMPLATES: WirdTemplate[] = [
-  { id: 'salat', title: 'Salat ala Nabi', target: 1000, icon: 'prayer' },
-  { id: 'fatiha', title: 'Al Fatiha', target: 100, icon: 'book' },
-  { id: 'istighfar', title: 'Istighfar', target: 1000, icon: 'heart' },
-  { id: 'tahlil', title: 'Tahlil', target: 1000, icon: 'tap' },
+  { id: 'salat', title: 'Salat ala Nabi', target: 1000, icon: 'prayer', text: EMPTY_TEMPLATE_TEXT },
+  { id: 'fatiha', title: 'Al Fatiha', target: 100, icon: 'book', text: EMPTY_TEMPLATE_TEXT },
+  { id: 'istighfar', title: 'Istighfar', target: 1000, icon: 'heart', text: EMPTY_TEMPLATE_TEXT },
+  { id: 'tahlil', title: 'Tahlil', target: 1000, icon: 'tap', text: EMPTY_TEMPLATE_TEXT },
 ];
 
 export const DEFAULT_FEATURES: FeatureSettings = { tasbih: true, photo: true, audio: true };
@@ -124,7 +128,16 @@ export function parseTemplates(value: unknown): WirdTemplate[] {
     if (!/^[a-z0-9-]{1,40}$/.test(id) || id === 'custom' || seen.has(id)) return [];
     if (!title || target < 1 || target > 2147483647 || !icon) return [];
     seen.add(id);
-    return [{ id, title, target, icon }];
+    const written = localized(data['text'], 1000);
+    return [
+      {
+        id,
+        title,
+        target,
+        icon,
+        text: { fr: written.fr.trim(), en: written.en.trim(), ar: written.ar.trim() },
+      },
+    ];
   });
 }
 
@@ -155,6 +168,26 @@ export function parseTexts(value: unknown): TextSettings {
  */
 export function localizedText(value: LocalizedText, locale: Locale): string {
   return (value[locale] || value.fr).trim();
+}
+
+/** The explanation shown under a template name, in the reader's language. */
+export function templateMeaning(text: LocalizedText, locale: Locale): string {
+  return (text[locale] || text.fr || text.ar || text.en).trim();
+}
+
+/**
+ * Arabic invocation first, then the translation in the reader's language.
+ * Fits the wird description, which the creator can still edit.
+ */
+export function templateDescription(text: LocalizedText, locale: Locale): string {
+  const arabic = text.ar.trim();
+  const translation = (
+    locale === 'ar' ? text.fr || text.en : text[locale] || text.fr || text.en
+  ).trim();
+  return [arabic, translation]
+    .filter((part, index, parts) => part && parts.indexOf(part) === index)
+    .join('\n\n')
+    .slice(0, 1000);
 }
 
 export function paragraphs(value: string): string[] {

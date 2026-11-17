@@ -1,6 +1,7 @@
 <p class="admin-hint">
-  Les modèles apparaissent dans Créer, après « Mon propre wird », et comme suggestions de titre. Les
-  wirds déjà créés ne changent pas.
+  Les modèles apparaissent dans Créer, après « Mon propre wird », et comme suggestions de titre.
+  L’invocation et son explication s’affichent sous le nom, puis remplissent la description du wird.
+  Le créateur peut encore la modifier. Les wirds déjà créés ne changent pas.
 </p>
 
 <ol class="admin-list admin-templates">
@@ -33,6 +34,34 @@
             }
           </select>
         </div>
+      </div>
+      <div class="admin-templates__text" formGroupName="text">
+        <label [for]="'template-ar-' + index">Invocation en arabe (facultatif)</label>
+        <textarea
+          [id]="'template-ar-' + index"
+          dir="rtl"
+          lang="ar"
+          maxlength="1000"
+          rows="3"
+          placeholder="Exemple : اللهم صل على محمد"
+          formControlName="ar"
+        ></textarea>
+        <label [for]="'template-fr-' + index">Explication en français (facultatif)</label>
+        <textarea
+          [id]="'template-fr-' + index"
+          maxlength="1000"
+          rows="2"
+          placeholder="Exemple : Prière sur le Prophète"
+          formControlName="fr"
+        ></textarea>
+        <label [for]="'template-en-' + index">Explication en anglais (facultatif)</label>
+        <textarea
+          [id]="'template-en-' + index"
+          maxlength="1000"
+          rows="2"
+          placeholder="Example: Prayer upon the Prophet"
+          formControlName="en"
+        ></textarea>
       </div>
       <div class="admin-templates__actions">
         <button type="button" class="admin-link" [disabled]="first" (click)="move(index, -1)">

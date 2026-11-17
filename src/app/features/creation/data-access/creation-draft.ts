@@ -1,4 +1,5 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { LocalizedText } from '../../../core/config/app-config';
 import { publicationContentType } from '../../../core/media-file';
 
 export type Recurrence = 'Une fois' | 'Tous les jours' | 'Chaque semaine' | 'Chaque vendredi';
@@ -9,7 +10,11 @@ export interface DraftContent {
   instructions?: string;
   target: number | null;
 }
-export const CUSTOM_TEMPLATE: DraftTemplate = { id: 'custom', title: 'Mon propre wird', target: null };
+export const CUSTOM_TEMPLATE: DraftTemplate = {
+  id: 'custom',
+  title: 'Mon propre wird',
+  target: null,
+};
 export interface DraftSchedule {
   recurrence: Recurrence;
   startDate: string;
@@ -26,6 +31,9 @@ export interface DraftTemplate {
   id: string;
   title: string;
   target: number | null;
+  /** Invocation and translation copied into the wird description. */
+  description?: string;
+  text?: LocalizedText;
 }
 export const MAX_WIRD_TARGET = 2147483647;
 const STORAGE_KEY = 'wirdlink.creation.v1';
@@ -141,6 +149,7 @@ export class CreationDraftStore {
     this.state.set({
       ...emptyDraft(),
       title: template.id === 'custom' ? '' : template.title,
+      description: template.id === 'custom' ? '' : (template.description ?? ''),
       target: template.target,
     });
     this.persist();

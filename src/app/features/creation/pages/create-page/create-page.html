@@ -25,6 +25,9 @@
       </span>
       <span class="template-card__content"
         ><strong>{{ template.id === 'custom' ? ('Mon propre wird' | t) : template.title }}</strong>
+        @if (meaning(template); as meaning) {
+          <span class="template-card__meaning" dir="auto">{{ meaning }}</span>
+        }
         <span>
           @if (template.target) {
             {{ template.target | number }} {{ 'lectures' | t }}

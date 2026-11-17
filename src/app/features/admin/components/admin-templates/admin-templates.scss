@@ -13,6 +13,11 @@
   color: var(--color-primary);
 }
 
+.admin-templates__text {
+  display: grid;
+  gap: var(--space-4);
+}
+
 .admin-templates__actions {
   display: flex;
   flex-wrap: wrap;

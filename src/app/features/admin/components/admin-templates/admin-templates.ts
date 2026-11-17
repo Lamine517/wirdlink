@@ -42,6 +42,20 @@ function templateGroup(template: WirdTemplate) {
       validators: [Validators.required, Validators.min(1), Validators.max(2147483647)],
     }),
     icon: new FormControl<TemplateIcon>(template.icon, { nonNullable: true }),
+    text: new FormGroup({
+      ar: new FormControl(template.text.ar, {
+        nonNullable: true,
+        validators: [Validators.maxLength(1000)],
+      }),
+      fr: new FormControl(template.text.fr, {
+        nonNullable: true,
+        validators: [Validators.maxLength(1000)],
+      }),
+      en: new FormControl(template.text.en, {
+        nonNullable: true,
+        validators: [Validators.maxLength(1000)],
+      }),
+    }),
   });
 }
 
@@ -79,7 +93,9 @@ export class AdminTemplates {
   protected add(): void {
     if (this.items.length >= MAX_TEMPLATES) return;
     const id = 'modele-' + crypto.randomUUID().slice(0, 8);
-    this.items.push(templateGroup({ id, title: '', target: 100, icon: 'book' }));
+    this.items.push(
+      templateGroup({ id, title: '', target: 100, icon: 'book', text: { fr: '', en: '', ar: '' } }),
+    );
   }
 
   protected remove(index: number): void {
@@ -99,7 +115,9 @@ export class AdminTemplates {
     this.error.set('');
     if (this.items.invalid) {
       this.items.markAllAsTouched();
-      this.error.set('Chaque modèle doit avoir un nom et un objectif entier supérieur à 0.');
+      this.error.set(
+        'Chaque modèle doit avoir un nom, un objectif entier supérieur à 0, et des textes d’au plus 1 000 caractères.',
+      );
       return;
     }
     if (this.busy()) return;
@@ -107,6 +125,11 @@ export class AdminTemplates {
       ...item,
       title: item.title.trim(),
       target: Math.trunc(item.target),
+      text: {
+        ar: item.text.ar.trim(),
+        fr: item.text.fr.trim(),
+        en: item.text.en.trim(),
+      },
     }));
     this.busy.set(true);
     try {

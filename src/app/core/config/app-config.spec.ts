@@ -4,6 +4,8 @@ import {
   DEFAULT_TEXTS,
   localizedText,
   paragraphs,
+  templateDescription,
+  templateMeaning,
   parseDonations,
   parseFeatures,
   parseTemplates,
@@ -40,7 +42,26 @@ describe('App config', () => {
         { id: 'b', title: 'Sans icône', target: 1, icon: 'rocket' },
         { id: 'c', title: '', target: 1, icon: 'book' },
       ]),
-    ).toEqual([{ id: 'a', title: 'Dalail', target: 41, icon: 'book' }]);
+    ).toEqual([
+      { id: 'a', title: 'Dalail', target: 41, icon: 'book', text: { fr: '', en: '', ar: '' } },
+    ]);
+    const text = { fr: ' Prière sur le Prophète ', en: '', ar: ' اللهم صل على محمد ' };
+    expect(
+      parseTemplates([{ id: 'salat', title: 'Salat', target: 1000, icon: 'prayer', text }])[0].text,
+    ).toEqual({
+      fr: 'Prière sur le Prophète',
+      en: '',
+      ar: 'اللهم صل على محمد',
+    });
+  });
+
+  it('shows the invocation in the reader’s language and keeps the Arabic text with its translation', () => {
+    const text = { fr: 'Prière sur le Prophète', en: 'Prayer upon the Prophet', ar: 'اللهم صل' };
+    expect(templateMeaning(text, 'fr')).toBe('Prière sur le Prophète');
+    expect(templateMeaning({ fr: '', en: '', ar: 'اللهم صل' }, 'fr')).toBe('اللهم صل');
+    expect(templateDescription(text, 'fr')).toBe('اللهم صل\n\nPrière sur le Prophète');
+    expect(templateDescription(text, 'ar')).toBe('اللهم صل\n\nPrière sur le Prophète');
+    expect(templateDescription({ fr: '', en: '', ar: '' }, 'fr')).toBe('');
   });
 
   it('keeps every feature on unless it is explicitly turned off', () => {
