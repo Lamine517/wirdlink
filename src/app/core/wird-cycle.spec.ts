@@ -1,4 +1,10 @@
-import { countsInCurrentCycle, dueReminderTitles, isReminderDay, wirdPhase } from './wird-cycle';
+import {
+  countsInCurrentCycle,
+  cycleTotals,
+  dueReminderTitles,
+  isReminderDay,
+  wirdPhase,
+} from './wird-cycle';
 
 const monday = '2026-11-16';
 const thursday = '2026-11-19';
@@ -64,6 +70,26 @@ describe('Wird cycles', () => {
     expect(wirdPhase(once, 10, thursday)).toEqual({ kind: 'closed' });
     expect(wirdPhase(once, 2, nextMonday)).toEqual({ kind: 'closed' });
     expect(wirdPhase(once, 0, '2026-11-15')).toEqual({ kind: 'upcoming', day: monday });
+  });
+
+  it('adds finished readings to the cycle they belong to, including empty cycles', () => {
+    const days = [
+      { day: monday, finished: 5 },
+      { day: thursday, finished: 7 },
+      { day: friday, finished: 10 },
+    ];
+    expect(cycleTotals(wird('Tous les jours', monday), days, friday).map((c) => c.finished)).toEqual(
+      [5, 0, 0, 7, 10],
+    );
+    expect(cycleTotals(wird('Chaque vendredi', monday), days, nextMonday)).toEqual([
+      { start: monday, finished: 12 },
+      { start: friday, finished: 10 },
+    ]);
+    expect(cycleTotals(wird('Chaque semaine', monday), days, nextMonday)).toEqual([
+      { start: monday, finished: 22 },
+      { start: nextMonday, finished: 0 },
+    ]);
+    expect(cycleTotals(wird('Tous les jours', friday), days, thursday)).toEqual([]);
   });
 });
 

@@ -22,6 +22,8 @@ import { WirdTabs } from '../../components/wird-tabs/wird-tabs';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { WirdAccess } from '../../../access/data-access/wird-access';
+import { WirdStats } from '../../components/wird-stats/wird-stats';
+import type { WirdStats as WirdStatsData } from '../../../../core/services/wird-repository';
 
 @Component({
   selector: 'app-participants-page',
@@ -35,6 +37,7 @@ import { WirdAccess } from '../../../access/data-access/wird-access';
     WirdTabs,
     Icon,
     EmptyState,
+    WirdStats,
   ],
   templateUrl: './participants-page.html',
   styleUrl: './participants-page.scss',
@@ -59,6 +62,10 @@ export class ParticipantsPage {
       : this.store.parts().filter((part) => part.wirdId === this.selected()?.id),
   );
   private readonly remoteParts = signal<Part[]>([]);
+  protected readonly stats = signal<WirdStatsData | null>(null);
+  private readonly ownedId = computed(() =>
+    this.selected()?.isOwner ? this.selected()!.id : null,
+  );
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   constructor() {
@@ -84,6 +91,21 @@ export class ParticipantsPage {
         .finally(() => {
           if (active) this.loading.set(false);
         });
+    });
+    effect((onCleanup) => {
+      const id = this.ownedId();
+      this.stats.set(null);
+      if (!id) return;
+      let active = true;
+      onCleanup(() => {
+        active = false;
+      });
+      this.store
+        .stats(id)
+        .then((stats) => {
+          if (active) this.stats.set(stats);
+        })
+        .catch(() => undefined);
     });
   }
   protected readonly groups = computed(() => groupParticipants(this.parts()));

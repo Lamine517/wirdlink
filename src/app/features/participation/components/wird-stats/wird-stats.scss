@@ -1,0 +1,79 @@
+:host {
+  display: block;
+  margin-bottom: var(--space-16);
+}
+
+h2 {
+  margin: 0 0 var(--space-12);
+  font-size: 1.125rem;
+}
+
+.wird-stats__totals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+
+  p {
+    margin: 0;
+    padding: var(--space-12);
+    border-radius: var(--radius-medium);
+    background: var(--color-bg-muted);
+  }
+
+  strong {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
+}
+
+.wird-stats__summary {
+  margin: var(--space-16) 0 var(--space-8);
+  font-weight: 800;
+}
+
+.wird-stats__cycles {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr 4.5rem;
+    align-items: center;
+    gap: var(--space-8);
+    font-size: var(--font-size-small);
+  }
+}
+
+.wird-stats__day {
+  color: var(--color-text-secondary);
+}
+
+.wird-stats__bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-bg-muted);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+  }
+}
+
+.wird-stats__cycle--reached .wird-stats__bar span {
+  background: var(--color-primary);
+}
+
+.wird-stats__value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-weight: 800;
+}

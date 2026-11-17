@@ -12,7 +12,12 @@ export interface WirdChanges {
   description: string;
   instructions: string;
 }
+export interface WirdStats {
+  participants: number;
+  days: { day: string; finished: number; reserved: number }[];
+}
 export interface WirdRepository {
+  stats?(id: string): Promise<WirdStats | null>;
   watchIdentity?(listener: (id: string | null) => void): () => void;
   update(id: string, changes: WirdChanges): Promise<Wird>;
   delete(id: string): Promise<void>;

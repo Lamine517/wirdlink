@@ -122,6 +122,45 @@ export function wirdPhase(
   return next ? { kind: 'reached', day: next } : { kind: 'closed' };
 }
 
+/** First day of the cycle that contains `day`, mirroring cycleContains. */
+export function cycleStartOf(recurrence: CycleRecurrence, start: string, day: string): string {
+  if (recurrence === 'Tous les jours') return day;
+  if (recurrence === 'Chaque semaine')
+    return addDays(start, Math.floor(diffDays(day, start) / 7) * 7);
+  if (recurrence === 'Chaque vendredi') {
+    const friday = addDays(day, -((weekday(day) + 2) % 7));
+    return friday < start ? start : friday;
+  }
+  return start;
+}
+
+export interface CycleTotal {
+  start: string;
+  finished: number;
+}
+
+/** Every cycle from the start of the wird to today, oldest first, with its finished readings. */
+export function cycleTotals(
+  wird: Pick<Wird, 'recurrence' | 'startDate' | 'endDate'>,
+  days: readonly { day: string; finished: number }[],
+  today: string,
+): CycleTotal[] {
+  const start = wird.startDate;
+  if (!start || today < start) return [];
+  const last = wird.endDate && wird.endDate < today ? wird.endDate : today;
+  const totals = new Map<string, number>();
+  for (let day = start; day <= last; day = addDays(day, 1)) {
+    const cycle = cycleStartOf(wird.recurrence, start, day);
+    if (!totals.has(cycle)) totals.set(cycle, 0);
+  }
+  for (const entry of days) {
+    if (entry.day < start || entry.day > last) continue;
+    const cycle = cycleStartOf(wird.recurrence, start, entry.day);
+    totals.set(cycle, (totals.get(cycle) ?? 0) + entry.finished);
+  }
+  return [...totals].map(([cycle, finished]) => ({ start: cycle, finished }));
+}
+
 export function nextDay(iso: string): string {
   return addDays(iso, 1);
 }

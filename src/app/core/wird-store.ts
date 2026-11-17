@@ -1,4 +1,9 @@
-import { WIRD_REPOSITORY, WirdRepository, WirdChanges } from './services/wird-repository';
+import {
+  WIRD_REPOSITORY,
+  WirdRepository,
+  WirdChanges,
+  WirdStats,
+} from './services/wird-repository';
 import { countsInCurrentCycle, dakarToday } from './wird-cycle';
 import {
   computed,
@@ -264,6 +269,16 @@ export class WirdStore {
     this.upsert(result.wird);
     this.parts.update((parts) => parts.map((part) => (part.id === id ? result.part : part)));
     return true;
+  }
+
+  async stats(id: string): Promise<WirdStats | null> {
+    if (!this.remote || !this.repository?.stats) return null;
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const stats = await this.repository.stats(id);
+    return generation === this.generation && identity === (await this.repository.identity())
+      ? stats
+      : null;
   }
 
   async participants(id: string): Promise<Part[]> {

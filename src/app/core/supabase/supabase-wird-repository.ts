@@ -9,7 +9,12 @@ import {
 } from '../services/frontend-gateway';
 import { publicationContentType, publicationExtension } from '../media-file';
 import type { PublicationReceipt, PublicationRequest } from '../services/frontend-gateway';
-import type { PartMutation, WirdRepository, WirdChanges } from '../services/wird-repository';
+import type {
+  PartMutation,
+  WirdRepository,
+  WirdChanges,
+  WirdStats,
+} from '../services/wird-repository';
 import type { Part, Wird } from '../wird-store';
 import { SUPABASE_CLIENT } from './supabase-client';
 
@@ -284,6 +289,26 @@ export class SupabaseWirdRepository implements WirdRepository {
         part(value),
       ),
     );
+  }
+  stats(id: string): Promise<WirdStats | null> {
+    return this.run(async (client) => {
+      const data = await this.rpc(client, 'wird_stats', { p_wird_id: id });
+      if (data === null) return null;
+      const row = record(data);
+      return {
+        participants: integer(row['participants'], 0),
+        days: array(row['days']).map((value) => {
+          const day = record(value);
+          const date = string(day['day']);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new ServiceUnavailableError();
+          return {
+            day: date,
+            finished: day['finished'] === null ? 0 : integer(day['finished'], 0),
+            reserved: day['reserved'] === null ? 0 : integer(day['reserved'], 0),
+          };
+        }),
+      };
+    });
   }
   unlock(id: string, code: string): Promise<Wird> {
     return this.run(async (client) => {

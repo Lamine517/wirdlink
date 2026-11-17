@@ -8,6 +8,9 @@
     [shareUrl]="shareOrigin + '/wird/' + wird.id"
   />
   <app-wird-tabs [wirdId]="wird.id" active="participants" />
+  @if (stats(); as stats) {
+    <app-wird-stats [wird]="wird" [stats]="stats" />
+  }
   <p class="text-strong">
     {{ '{count} lus sur {target}' | t: { count: store.completed(wird.id), target: wird.target } }}
   </p>

@@ -1,0 +1,34 @@
+<section class="surface-card wird-stats" aria-labelledby="wird-stats-title">
+  <h2 id="wird-stats-title">{{ 'Suivi du wird' | t }}</h2>
+  <div class="wird-stats__totals">
+    <p>
+      <strong>{{ stats().participants | number }}</strong>
+      {{ (stats().participants > 1 ? 'participants' : 'participant') | t }}
+    </p>
+    <p>
+      <strong>{{ finished() | number }}</strong>
+      {{ 'lectures terminées' | t }}
+    </p>
+  </div>
+  @if (total() > 1) {
+    <p class="wird-stats__summary">
+      {{ 'Objectif atteint {count} fois sur {total}' | t: { count: reached(), total: total() } }}
+    </p>
+    <ol class="wird-stats__cycles">
+      @for (cycle of recent(); track cycle.start) {
+        <li [class.wird-stats__cycle--reached]="cycle.reached">
+          <span class="wird-stats__day">{{ cycle.label }}</span>
+          <span class="wird-stats__bar" aria-hidden="true"
+            ><span [style.width.%]="cycle.percent"></span
+          ></span>
+          <span class="wird-stats__value">
+            @if (cycle.reached) {
+              <app-icon name="check" [size]="16" />
+            }
+            {{ cycle.finished | number }}
+          </span>
+        </li>
+      }
+    </ol>
+  }
+</section>
