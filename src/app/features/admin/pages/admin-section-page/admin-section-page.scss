@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.admin-numbers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+
+  p {
+    margin: 0;
+    padding: var(--space-12);
+    border-radius: var(--radius-medium);
+    background: var(--color-bg-surface);
+  }
+
+  strong {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
+}
+
+.admin-numbers__wide {
+  grid-column: 1 / -1;
+}

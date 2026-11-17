@@ -37,15 +37,21 @@
         <a routerLink="/pass">{{ 'Renouveler' | t }}</a>
       </p>
     }
-    @if (pass.isAdmin || (passes.settings().enabled && (pass.hadPass || !pass.privateAllowed))) {
-      <a class="button button--outline profile-link" routerLink="/pass"
-        ><app-icon name="heart" [size]="22" />{{ 'Pass dahira' | t }}</a
-      >
-    }
-    @if (pass.isAdmin) {
-      <a class="button button--outline profile-link" [routerLink]="adminLink"
-        ><app-icon name="settings" [size]="22" />{{ 'Administration' | t }}</a
-      >
+    @let showPass =
+      pass.isAdmin || (passes.settings().enabled && (pass.hadPass || !pass.privateAllowed));
+    @if (showPass || pass.isAdmin) {
+      <div class="profile-actions">
+        @if (showPass) {
+          <a class="button button--outline" routerLink="/pass"
+            ><app-icon name="heart" [size]="22" />{{ 'Pass dahira' | t }}</a
+          >
+        }
+        @if (pass.isAdmin) {
+          <a class="button button--outline" [routerLink]="adminLink"
+            ><app-icon name="settings" [size]="22" />{{ 'Administration' | t }}</a
+          >
+        }
+      </div>
     }
   }
   <div class="profile-actions">

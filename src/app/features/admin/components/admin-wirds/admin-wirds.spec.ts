@@ -60,7 +60,15 @@ describe('Admin wirds', () => {
     expect(cards[1].textContent).toContain('Wird avec code');
     expect(cards[1].textContent).toContain('Masqué · Signalé');
 
-    cards[0].querySelector<HTMLButtonElement>('.admin-link--danger')!.click();
+    element.querySelectorAll<HTMLButtonElement>('.admin-wirds__filters button')[1].click();
+    fixture.detectChanges();
+    expect(element.querySelectorAll('.admin-list li.surface-card').length).toBe(1);
+    element.querySelectorAll<HTMLButtonElement>('.admin-wirds__filters button')[0].click();
+    fixture.detectChanges();
+
+    const hideButton = element.querySelector<HTMLButtonElement>('.wird-row__action--hide')!;
+    expect(hideButton.getAttribute('aria-label')).toBe('Masquer Salat du vendredi');
+    hideButton.click();
     fixture.detectChanges();
     const reason = element.querySelector<HTMLInputElement>('#admin-hide-reason')!;
     reason.value = 'Contenu inapproprié';

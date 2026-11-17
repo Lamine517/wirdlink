@@ -12,6 +12,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Icon } from '../../../../shared/components/icon/icon';
+import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
 import { PassError, PassKind, PassService } from '../../../../core/pass/pass-service';
 import { AdminApi, AdminCreator, AdminOverview, AdminPass } from '../../data-access/admin-api';
 
@@ -24,7 +25,7 @@ export const PASS_LABELS: Record<PassKind, string> = {
 
 @Component({
   selector: 'app-admin-creators',
-  imports: [DecimalPipe, ReactiveFormsModule, BottomSheet, Icon],
+  imports: [DecimalPipe, ReactiveFormsModule, BottomSheet, Icon, UserAvatar],
   templateUrl: './admin-creators.html',
   styleUrl: './admin-creators.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -129,7 +130,7 @@ export class AdminCreators {
   protected date(value: string): string {
     return new Intl.DateTimeFormat('fr-FR', {
       day: 'numeric',
-      month: 'long',
+      month: 'short',
       year: 'numeric',
       timeZone: 'UTC',
     }).format(new Date(value + 'T00:00:00Z'));

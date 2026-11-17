@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
+import { Icon } from '../../../../shared/components/icon/icon';
 import { PassError } from '../../../../core/pass/pass-service';
 import { AdminApi, AdminWird } from '../../data-access/admin-api';
 
@@ -14,7 +15,7 @@ export function wirdIdFromLink(value: string): string | null {
 
 @Component({
   selector: 'app-admin-wirds',
-  imports: [ReactiveFormsModule, BottomSheet],
+  imports: [ReactiveFormsModule, BottomSheet, Icon],
   templateUrl: './admin-wirds.html',
   styleUrls: ['../../admin-form.scss', './admin-wirds.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,14 +26,20 @@ export class AdminWirds {
   protected readonly loaded = signal(false);
   protected readonly search = new FormControl('', { nonNullable: true });
   private readonly query = toSignal(this.search.valueChanges, { initialValue: '' });
+  protected readonly onlyHidden = signal(false);
+  protected readonly hiddenCount = computed(
+    () => this.wirds().filter((wird) => wird.hidden).length,
+  );
   protected readonly visible = computed(() => {
     const query = this.query().trim().toLocaleLowerCase('fr');
+    const onlyHidden = this.onlyHidden();
     return this.wirds().filter(
       (wird) =>
-        !query ||
-        [wird.title, wird.author, wird.description].some((value) =>
-          value.toLocaleLowerCase('fr').includes(query),
-        ),
+        (!onlyHidden || wird.hidden) &&
+        (!query ||
+          [wird.title, wird.author, wird.description].some((value) =>
+            value.toLocaleLowerCase('fr').includes(query),
+          )),
     );
   });
   protected readonly link = new FormControl('', { nonNullable: true });

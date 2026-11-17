@@ -6,32 +6,51 @@
     [formControl]="search"
     placeholder="Nom, dahira, e-mail ou téléphone"
 /></label>
+<p class="admin-count">{{ creators().length }} créateur{{ creators().length > 1 ? 's' : '' }}</p>
 
 <ul class="admin-list">
   @for (creator of creators(); track creator.id) {
-    <li class="surface-card">
-      <strong>{{ creator.name || 'Sans nom' }}</strong>
-      @if (creator.organization) {
-        <span>{{ creator.organization }}</span>
-      }
-      <span class="admin-muted">{{ creator.contact }}</span>
-      <span class="admin-muted"
-        >{{ creator.wirds }} wirds · {{ creator.privateInProgress }} avec code en cours</span
-      >
-      @if (creator.passKind && creator.passEndsOn) {
-        <span class="admin-pass"
-          >{{ labels[creator.passKind] }} jusqu’au {{ date(creator.passEndsOn) }}</span
+    <li class="surface-card creator">
+      <div class="creator__head">
+        <app-user-avatar [name]="creator.name || creator.contact" />
+        <div class="creator__identity">
+          <strong>{{ creator.name || 'Sans nom' }}</strong>
+          @if (creator.organization) {
+            <span class="creator__organization">{{ creator.organization }}</span>
+          }
+          <span class="admin-muted">{{ creator.contact }}</span>
+        </div>
+      </div>
+      <div class="creator__facts">
+        <span
+          ><app-icon name="book" [size]="18" />{{ creator.wirds }} wird{{
+            creator.wirds > 1 ? 's' : ''
+          }}</span
         >
-      } @else {
-        <span class="admin-muted">Sans pass</span>
-      }
-      <button
-        type="button"
-        class="button button--outline button--compact"
-        (click)="openGrant(creator, grantSheet)"
-      >
-        <app-icon name="plus" [size]="20" />Donner un pass
-      </button>
+        <span
+          ><app-icon name="lock" [size]="18" />{{ creator.privateInProgress }} avec code en
+          cours</span
+        >
+      </div>
+      <div class="creator__foot">
+        @if (creator.passKind && creator.passEndsOn) {
+          <span class="creator__pass creator__pass--active"
+            ><app-icon name="ticket" [size]="18" />{{ labels[creator.passKind] }} · jusqu’au
+            {{ date(creator.passEndsOn) }}</span
+          >
+        } @else {
+          <span class="creator__pass">Sans pass</span>
+        }
+        <button
+          type="button"
+          class="button button--outline button--compact"
+          (click)="openGrant(creator, grantSheet)"
+        >
+          <app-icon name="plus" [size]="20" />{{
+            creator.passKind ? 'Prolonger' : 'Donner un pass'
+          }}
+        </button>
+      </div>
     </li>
   } @empty {
     <li class="admin-muted">Aucun créateur trouvé.</li>
@@ -41,14 +60,24 @@
 <h2>Derniers pass</h2>
 <ul class="admin-list">
   @for (pass of overview().passes; track pass.id) {
-    <li class="surface-card">
-      <strong>{{ pass.ownerName || 'Sans nom' }} · {{ labels[pass.kind] }}</strong>
-      <span class="admin-muted">Du {{ date(pass.startsOn) }} au {{ date(pass.endsOn) }}</span>
-      <span class="admin-muted"
-        >{{ pass.amount | number }} F{{ pass.note ? ' · ' + pass.note : '' }}</span
+    <li class="surface-card pass-row">
+      <span class="pass-row__icon"><app-icon name="ticket" [size]="22" /></span>
+      <div class="pass-row__body">
+        <strong>{{ pass.ownerName || 'Sans nom' }}</strong>
+        <span class="creator__organization">{{ labels[pass.kind] }}</span>
+        <span class="admin-muted">Du {{ date(pass.startsOn) }} au {{ date(pass.endsOn) }}</span>
+        <span class="admin-muted"
+          >{{ pass.amount | number }} F{{ pass.note ? ' · ' + pass.note : '' }}</span
+        >
+      </div>
+      <button
+        type="button"
+        class="icon-button pass-row__revoke"
+        [attr.aria-label]="'Annuler le pass de ' + (pass.ownerName || 'ce créateur')"
+        title="Annuler ce pass"
+        (click)="openRevoke(pass, revokeSheet)"
       >
-      <button type="button" class="admin-link" (click)="openRevoke(pass, revokeSheet)">
-        Annuler ce pass
+        <app-icon name="trash" [size]="22" />
       </button>
     </li>
   } @empty {

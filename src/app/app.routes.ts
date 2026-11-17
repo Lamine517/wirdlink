@@ -6,6 +6,7 @@ import { Router, Routes } from '@angular/router';
 import { AppConfig } from './core/config/app-config';
 import { readableWird } from './features/access/data-access/wird-access';
 import { ADMIN_PATH, adminGuard } from './features/admin/data-access/admin-guard';
+import { adminSection, adminSectionGuard } from './features/admin/data-access/admin-sections';
 
 export const routes: Routes = [
   {
@@ -122,6 +123,16 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/admin/pages/admin-page/admin-page').then((m) => m.AdminPage),
     title: 'Administration · WirdLink',
+  },
+  {
+    path: `${ADMIN_PATH}/:section`,
+    canActivate: [adminGuard, adminSectionGuard],
+    loadComponent: () =>
+      import('./features/admin/pages/admin-section-page/admin-section-page').then(
+        (m) => m.AdminSectionPage,
+      ),
+    title: (route) =>
+      `${adminSection(route.paramMap.get('section'))?.title ?? 'Administration'} · WirdLink`,
   },
   {
     path: 'connexion',

@@ -37,6 +37,8 @@ confiance qu’il ajoute lui-même.
 - L’offre n’est montrée qu’à la limite : message à la publication, mention sous le suivi
   après 7 périodes, lien dans Mon profil seulement après un premier pass ou à la limite.
 - Le back office est en français uniquement ; les écrans créateur sont traduits.
+- Navigation : un menu de tuiles avec icône ouvre chaque rubrique sur sa propre page
+  (`ADMIN_PATH/<rubrique>`, liste dans `admin-sections.ts`), protégée par le même garde.
 
 ## Phase 2 : autres rubriques
 

@@ -43,6 +43,15 @@ const ICON_FILES = {
   upload: 'upload-simple',
   stop: 'stop',
   bell: 'bell',
+  chart: 'chart-bar',
+  eye: 'eye',
+  eyeOff: 'eye-slash',
+  text: 'text-aa',
+  toggle: 'toggle-right',
+  coins: 'hand-coins',
+  ticket: 'ticket',
+  shield: 'shield-check',
+  grid: 'squares-four',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

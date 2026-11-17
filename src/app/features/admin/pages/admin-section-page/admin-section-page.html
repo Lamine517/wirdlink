@@ -1,0 +1,80 @@
+<app-back-button [fallback]="menu" />
+
+@if (section(); as section) {
+  <h1>{{ section.title }}</h1>
+
+  @switch (section.id) {
+    @case ('chiffres') {
+      <ng-container [ngTemplateOutlet]="overviewState" />
+      @if (overview(); as data) {
+        <section class="admin-numbers" aria-label="Chiffres">
+          <p>
+            <strong>{{ data.totals.wirds | number }}</strong> wirds
+          </p>
+          <p>
+            <strong>{{ data.totals.privateWirds | number }}</strong> avec code
+          </p>
+          <p>
+            <strong>{{ data.totals.creators | number }}</strong> créateurs
+          </p>
+          <p>
+            <strong>{{ data.totals.participants | number }}</strong> participants
+          </p>
+          <p>
+            <strong>{{ data.totals.finished | number }}</strong> lectures terminées
+          </p>
+          <p>
+            <strong>{{ data.totals.activePasses | number }}</strong> pass actifs
+          </p>
+          <p>
+            <strong>{{ data.totals.trials | number }}</strong> essais en cours
+          </p>
+          <p>
+            <strong>{{ data.totals.founders | number }}</strong> fondateurs
+          </p>
+          <p class="admin-numbers__wide">
+            <strong>{{ data.totals.collected | number }} F</strong> encaissés au total
+          </p>
+        </section>
+      }
+    }
+    @case ('createurs') {
+      <ng-container [ngTemplateOutlet]="overviewState" />
+      @if (overview(); as data) {
+        <app-admin-creators [overview]="data" (changed)="load()" />
+      }
+    }
+    @case ('wirds') {
+      <app-admin-wirds />
+    }
+    @case ('pass') {
+      <app-admin-settings />
+    }
+    @case ('dons') {
+      <app-admin-donations />
+    }
+    @case ('modeles') {
+      <app-admin-templates />
+    }
+    @case ('textes') {
+      <app-admin-texts />
+    }
+    @case ('fonctions') {
+      <app-admin-features />
+    }
+    @case ('equipe') {
+      <app-admin-team />
+    }
+  }
+}
+
+<ng-template #overviewState>
+  <app-request-state
+    [skeleton]="true"
+    [loading]="loading() && !overview()"
+    loadingLabel="Chargement…"
+    [error]="error()"
+    retryLabel="Réessayer"
+    (retry)="load()"
+  />
+</ng-template>

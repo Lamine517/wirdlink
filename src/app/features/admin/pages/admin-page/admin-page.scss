@@ -2,32 +2,39 @@
   display: block;
 }
 
-.admin-tabs {
+.admin-menu {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-24);
+  gap: var(--space-12);
 }
 
-.admin-numbers {
+.admin-menu__tile {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-items: center;
+  align-content: start;
   gap: var(--space-8);
+  min-height: 112px;
+  padding: var(--space-16) var(--space-4);
+  border-radius: var(--radius-large);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-small);
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
 
-  p {
-    margin: 0;
-    padding: var(--space-12);
-    border-radius: var(--radius-medium);
-    background: var(--color-bg-surface);
-  }
-
-  strong {
-    display: block;
-    font-size: 1.5rem;
-    color: var(--color-primary);
+  &:active {
+    background: var(--color-bg-muted);
   }
 }
 
-.admin-numbers__wide {
-  grid-column: 1 / -1;
+.admin-menu__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  color: var(--color-primary);
 }

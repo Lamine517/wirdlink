@@ -1,85 +1,11 @@
-<app-back-button fallback="/preferences" />
+<app-back-button fallback="/profil" />
 <h1>Administration</h1>
 
-<div class="admin-tabs segmented-choice" role="group" aria-label="Rubriques">
-  @for (item of tabs; track item.id) {
-    <button
-      type="button"
-      class="button button--outline button--compact"
-      [class.button--selected]="tab() === item.id"
-      [attr.aria-pressed]="tab() === item.id"
-      (click)="tab.set(item.id)"
-    >
-      {{ item.label }}
-    </button>
+<nav class="admin-menu" aria-label="Rubriques">
+  @for (section of sections; track section.id) {
+    <a class="admin-menu__tile" [routerLink]="section.id">
+      <span class="admin-menu__icon"><app-icon [name]="section.icon" [size]="28" /></span>
+      {{ section.label }}
+    </a>
   }
-</div>
-
-<app-request-state
-  [skeleton]="true"
-  [loading]="loading() && !overview()"
-  loadingLabel="Chargement…"
-  [error]="error()"
-  retryLabel="Réessayer"
-  (retry)="load()"
-/>
-
-@if (overview(); as data) {
-  @switch (tab()) {
-    @case ('numbers') {
-      <section class="admin-numbers" aria-label="Chiffres">
-        <p>
-          <strong>{{ data.totals.wirds | number }}</strong> wirds
-        </p>
-        <p>
-          <strong>{{ data.totals.privateWirds | number }}</strong> avec code
-        </p>
-        <p>
-          <strong>{{ data.totals.creators | number }}</strong> créateurs
-        </p>
-        <p>
-          <strong>{{ data.totals.participants | number }}</strong> participants
-        </p>
-        <p>
-          <strong>{{ data.totals.finished | number }}</strong> lectures terminées
-        </p>
-        <p>
-          <strong>{{ data.totals.activePasses | number }}</strong> pass actifs
-        </p>
-        <p>
-          <strong>{{ data.totals.trials | number }}</strong> essais en cours
-        </p>
-        <p>
-          <strong>{{ data.totals.founders | number }}</strong> fondateurs
-        </p>
-        <p class="admin-numbers__wide">
-          <strong>{{ data.totals.collected | number }} F</strong> encaissés au total
-        </p>
-      </section>
-    }
-    @case ('creators') {
-      <app-admin-creators [overview]="data" (changed)="load()" />
-    }
-    @case ('wirds') {
-      <app-admin-wirds />
-    }
-    @case ('pass') {
-      <app-admin-settings />
-    }
-    @case ('donations') {
-      <app-admin-donations />
-    }
-    @case ('templates') {
-      <app-admin-templates />
-    }
-    @case ('texts') {
-      <app-admin-texts />
-    }
-    @case ('features') {
-      <app-admin-features />
-    }
-    @case ('team') {
-      <app-admin-team />
-    }
-  }
-}
+</nav>

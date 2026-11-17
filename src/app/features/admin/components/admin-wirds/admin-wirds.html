@@ -1,10 +1,105 @@
-<p class="admin-hint">
-  Un wird masqué n’est plus visible ni accessible, sauf pour son créateur, qui est prévenu. Rien
-  n’est supprimé. Les wirds avec code n’apparaissent ici que masqués, sans leur contenu.
-</p>
+<label class="admin-wirds__search" for="admin-wird-search"
+  ><app-icon name="search" [size]="20" /><span class="visually-hidden">Rechercher un wird</span
+  ><input
+    id="admin-wird-search"
+    type="search"
+    placeholder="Titre, auteur ou description"
+    [formControl]="search"
+/></label>
+
+<div class="admin-wirds__filters segmented-choice" role="group" aria-label="Afficher">
+  <button
+    type="button"
+    class="button button--outline button--compact"
+    [class.button--selected]="!onlyHidden()"
+    [attr.aria-pressed]="!onlyHidden()"
+    (click)="onlyHidden.set(false)"
+  >
+    Tous ({{ wirds().length }})
+  </button>
+  <button
+    type="button"
+    class="button button--outline button--compact"
+    [class.button--selected]="onlyHidden()"
+    [attr.aria-pressed]="onlyHidden()"
+    (click)="onlyHidden.set(true)"
+  >
+    Masqués ({{ hiddenCount() }})
+  </button>
+</div>
+
+@if (error()) {
+  <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+}
+
+<ul class="admin-list">
+  @for (wird of visible(); track wird.id) {
+    <li class="surface-card wird-row" [class.wird-row--hidden]="wird.hidden">
+      <div class="wird-row__head">
+        <span class="wird-row__icon"
+          ><app-icon [name]="wird.visibility === 'private' ? 'lock' : 'book'" [size]="22"
+        /></span>
+        <div class="wird-row__identity">
+          <strong>{{ label(wird) }}</strong>
+          <span class="admin-muted">{{ wird.author || 'Auteur sans nom' }}</span>
+        </div>
+        @if (wird.hidden) {
+          <button
+            type="button"
+            class="icon-button wird-row__action"
+            [attr.aria-label]="'Réafficher ' + label(wird)"
+            title="Réafficher"
+            [disabled]="busy()"
+            (click)="unhide(wird)"
+          >
+            <app-icon name="eye" [size]="22" />
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="icon-button wird-row__action wird-row__action--hide"
+            [attr.aria-label]="'Masquer ' + label(wird)"
+            title="Masquer"
+            (click)="openHide(wird, hideSheet)"
+          >
+            <app-icon name="eyeOff" [size]="22" />
+          </button>
+        }
+      </div>
+      @if (wird.description) {
+        <p class="wird-row__description">{{ wird.description }}</p>
+      }
+      <div class="wird-row__facts">
+        <span><app-icon name="calendar" [size]="18" />{{ date(wird.createdAt) }}</span>
+        <span
+          ><app-icon name="users" [size]="18" />{{ wird.participants }} participant{{
+            wird.participants > 1 ? 's' : ''
+          }}</span
+        >
+      </div>
+      @if (wird.hidden) {
+        <span class="admin-badge"
+          ><app-icon name="eyeOff" [size]="16" />Masqué{{
+            wird.reason ? ' · ' + wird.reason : ''
+          }}</span
+        >
+      }
+    </li>
+  } @empty {
+    @if (loaded()) {
+      <li class="admin-muted">Aucun wird trouvé.</li>
+    }
+  }
+</ul>
 
 <section class="surface-card admin-wirds__link">
-  <label for="admin-wird-link">Masquer un wird signalé (lien)</label>
+  <h2>Un wird signalé ?</h2>
+  <p class="admin-hint">
+    Collez son lien. Un wird masqué n’est plus visible ni accessible, sauf pour son créateur, qui
+    est prévenu. Rien n’est supprimé. Les wirds avec code n’apparaissent dans la liste que masqués,
+    sans leur contenu.
+  </p>
+  <label for="admin-wird-link" class="visually-hidden">Lien du wird signalé</label>
   <input
     id="admin-wird-link"
     autocomplete="off"
@@ -17,57 +112,9 @@
     [disabled]="!link.value.trim()"
     (click)="openHideByLink(hideSheet)"
   >
-    Masquer ce wird
+    <app-icon name="eyeOff" [size]="20" />Masquer ce wird
   </button>
 </section>
-
-@if (error()) {
-  <p class="feedback feedback--error" role="alert">{{ error() }}</p>
-}
-
-<label for="admin-wird-search" class="visually-hidden">Rechercher un wird</label>
-<input
-  id="admin-wird-search"
-  type="search"
-  class="admin-wirds__search"
-  placeholder="Titre, auteur ou description"
-  [formControl]="search"
-/>
-
-<ul class="admin-list">
-  @for (wird of visible(); track wird.id) {
-    <li class="surface-card">
-      @if (wird.hidden) {
-        <span class="admin-badge">Masqué{{ wird.reason ? ' · ' + wird.reason : '' }}</span>
-      }
-      <strong>{{ label(wird) }}</strong>
-      @if (wird.description) {
-        <span class="admin-muted admin-wirds__description">{{ wird.description }}</span>
-      }
-      <span class="admin-muted"
-        >{{ wird.author || 'Auteur sans nom' }} · {{ date(wird.createdAt) }} ·
-        {{ wird.participants }} participants</span
-      >
-      @if (wird.hidden) {
-        <button type="button" class="admin-link" [disabled]="busy()" (click)="unhide(wird)">
-          Réafficher
-        </button>
-      } @else {
-        <button
-          type="button"
-          class="admin-link admin-link--danger"
-          (click)="openHide(wird, hideSheet)"
-        >
-          Masquer
-        </button>
-      }
-    </li>
-  } @empty {
-    @if (loaded()) {
-      <li class="admin-muted">Aucun wird trouvé.</li>
-    }
-  }
-</ul>
 
 <app-bottom-sheet #hideSheet panelId="admin-hide-wird" title="Masquer ce wird ?">
   <div class="form-stack">
@@ -89,7 +136,7 @@
       [disabled]="busy()"
       (click)="hide(hideSheet)"
     >
-      Masquer
+      <app-icon name="eyeOff" [size]="22" />Masquer
     </button>
   </div>
 </app-bottom-sheet>
