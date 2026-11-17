@@ -3,7 +3,7 @@
 }
 @if (selected(); as wird) {
   <app-wird-header
-    [allowDuplicate]="true"
+    [allowDuplicate]="wird.isOwner === true"
     [canManage]="wird.isOwner === true"
     (editRequested)="edit()"
     (deleteRequested)="openDelete()"
@@ -28,42 +28,43 @@
       [completed]="store.completed(wird.id)"
       [target]="wird.target"
     />
-    <div class="participation-summary__stats">
-      <div class="participation-summary__stat">
-        <span class="participation-summary__dot" aria-hidden="true"></span>
-        <strong>{{ store.available(wird.id) | number }}</strong
-        ><span>{{ 'à prendre' | t }}</span>
-      </div>
-      @if (wird.target - store.completed(wird.id) - store.available(wird.id) > 0) {
+    @if (store.completed(wird.id) < wird.target) {
+      <div class="participation-summary__stats">
         <div class="participation-summary__stat">
-          <span
-            class="participation-summary__dot participation-summary__dot--reserved"
-            aria-hidden="true"
-          ></span>
-          <strong>{{
-            wird.target - store.completed(wird.id) - store.available(wird.id) | number
-          }}</strong
-          ><span>{{ 'en cours' | t }}</span>
+          <span class="participation-summary__dot" aria-hidden="true"></span>
+          <strong>{{ store.available(wird.id) | number }}</strong><span>{{ 'à prendre' | t }}</span>
         </div>
-      }
-    </div>
+        @if (wird.target - store.completed(wird.id) - store.available(wird.id) > 0) {
+          <div class="participation-summary__stat">
+            <span
+              class="participation-summary__dot participation-summary__dot--reserved"
+              aria-hidden="true"
+            ></span>
+            <strong>{{
+              wird.target - store.completed(wird.id) - store.available(wird.id) | number
+            }}</strong><span>{{ 'en cours' | t }}</span>
+          </div>
+        }
+      </div>
+    }
   </section>
-  @if (wird.imageUrl; as image) {
-    <img class="wird-image" [src]="image" [alt]="wird.title" />
-  }
   @if (wird.audioUrl; as source) {
     <app-audio-player [source]="source" [title]="wird.title" />
   }
-  @if (wird.description?.trim()) {
-    <section class="wird-text">
-      <h2>{{ 'Description' | t }}</h2>
-      <p>{{ wird.description }}</p>
-    </section>
-  }
-  @if (wird.instructions?.trim()) {
-    <section class="wird-text">
-      <h2>{{ 'Consignes' | t }}</h2>
-      <p>{{ wird.instructions }}</p>
+  @if (wird.imageUrl || wird.description?.trim() || wird.instructions?.trim()) {
+    <section class="surface-card wird-about" [attr.aria-label]="'À propos de ce wird' | t">
+      @if (wird.imageUrl; as image) {
+        <img class="wird-image" [src]="image" [alt]="wird.title" />
+      }
+      @if (wird.description?.trim()) {
+        <p class="wird-text">{{ wird.description }}</p>
+      }
+      @if (wird.instructions?.trim()) {
+        <div class="wird-instructions">
+          <h2>{{ 'Consignes' | t }}</h2>
+          <p class="wird-text">{{ wird.instructions }}</p>
+        </div>
+      }
     </section>
   }
 
@@ -75,54 +76,19 @@
         [control]="quantity"
         [maximum]="store.available(wird.id)"
       />
-      <fieldset>
-        <legend>{{ 'Mon nom' | t }}</legend>
-        <div class="choice-list segmented-choice">
-          <button
-            type="button"
-            class="button button--outline"
-            [class.button--selected]="!useName()"
-            [attr.aria-pressed]="!useName()"
-            (click)="useName.set(false)"
-          >
-            {{ 'Sans nom' | t }}</button
-          ><button
-            type="button"
-            class="button button--outline"
-            [class.button--selected]="useName()"
-            [attr.aria-pressed]="useName()"
-            (click)="useName.set(true)"
-          >
-            {{ 'Mon nom' | t }}
-          </button>
-        </div>
-      </fieldset>
-      @if (useName()) {
-        <label for="name">{{ 'Votre nom affiché' | t }}</label
-        ><input
-          id="name"
-          autocomplete="given-name"
-          maxlength="60"
-          [placeholder]="'Ex. Awa' | t"
-          [formControl]="name"
-          aria-describedby="name-hint"
-          [attr.aria-invalid]="nameError()"
-          (blur)="nameTouched.set(true)"
-        />
-      }
-      @if (useName()) {
-        <p
-          id="name-hint"
-          class="participation-form__hint"
-          [class.participation-form__hint--error]="nameError()"
-        >
-          {{
-            nameError()
-              ? ('Écrivez votre nom, ou choisissez « Sans nom ».' | t)
-              : ('Ce nom sera visible avec votre part. Vous pouvez rester sans nom.' | t)
-          }}
-        </p>
-      }
+      <label class="participation-form__label" for="name"
+        >{{ 'Mon nom' | t }}<span class="field-optional">{{ 'facultatif' | t }}</span></label
+      ><input
+        id="name"
+        autocomplete="given-name"
+        maxlength="60"
+        [placeholder]="'Ex. Awa' | t"
+        [formControl]="name"
+        aria-describedby="name-hint"
+      />
+      <p id="name-hint" class="participation-form__hint">
+        {{ 'Visible avec votre part. Laissez vide pour rester anonyme.' | t }}
+      </p>
       <div class="participation-form__action" aria-live="polite">
         <button
           type="submit"

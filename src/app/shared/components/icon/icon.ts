@@ -16,7 +16,6 @@ const ICON_FILES = {
   prayer: 'hands-praying',
   book: 'book-open',
   heart: 'heart',
-  sparkle: 'sparkle',
   check: 'check',
   play: 'play',
   pause: 'pause',
@@ -41,6 +40,8 @@ const ICON_FILES = {
   minus: 'minus',
   clock: 'clock',
   close: 'x',
+  upload: 'upload-simple',
+  stop: 'stop',
 } as const;
 export type IconName = keyof typeof ICON_FILES;
 

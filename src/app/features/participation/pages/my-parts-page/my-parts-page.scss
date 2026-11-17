@@ -1,40 +1,43 @@
-.parts-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-bg-muted);
-  border-radius: 16px;
-  color: var(--color-primary);
-}
-.parts-search:focus-within {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-.parts-search input {
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font-size: 0.875rem;
-  min-height: 48px;
-  padding: 8px 0;
-}
-.parts-search input:focus-visible {
-  outline: none;
-}
-.parts-count {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  margin: 12px 0;
+@use '../../../../../styles/mixins';
+
+.parts-toolbar {
+  @include mixins.flex-row(var(--space-8));
+  margin-bottom: var(--space-4);
 }
 
-.device-options-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  margin-top: 16px;
-  font-size: var(--font-size-small);
+.parts-search {
+  @include mixins.flex-row(var(--space-8));
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--space-12);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-bg-muted);
+  border-radius: var(--radius-medium);
+  color: var(--color-primary);
+
+  &:focus-within {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    min-height: 48px;
+    padding: var(--space-8) 0;
+    border: 0;
+    background: transparent;
+    font-size: var(--font-size-small);
+  }
+
+  input:focus-visible {
+    outline: none;
+  }
+}
+
+.parts-filter {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
 }

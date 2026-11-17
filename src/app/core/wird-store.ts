@@ -207,18 +207,24 @@ export class WirdStore {
   async ensure(id: string): Promise<Wird | null> {
     if (!this.remote || !this.repository)
       return this.wirds().find((wird) => wird.id === id) ?? null;
-    const generation = this.generation;
-    const revision = this.revision;
-    const identity = await this.repository.identity();
-    const wird = await this.repository.getWird(id);
-    if (generation !== this.generation || identity !== (await this.repository.identity()))
-      return null;
-    if (revision !== this.revision) return this.wirds().find((item) => item.id === id) ?? null;
-    if (wird) {
-      this.revision++;
-      this.upsert(wird);
-    } else this.wirds.update((items) => items.filter((item) => item.id !== id));
-    return wird;
+    // A read that straddles the startup session is retried; an account switch still drops it.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const generation = this.generation;
+      const revision = this.revision;
+      const identity = await this.repository.identity();
+      const wird = await this.repository.getWird(id);
+      const current = await this.repository.identity();
+      if (identity !== null && current !== identity) return null;
+      if (generation !== this.generation || current !== identity) continue;
+      if (revision !== this.revision && this.wirds().some((item) => item.id === id))
+        return this.wirds().find((item) => item.id === id) ?? null;
+      if (wird) {
+        this.revision++;
+        this.upsert(wird);
+      } else this.wirds.update((items) => items.filter((item) => item.id !== id));
+      return wird;
+    }
+    return null;
   }
 
   async reservePart(

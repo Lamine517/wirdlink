@@ -46,8 +46,10 @@ describe('WirdLink navigation', () => {
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await harness.fixture.whenStable();
     harness.detectChanges();
-    expect(harness.routeNativeElement!.textContent).toContain('10 à lire');
-    harness.routeNativeElement!.querySelector<HTMLButtonElement>('article button')!.click();
+    expect(harness.routeNativeElement!.textContent).toContain('10 lectures');
+    harness
+      .routeNativeElement!.querySelector<HTMLButtonElement>('article .part-row__finish')!
+      .click();
     await harness.fixture.whenStable();
     harness.detectChanges();
     expect(harness.routeNativeElement!.textContent).toContain('Merci !');

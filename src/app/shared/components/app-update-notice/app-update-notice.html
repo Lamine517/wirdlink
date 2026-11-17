@@ -1,6 +1,6 @@
 @if (updates.available()) {
   <section class="update-notice" role="status">
-    <app-icon name="sparkle" [size]="20" />
+    <app-icon name="undo" [size]="20" />
     <div class="update-notice__copy">
       <p><strong>{{ (updates.unrecoverable() ? 'Cette version doit être actualisée.' : 'Une mise à jour est prête.') | t }}</strong></p>
       <p>{{ 'Actualisez pour utiliser la dernière version de WirdLink.' | t }}</p>

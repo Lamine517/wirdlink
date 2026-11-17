@@ -1,4 +1,4 @@
-import { groupParts, matchesPartSearch } from './part-groups';
+import { groupParts, groupState, matchesPartSearch, sortByState } from './part-groups';
 import { Part, Wird } from '../../../core/wird-store';
 
 const wirds: Wird[] = [
@@ -33,5 +33,14 @@ describe('Grouped parts', () => {
     expect(matchesPartSearch(group, 'eva')).toBeTrue();
     expect(matchesPartSearch(group, 'unknown')).toBeFalse();
     expect(matchesPartSearch(group, '')).toBeTrue();
+  });
+  it('tells taken, counting and finished wirds apart and lists counting ones first', () => {
+    const [group] = groupParts(wirds, parts);
+    expect(groupState(group, new Map())).toBe('taken');
+    expect(groupState(group, new Map([['d', 3]]))).toBe('progress');
+    const done = groupParts(wirds, parts.filter((part) => part.finished))[0];
+    expect(groupState(done, new Map())).toBe('done');
+    const sorted = sortByState([done, group], new Map([['d', 3]]));
+    expect(sorted[0]).toBe(group);
   });
 });

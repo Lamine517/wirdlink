@@ -35,19 +35,22 @@ describe('Native wird sharing', () => {
     return { fixture, navigate, button };
   }
 
-  it('opens an options menu before sharing and only exposes permitted actions', () => {
+  it('gives participants a direct share button and owners the full options menu', async () => {
     const { fixture, button } = setup();
-    expect(button.getAttribute('aria-label')).toBe('Plus d’options');
+    expect(button.getAttribute('aria-label')).toBe('Partager');
     button.click();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('dialog').open).toBeTrue();
-    expect(share).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.querySelector('.wird-menu').textContent).not.toContain(
-      'Supprimer',
-    );
+    await fixture.whenStable();
+    expect(share).toHaveBeenCalled();
     fixture.componentRef.setInput('canManage', true);
     fixture.componentRef.setInput('allowDuplicate', true);
     fixture.detectChanges();
+    const menuButton = fixture.nativeElement.querySelector(
+      '.wird-header__share',
+    ) as HTMLButtonElement;
+    expect(menuButton.getAttribute('aria-label')).toBe('Plus d’options');
+    menuButton.click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('dialog').open).toBeTrue();
     const menuText = fixture.nativeElement.querySelector('.wird-menu').textContent;
     expect(menuText).toContain('Modifier');
     expect(menuText).toContain('Dupliquer');
@@ -57,8 +60,6 @@ describe('Native wird sharing', () => {
   it('opens the native sheet with the canonical wird URL', async () => {
     const { fixture, navigate, button } = setup();
     button.click();
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('dialog .wird-menu button').click();
     await fixture.whenStable();
     expect(share).toHaveBeenCalledOnceWith({
       title: 'Notre wird',
@@ -71,9 +72,8 @@ describe('Native wird sharing', () => {
     share.and.rejectWith(new DOMException('Cancelled', 'AbortError'));
     const { fixture, navigate, button } = setup();
     button.click();
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('dialog .wird-menu button').click();
     await fixture.whenStable();
+    fixture.detectChanges();
     expect(navigate).not.toHaveBeenCalled();
     expect(button.disabled).toBeFalse();
   });
@@ -82,15 +82,11 @@ describe('Native wird sharing', () => {
     share.and.rejectWith(new DOMException('Unavailable', 'NotAllowedError'));
     const { fixture, navigate, button } = setup();
     button.click();
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('dialog .wird-menu button').click();
     await fixture.whenStable();
     expect(navigate).toHaveBeenCalledOnceWith('/partage/example');
     navigate.calls.reset();
     Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
     button.click();
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('dialog .wird-menu button').click();
     await fixture.whenStable();
     expect(navigate).toHaveBeenCalledOnceWith('/partage/example');
   });

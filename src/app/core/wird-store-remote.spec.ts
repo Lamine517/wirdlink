@@ -67,6 +67,31 @@ describe('WirdStore connected', () => {
     expect(store.wirds()).toEqual([]);
     expect(store.parts()).toEqual([]);
   });
+  it('opens a shared link even when the session settles during the first read', async () => {
+    let notify!: (identity: string | null) => void;
+    repository.watchIdentity = (listener) => {
+      notify = listener;
+      return () => undefined;
+    };
+    repository.identity.and.resolveTo(null);
+    repository.listWirds.and.resolveTo([]);
+    repository.listParts.and.resolveTo([]);
+    const store = new WirdStore([], repository);
+    let resolveFirst!: (value: Wird | null) => void;
+    repository.getWird.and.returnValues(
+      new Promise((done) => {
+        resolveFirst = done;
+      }),
+      Promise.resolve(wird),
+    );
+    const pending = store.ensure('one');
+    await Promise.resolve();
+    notify(null);
+    resolveFirst(wird);
+    expect(await pending).toEqual(wird);
+    expect(store.wirds().some((item) => item.id === 'one')).toBeTrue();
+  });
+
   it('does not restore a private response after switching accounts', async () => {
     const store = new WirdStore([], repository);
     await store.ready;

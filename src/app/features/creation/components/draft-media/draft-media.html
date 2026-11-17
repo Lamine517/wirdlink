@@ -1,48 +1,75 @@
 <div class="draft-media">
-  <button type="button" class="draft-media__picker" (click)="audioFile.click()">
-    <span class="draft-media__icon"><app-icon name="microphone" [size]="28" /></span
-    ><span
-      >{{ 'Ma voix' | t }}<small>{{ 'facultatif' | t }}</small></span
-    >
-  </button>
-  <input
-    #audioFile
-    hidden
-    id="draft-audio"
-    type="file"
-    accept="audio/*"
-    capture="user"
-    (change)="select($event, 'audio')"
-  />
-  @if (audio(); as media) {
-    <app-audio-player [source]="media.url" [title]="'Votre note vocale' | t" /><button
-      type="button"
-      class="draft-media__remove"
-      (click)="removeRequested.emit('audio')"
-    >
-      {{ 'Retirer la voix' | t }}
-    </button>
-  }
-  <button type="button" class="button button--outline" (click)="imageFile.click()">
-    <app-icon name="image" [size]="24" />{{ 'Ajouter une photo' | t }}
-  </button>
-  <input
-    #imageFile
-    hidden
-    id="draft-image"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    (change)="select($event, 'image')"
-  />
-  @if (image(); as media) {
-    <img
-      class="draft-media__preview"
-      [src]="media.url"
-      [attr.alt]="'Photo choisie pour le wird' | t"
-    /><button type="button" class="draft-media__remove" (click)="removeRequested.emit('image')">
-      {{ 'Retirer la photo' | t }}
-    </button>
-  }
+  <section class="draft-media__block" aria-labelledby="draft-voice-title">
+    <h2 id="draft-voice-title" class="draft-media__title">
+      <app-icon name="microphone" [size]="20" />{{ 'Ma voix' | t }}
+      <span class="field-optional">{{ 'facultatif' | t }}</span>
+    </h2>
+    @if (audio(); as media) {
+      <app-audio-player [source]="media.url" [title]="'Votre note vocale' | t" />
+      <button type="button" class="draft-media__remove" (click)="removeRequested.emit('audio')">
+        {{ 'Retirer la voix' | t }}
+      </button>
+    } @else if (recording()) {
+      <p class="draft-media__live" role="status">
+        <span class="draft-media__dot" aria-hidden="true"></span>
+        {{ 'Enregistrement' | t }} · <time>{{ duration(elapsed()) }}</time>
+      </p>
+      <button type="button" class="button button--danger" (click)="stopRecording()">
+        <app-icon name="stop" [size]="22" />{{ 'Arrêter' | t }}
+      </button>
+    } @else {
+      <div class="draft-media__choices">
+        @if (canRecord) {
+          <button type="button" class="button button--accent" (click)="startRecording()">
+            <app-icon name="microphone" [size]="22" />{{ 'Enregistrer' | t }}
+          </button>
+        }
+        <button type="button" class="button button--outline" (click)="audioFile.click()">
+          <app-icon name="upload" [size]="22" />{{ 'Importer' | t }}
+        </button>
+      </div>
+    }
+    <input
+      #audioFile
+      hidden
+      id="draft-audio"
+      type="file"
+      accept="audio/*"
+      (change)="select($event, 'audio')"
+    />
+    @if (recordError()) {
+      <p class="field-error" role="alert">{{ recordError() | t }}</p>
+    }
+  </section>
+
+  <section class="draft-media__block" aria-labelledby="draft-photo-title">
+    <h2 id="draft-photo-title" class="draft-media__title">
+      <app-icon name="image" [size]="20" />{{ 'Photo' | t }}
+      <span class="field-optional">{{ 'facultatif' | t }}</span>
+    </h2>
+    @if (image(); as media) {
+      <img
+        class="draft-media__preview"
+        [src]="media.url"
+        [attr.alt]="'Photo choisie pour le wird' | t"
+      />
+      <button type="button" class="draft-media__remove" (click)="removeRequested.emit('image')">
+        {{ 'Retirer la photo' | t }}
+      </button>
+    } @else {
+      <button type="button" class="button button--outline" (click)="imageFile.click()">
+        <app-icon name="upload" [size]="22" />{{ 'Ajouter une photo' | t }}
+      </button>
+    }
+    <input
+      #imageFile
+      hidden
+      id="draft-image"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      (change)="select($event, 'image')"
+    />
+  </section>
   @if (error()) {
     <p class="field-error" role="alert">{{ error() | t }}</p>
   }

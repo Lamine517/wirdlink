@@ -19,8 +19,11 @@ describe('My grouped parts', () => {
     }
     store.reserve('salat-fatihi', 5, 'Awa');
     const harness = await RouterTestingHarness.create('/mes-parts');
-    expect(harness.routeNativeElement!.querySelectorAll('article').length).toBe(2);
-    expect(harness.routeNativeElement!.querySelector('article')?.textContent).toContain('360');
+    const cards = harness.routeNativeElement!.querySelectorAll('article');
+    expect(cards.length).toBe(2);
+    expect(cards[0].textContent).toContain('Pris');
+    expect(cards[1].textContent).toContain('Terminé');
+    expect(cards[1].textContent).toContain('360');
     const search = harness.routeNativeElement!.querySelector<HTMLInputElement>('#parts-search')!;
     search.value = 'mamy';
     search.dispatchEvent(new Event('input'));

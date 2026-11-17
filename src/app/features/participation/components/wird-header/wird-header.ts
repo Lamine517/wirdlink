@@ -13,15 +13,28 @@ import { Icon } from '../../../../shared/components/icon/icon';
   template: `<header>
       <div class="wird-header__toolbar">
         <app-back-button />
-        <button
-          type="button"
-          class="wird-header__share"
-          (click)="menu.open()"
-          [attr.aria-label]="'Plus d’options' | t"
-          [title]="'Plus d’options' | t"
-        >
-          <app-icon name="more" />
-        </button>
+        @if (canManage() || allowDuplicate()) {
+          <button
+            type="button"
+            class="icon-button wird-header__share"
+            (click)="menu.open()"
+            [attr.aria-label]="'Plus d’options' | t"
+            [title]="'Plus d’options' | t"
+          >
+            <app-icon name="more" />
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="icon-button wird-header__share"
+            [disabled]="sharing()"
+            (click)="share(shareLink() ?? '')"
+            [attr.aria-label]="'Partager' | t"
+            [title]="'Partager' | t"
+          >
+            <app-icon name="share" />
+          </button>
+        }
       </div>
       <h1>{{ title() }}</h1>
     </header>
@@ -78,17 +91,6 @@ import { Icon } from '../../../../shared/components/icon/icon';
       justify-content: space-between;
       gap: 12px;
       min-height: 48px;
-    }
-    .wird-header__share {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      flex-shrink: 0;
-      border-radius: 16px;
-      background: var(--color-bg-muted);
-      color: var(--color-primary);
-      border: 0;
     }
     h1 {
       text-align: center;

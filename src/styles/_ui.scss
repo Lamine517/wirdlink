@@ -85,6 +85,51 @@ button {
   }
 }
 
+.status-chip {
+  @include mixins.flex-row(var(--space-4));
+  display: inline-flex;
+  flex-shrink: 0;
+  min-height: 28px;
+  padding: var(--space-2) var(--space-12);
+  border: 2px solid var(--color-progress-empty);
+  border-radius: 99px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  font-weight: tokens.$font-weight-extrabold;
+  white-space: nowrap;
+
+  &--progress {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+  }
+
+  &--done {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: tokens.$touch-target-min;
+  height: tokens.$touch-target-min;
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: var(--color-bg-muted);
+  color: var(--color-primary);
+  text-decoration: none;
+
+  &--active {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+}
+
 .text-secondary {
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);

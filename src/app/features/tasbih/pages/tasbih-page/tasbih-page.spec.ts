@@ -32,9 +32,7 @@ describe('Tasbih interaction', () => {
 
   it('vibrates once on reaching the goal and requires an explicit final confirmation', async () => {
     const harness = await RouterTestingHarness.create('/mes-parts/' + part.id + '/compteur');
-    expect(
-      harness.routeNativeElement!.querySelector<HTMLButtonElement>('.tasbih__finish')!.disabled,
-    ).toBeTrue();
+    expect(harness.routeNativeElement!.querySelector('.tasbih__finish')).toBeNull();
     for (let count = 0; count < 3; count++) click(harness, '.tasbih__circle');
     expect(harness.routeNativeElement!.querySelector('.tasbih__guidance')!.textContent).toContain(
       'Objectif atteint',
@@ -99,6 +97,32 @@ describe('Tasbih interaction', () => {
       harness.routeNativeElement!.querySelector<HTMLButtonElement>('.tasbih__finish')!.disabled,
     ).toBeTrue();
     expect(TestBed.inject(WirdStore).parts()[0].finished).toBeFalse();
+  });
+
+  it('lights one bead per tap and shows taken, counting and reached states', async () => {
+    const harness = await RouterTestingHarness.create('/mes-parts/' + part.id + '/compteur');
+    const root = harness.routeNativeElement!;
+    expect(root.querySelectorAll('.tasbih__bead').length).toBe(3);
+    expect(root.querySelector('.tasbih-header .status-chip')!.textContent).toContain('Pris');
+    click(harness, '.tasbih__circle');
+    expect(root.querySelectorAll('.tasbih__bead--lit').length).toBe(1);
+    expect(root.querySelector('.tasbih-header .status-chip')!.textContent).toContain('En cours');
+    click(harness, '.tasbih__circle');
+    click(harness, '.tasbih__circle');
+    expect(root.querySelectorAll('.tasbih__bead--lit').length).toBe(3);
+    expect(root.querySelector('.tasbih-header .status-chip')!.textContent).toContain(
+      'Objectif atteint',
+    );
+  });
+
+  it('turns a long share into rounds of 33 beads', async () => {
+    const long = TestBed.inject(WirdStore).reserve('salat-nabi', 100, '')!;
+    const harness = await RouterTestingHarness.create('/mes-parts/' + long.id + '/compteur');
+    const root = harness.routeNativeElement!;
+    expect(root.querySelectorAll('.tasbih__bead').length).toBe(33);
+    for (let count = 0; count < 34; count++) click(harness, '.tasbih__circle');
+    expect(root.querySelectorAll('.tasbih__bead--lit').length).toBe(1);
+    expect(root.querySelector('.tasbih__round')!.textContent).toContain('Tour 2 sur 4');
   });
 
   it('handles missing and already finished shares without an active counter', async () => {

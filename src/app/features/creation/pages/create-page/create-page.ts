@@ -19,7 +19,7 @@ export class CreatePage {
     salat: 'prayer',
     fatiha: 'book',
     istighfar: 'heart',
-    tahlil: 'sparkle',
+    tahlil: 'tap',
     custom: 'plus',
   } as const;
   protected readonly templates = [...WIRD_TEMPLATES].sort(

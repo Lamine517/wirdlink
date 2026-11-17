@@ -86,23 +86,30 @@ input[aria-invalid='true'] {
   font-size: 1rem;
 }
 
+.wird-about {
+  margin-block: var(--space-16) var(--space-24);
+}
+
 .wird-text {
-  margin: 16px 0;
-}
-.wird-text h2 {
-  font-size: 1rem;
-  margin: 0 0 8px;
-}
-.wird-text p {
   white-space: pre-line;
-  font-size: var(--font-size-small);
+  line-height: 1.5;
+}
+
+.wird-instructions {
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--color-bg-muted);
+
+  h2 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--font-size-small);
+    color: var(--color-primary);
+  }
 }
 
 .wird-image {
   display: block;
   width: 100%;
-  max-height: 28rem;
-  object-fit: contain;
-  border-radius: var(--radius-large);
-  margin-block: var(--space-16);
+  max-height: 16rem;
+  object-fit: cover;
+  border-radius: var(--radius-medium);
 }

@@ -13,6 +13,18 @@ import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-s
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { Icon } from '../../../../shared/components/icon/icon';
 
+/** Beads in one turn of a classic prayer string. */
+const ROUND = 33;
+
+/** Places beads clockwise from the bottom marker bead, in a 200×200 box. */
+function beadPositions(size: number): { x: number; y: number }[] {
+  const step = (2 * Math.PI) / (size + 1);
+  return Array.from({ length: size }, (_, index) => {
+    const angle = Math.PI / 2 + (index + 1) * step;
+    return { x: 100 + 86 * Math.cos(angle), y: 100 + 86 * Math.sin(angle) };
+  });
+}
+
 @Component({
   selector: 'app-tasbih-page',
   imports: [Translate, DecimalPipe, BackButton, BottomSheet, EmptyState, Icon],
@@ -43,8 +55,18 @@ export class TasbihPage {
   protected readonly reached = computed(() =>
     Boolean(this.part() && this.count() >= this.part()!.quantity),
   );
-  protected readonly progress = computed(() =>
-    this.part() ? (this.count() / this.part()!.quantity) * 100 : 0,
+  protected readonly roundSize = computed(() => Math.min(ROUND, this.part()?.quantity ?? ROUND));
+  protected readonly beads = computed(() => beadPositions(this.roundSize()));
+  protected readonly lit = computed(() => {
+    const count = this.count();
+    if (count === 0) return 0;
+    return this.reached() ? this.roundSize() : ((count - 1) % this.roundSize()) + 1;
+  });
+  protected readonly round = computed(() =>
+    Math.max(1, Math.ceil(this.count() / this.roundSize())),
+  );
+  protected readonly rounds = computed(() =>
+    Math.ceil((this.part()?.quantity ?? 0) / this.roundSize()),
   );
   protected readonly confirmReset = signal(false);
   protected readonly finishing = signal(false);

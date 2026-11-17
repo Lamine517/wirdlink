@@ -128,7 +128,6 @@ export class ParticipatePage {
       .wirds()
       .find((wird) => wird.id === this.params().get('id') && this.access.canRead(wird.id)),
   );
-  protected readonly useName = signal(false);
   protected readonly message = signal('');
   protected readonly reserved = signal(false);
   private requestId = crypto.randomUUID();
@@ -145,12 +144,10 @@ export class ParticipatePage {
   private readonly formValue = toSignal(this.form.valueChanges, {
     initialValue: this.form.getRawValue(),
   });
-  protected readonly nameTouched = signal(false);
   protected readonly canReserve = computed(() => {
     const value = this.formValue();
     const wird = this.selected();
     const quantity = value.quantity;
-    const name = value.name?.trim() ?? '';
     return (
       !this.reserved() &&
       this.network.online() &&
@@ -159,28 +156,15 @@ export class ParticipatePage {
       Number.isSafeInteger(quantity) &&
       quantity >= 1 &&
       quantity <= this.store.available(wird.id) &&
-      (!this.useName() || (name.length > 0 && this.name.valid))
+      this.name.valid
     );
   });
-  protected readonly nameError = computed(() => {
-    const name = this.formValue().name?.trim() ?? '';
-    return this.useName() && this.nameTouched() && (name.length === 0 || this.name.invalid);
-  });
   protected readonly guidance = computed(() => {
-    const value = this.formValue().quantity;
     const wird = this.selected();
     if (!this.network.online()) return 'Reconnectez-vous pour commencer une part.';
     if (!wird || this.store.available(wird.id) === 0)
       return 'Toutes les parts sont prises pour le moment.';
-    if (
-      typeof value !== 'number' ||
-      !Number.isSafeInteger(value) ||
-      value < 1 ||
-      value > this.store.available(wird.id)
-    ) {
-      return 'Choisissez une quantité disponible pour activer « Je commence ».';
-    }
-    return 'Écrivez votre nom ou choisissez « Sans nom » pour continuer.';
+    return 'Choisissez une quantité disponible pour activer « Je commence ».';
   });
 
   constructor() {
@@ -210,16 +194,11 @@ export class ParticipatePage {
       return;
     }
     if (!this.canReserve()) {
-      this.nameTouched.set(true);
-      this.message.set(
-        this.useName() && (!this.name.value.trim() || this.name.invalid)
-          ? 'Écrivez votre nom (60 caractères maximum), ou choisissez Sans nom.'
-          : `Choisissez un nombre entier entre 1 et ${this.store.available(wird.id)}.`,
-      );
+      this.message.set(`Choisissez un nombre entier entre 1 et ${this.store.available(wird.id)}.`);
       return;
     }
     this.reserved.set(true);
-    const name = this.useName() ? this.name.value : '';
+    const name = this.name.value.trim();
     const value = JSON.stringify([wird.id, this.quantity.value, name]);
     if (value !== this.requestValue) {
       this.requestValue = value;

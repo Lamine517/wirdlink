@@ -42,7 +42,9 @@ export class HomePage {
   protected readonly recurrence = signal<RecurrenceFilter>('all');
   protected readonly showFinished = signal(false);
   protected readonly today = dakarToday();
-  protected readonly filtered = computed(() => this.recurrence() !== 'all' || this.visibility() !== 'all');
+  protected readonly filtered = computed(
+    () => this.recurrence() !== 'all' || this.visibility() !== 'all',
+  );
   private readonly matchingWirds = computed(() =>
     this.store
       .wirds()

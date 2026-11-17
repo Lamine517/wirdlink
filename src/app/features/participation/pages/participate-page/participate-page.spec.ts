@@ -50,24 +50,18 @@ describe('Guided participation form', () => {
     expect(submitButton()?.disabled).toBeFalse();
   });
 
-  it('requires a meaningful name only when Mon nom is selected', () => {
+  it('keeps the name optional and stores blank names as anonymous', async () => {
     enterQuantity('10');
-    const nameChoice = [
-      ...harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>('fieldset button'),
-    ].find((button) => button.textContent?.trim() === 'Mon nom')!;
-    nameChoice.click();
-    harness.detectChanges();
-    expect(submitButton()?.disabled).toBeTrue();
     const name = harness.routeNativeElement!.querySelector<HTMLInputElement>('#name')!;
     expect(name.placeholder).toBe('Ex. Awa');
+    expect(submitButton()?.disabled).toBeFalse();
     name.value = '   ';
     name.dispatchEvent(new Event('input'));
     harness.detectChanges();
-    expect(submitButton()?.disabled).toBeTrue();
-    name.value = 'Awa';
-    name.dispatchEvent(new Event('input'));
-    harness.detectChanges();
     expect(submitButton()?.disabled).toBeFalse();
+    submitButton()!.click();
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(WirdStore).parts()[0].name).toBe('');
   });
 
   it('rejects implicit keyboard submission until valid and then reserves once', async () => {
@@ -152,24 +146,19 @@ describe('Stable wird header', () => {
     TestBed.configureTestingModule({ providers: appConfig.providers });
   });
   afterEach(() => localStorage.removeItem('wirdlink.parts.v1'));
-  it('keeps the same title on both views and exposes an icon-only options menu before sharing', async () => {
+  it('keeps the same title on both views and only offers sharing to a participant', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
     const share = harness.routeNativeElement!.querySelector<HTMLButtonElement>(
-      'app-wird-header button[aria-label="Plus d’options"]',
+      'app-wird-header button[aria-label="Partager"]',
     )!;
     expect(share.textContent!.trim()).toBe('');
     expect(share.querySelector('app-icon')).not.toBeNull();
-    share.click();
-    harness.detectChanges();
     expect(
-      harness.routeNativeElement!.querySelector<HTMLDialogElement>('#wird-options')!.open,
-    ).toBeTrue();
-    expect(harness.routeNativeElement!.querySelector('#wird-options')!.textContent).toContain(
-      'Partager',
-    );
-    harness.routeNativeElement!.querySelector<HTMLDialogElement>('#wird-options')!.close();
-    expect(harness.routeNativeElement!.querySelector('.participation-share')).toBeNull();
+      harness.routeNativeElement!.querySelector(
+        'app-wird-header button[aria-label="Plus d’options"]',
+      ),
+    ).toBeNull();
     await harness.navigateByUrl('/wird/salat-nabi/participants');
     expect(harness.routeNativeElement!.querySelector('h1')!.textContent).toBe('Salat ala Nabi');
   });

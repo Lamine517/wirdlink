@@ -2,7 +2,7 @@
   <app-back-button fallback="/mes-parts" />
   @if (part() && wird() && !part()?.finished) {
     <button
-      class="tasbih-options"
+      class="icon-button tasbih-options"
       type="button"
       [attr.aria-label]="'Options du compteur' | t"
       [title]="'Options du compteur' | t"
@@ -15,12 +15,24 @@
 @if (part(); as part) {
   @if (wird(); as wird) {
     <header class="tasbih-header">
-      <p><app-icon name="prayer" [size]="18" />{{ 'Mon tasbih' | t }}</p>
       <h1 dir="auto">{{ wird.title }}</h1>
-      @if (part.name) {
+      @if (!part.finished) {
         <span
-          >{{ 'Ma part ·' | t }}<bdi>{{ part.name }}</bdi></span
+          class="status-chip"
+          [class.status-chip--progress]="count() > 0 && !reached()"
+          [class.status-chip--done]="reached()"
         >
+          @if (reached()) {
+            <app-icon name="check" [size]="16" />{{ 'Objectif atteint' | t }}
+          } @else if (count() > 0) {
+            {{ 'En cours' | t }}
+          } @else {
+            {{ 'Pris' | t }}
+          }
+        </span>
+      }
+      @if (part.name) {
+        <bdi class="tasbih-header__name">{{ part.name }}</bdi>
       }
     </header>
     @if (!part.finished) {
@@ -31,7 +43,6 @@
         <button
           class="tasbih__circle"
           [class.tasbih__circle--complete]="reached()"
-          [style.--counter-progress]="progress() + '%'"
           type="button"
           [disabled]="reached() || finishing()"
           [attr.aria-label]="
@@ -41,20 +52,39 @@
           (click)="increment()"
           (keydown)="preventRepeat($event)"
         >
+          <svg class="tasbih__beads" viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="tasbih__string" cx="100" cy="100" r="86" />
+            <circle class="tasbih__marker" cx="100" cy="186" r="9" />
+            @for (bead of beads(); track $index) {
+              <circle
+                class="tasbih__bead"
+                [class.tasbih__bead--lit]="$index < lit()"
+                [class.tasbih__bead--last]="$index === lit() - 1 && !reached()"
+                [attr.cx]="bead.x"
+                [attr.cy]="bead.y"
+                r="6.5"
+              />
+            }
+          </svg>
           <span class="tasbih__center" aria-hidden="true">
+            @if (reached()) {
+              <app-icon name="check" [size]="40" />
+            }
             <strong class="tasbih__value">{{ count() | number }}</strong>
             <span class="tasbih__target">{{ 'sur {target}' | t: { target: part.quantity } }}</span>
-            <span class="tasbih__tap">
-              @if (reached()) {
-                <app-icon name="check" [size]="22" /><span>{{ 'Terminé' | t }}</span>
-              } @else {
-                <app-icon name="tap" [size]="22" /><span>{{ '+1 lecture' | t }}</span>
-              }
-            </span>
+            @if (rounds() > 1 && !reached()) {
+              <span class="tasbih__round">{{
+                'Tour {round} sur {rounds}' | t: { round: round(), rounds: rounds() }
+              }}</span>
+            }
           </span>
         </button>
         <p class="tasbih__guidance" role="status">
-          {{ reached() ? ('Objectif atteint !' | t) : 'Touchez le grand cercle pour compter' }}
+          @if (reached()) {
+            {{ 'Objectif atteint !' | t }}
+          } @else {
+            <app-icon name="tap" [size]="20" />{{ 'Touchez le chapelet pour compter' | t }}
+          }
         </p>
         @if (!reached()) {
           <p class="tasbih__remaining">
@@ -69,27 +99,23 @@
         >
           <app-icon name="undo" [size]="20" />{{ 'Annuler le dernier appui' | t }}
         </button>
-        <button
-          type="button"
-          class="button button--primary tasbih__finish"
-          [disabled]="!reached() || !network.online() || finishing()"
-          (click)="finish()"
-        >
-          <app-icon name="check" [size]="22" />{{
-            finishing() ? ('Confirmation…' | t) : ('J’ai fini' | t)
-          }}
-        </button>
         @if (reached()) {
+          <button
+            type="button"
+            class="button button--primary tasbih__finish"
+            [disabled]="!network.online() || finishing()"
+            (click)="finish()"
+          >
+            <app-icon name="check" [size]="22" />{{
+              finishing() ? ('Confirmation…' | t) : ('J’ai fini' | t)
+            }}
+          </button>
           <p class="tasbih__hint">
             {{
               network.online()
                 ? ('Confirmez pour terminer votre part.' | t)
                 : ('Votre compteur est conservé. Reconnectez-vous pour confirmer.' | t)
             }}
-          </p>
-        } @else {
-          <p class="tasbih__hint">
-            {{ 'Vous pourrez confirmer une fois votre objectif atteint.' | t }}
           </p>
         }
       </section>
@@ -140,7 +166,7 @@
   } @else {
     <div class="tasbih-settings">
       @if (vibration.supported) {
-        <label class="tasbih-switch"
+        <label class="switch-field"
           ><span>{{ 'Vibrer à l’objectif' | t }}</span
           ><input
             type="checkbox"
@@ -148,7 +174,7 @@
             [checked]="counter.haptics().atGoal"
             (change)="changeVibration('atGoal', $event)"
         /></label>
-        <label class="tasbih-switch"
+        <label class="switch-field"
           ><span>{{ 'Vibrer à chaque appui' | t }}</span
           ><input
             type="checkbox"

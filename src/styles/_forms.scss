@@ -41,6 +41,12 @@ legend {
 .field-group p {
   margin: 0;
 }
+.field-optional {
+  margin-inline-start: var(--space-8);
+  font-size: var(--font-size-small);
+  font-weight: tokens.$font-weight-semibold;
+  color: var(--color-text-secondary);
+}
 .field-error {
   margin: 0;
   color: var(--color-feedback-error);
@@ -97,6 +103,50 @@ textarea {
 }
 .date-field > img {
   flex-shrink: 0;
+}
+
+.switch-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  min-height: 48px;
+  cursor: pointer;
+
+  input {
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 48px;
+    height: 28px;
+    min-height: 0;
+    padding: 2px;
+    border: 2px solid var(--color-text-secondary);
+    border-radius: 99px;
+    background: var(--color-bg-muted);
+    cursor: pointer;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-start: 2px;
+      top: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--color-text-secondary);
+    }
+
+    &:checked {
+      border-color: var(--color-text-primary);
+      background: var(--color-accent);
+    }
+
+    &:checked::after {
+      inset-inline-start: calc(100% - 22px);
+      background: var(--color-text-on-accent);
+    }
+  }
 }
 
 input:focus-visible,
