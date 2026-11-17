@@ -1,6 +1,6 @@
 # 0020 — Statistiques du créateur et offre organisateur
 
-Date : 17 novembre 2026. Statut : statistiques livrées ; offre organisateur reportée.
+Date : 17 novembre 2026. Statut : statistiques livrées ; offre organisateur validée, implémentation reportée.
 
 ## Statistiques globales du créateur
 
@@ -12,13 +12,50 @@ Date : 17 novembre 2026. Statut : statistiques livrées ; offre organisateur rep
 - Un wird « Une fois » compte pour un cycle ; le cycle en cours entre dans le total.
 - Pas de tableau de bord de toute l’application pour le responsable : non demandé à ce stade.
 
-## Offre organisateur (choix du responsable, non implémentés)
+## Offre organisateur (validée le 17 novembre 2026, non implémentée)
 
-- Contenu payant envisagé : statistiques détaillées, historique complet des cycles, plusieurs
-  responsables par wird, logo de la dahira, rappels SMS ou WhatsApp, plus de wirds privés.
-- Paiement de départ : transfert Wave ou Orange Money au numéro, puis activation manuelle.
-- Calendrier : plus tard, quand des dahiras utilisent réellement l’application.
+Principe : ne jamais retirer ce qui est déjà donné, ne jamais faire payer celui qui lit.
+Seul le responsable d’une dahira paie, pour des outils d’organisation.
 
-Restent à décider avant toute implémentation : prix et durée, limites de l’offre gratuite
-(nombre de wirds privés, profondeur de l’historique), sort des statistiques aujourd’hui gratuites
-pour les créateurs existants, fournisseur de rappels et son coût.
+Gratuit, sans limite de durée :
+
+- participer sans compte, Mes parts, tasbih, rappels dans l’application ;
+- wirds publics illimités ;
+- 3 wirds privés en cours au maximum (les wirds terminés ne comptent pas) ;
+- statistiques actuelles : résumé dans Mon profil et suivi de chaque wird sur 7 cycles.
+
+Offre organisateur :
+
+- wirds privés illimités ;
+- historique complet des cycles de chaque wird ;
+- jusqu’à 5 responsables par wird ;
+- logo de la dahira sur ses wirds ;
+- rappels SMS ou WhatsApp en recharge séparée, à prix coûtant plus une petite marge,
+  fixé après le choix du fournisseur.
+
+Prix et durée :
+
+- 2 000 F CFA par mois ou 20 000 F CFA par an ;
+- un mois d’essai gratuit, sans paiement préalable ;
+- membres fondateurs (20 premières dahiras) : 10 000 F CFA par an, conservé à vie.
+
+Règles de transition :
+
+- à l’expiration, rien n’est supprimé ni bloqué : les wirds privés existants continuent,
+  les participants ne voient aucune différence ; seuls la création d’un 4e wird privé
+  et l’affichage du logo sont désactivés ;
+- la limite de 3 wirds privés est annoncée un mois avant son application ; les créateurs
+  qui en ont déjà plus les conservent ;
+- l’offre n’est présentée qu’au créateur, au moment où il atteint une limite, sans bandeau
+  ni relance.
+
+Paiement : transfert Wave ou Orange Money au numéro de dons, puis activation manuelle par le
+responsable de WirdLink depuis une page qui lui est réservée (dahira, date de fin).
+
+Calendrier : implémentation quand des dahiras utilisent réellement l’application et sur
+demande explicite. Au 17 novembre 2026 : 2 créateurs, 6 wirds, au plus 3 wirds privés par
+créateur ; la limite gratuite ne touche donc personne.
+
+Restent à préciser à l’implémentation : rattachement d’une offre à un compte ou à une
+dahira, fournisseur de rappels, rôle administrateur pour l’activation, mention dans les
+Règles d’utilisation.
