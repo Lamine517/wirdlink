@@ -264,6 +264,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   Modifier: ['Edit', 'تعديل'],
   'Mon nom': ['My name', 'اسمي'],
   'Mon profil': ['My profile', 'ملفي الشخصي'],
+  'Modifier mon profil': ['Edit my profile', 'تعديل ملفي الشخصي'],
   'Mon tasbih': ['My tasbih', 'تسبيحي'],
   'Mon wird': ['My wird', 'وردي'],
   'Nom du wird': ['Wird name', 'اسم الورد'],

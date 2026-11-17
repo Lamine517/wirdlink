@@ -1,0 +1,21 @@
+@use '../../../../../styles/mixins';
+:host {
+  display: block;
+}
+.profile-form {
+  @include mixins.stack(var(--space-16));
+}
+.profile-form label {
+  display: block;
+  margin-bottom: var(--space-8);
+}
+.profile-form input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.profile-hint,
+.profile-form label span {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}

@@ -4,67 +4,26 @@
   <p class="profile-status" role="status">{{ message() | t }}</p>
 }
 <app-request-state
-  [skeleton]="true"
-  [loading]="loading()"
+  [loading]="auth.restoring()"
   [loadingLabel]="'Chargement du profil…' | t"
   [error]="error()"
-  [retryLabel]="!loaded() && auth.session() ? 'Réessayer' : ''"
-  (retry)="load()"
 />
 @if (auth.session(); as session) {
   <div class="profile-summary">
     <app-user-avatar [name]="session.displayName ?? ''" />
     <strong>{{ session.displayName || ('Votre compte' | t) }}</strong>
+    <a
+      class="icon-button profile-edit"
+      routerLink="/profil/modifier"
+      [attr.aria-label]="'Modifier mon profil' | t"
+      [title]="'Modifier mon profil' | t"
+      ><app-icon name="edit" [size]="22"
+    /></a>
   </div>
   @if (stats(); as stats) {
     @if (stats.wirds.length > 0) {
       <app-creator-stats [stats]="stats" [wirds]="ownedWirds()" />
     }
-  }
-  @if (loaded()) {
-    <form class="profile-form" [formGroup]="form" (ngSubmit)="save()">
-      <div>
-        <label for="profile-first-name">{{ 'Prénom' | t }}</label>
-        <input
-          id="profile-first-name"
-          formControlName="firstName"
-          autocomplete="given-name"
-          maxlength="60"
-          [placeholder]="'Votre prénom' | t"
-        />
-      </div>
-      <div>
-        <label for="profile-last-name">{{ 'Nom' | t }}</label>
-        <input
-          id="profile-last-name"
-          formControlName="lastName"
-          autocomplete="family-name"
-          maxlength="60"
-          [placeholder]="'Votre nom' | t"
-        />
-      </div>
-      <div>
-        <label for="profile-organization"
-          >{{ 'Organisation ou dahira' | t }}<span>{{ '(facultatif)' | t }}</span></label
-        >
-        <input
-          id="profile-organization"
-          formControlName="organization"
-          maxlength="120"
-          [placeholder]="'Ex. : Dahira de votre quartier' | t"
-        />
-      </div>
-      <p class="profile-hint">
-        {{ 'Votre nom et votre organisation apparaîtront comme auteur de vos wirds.' | t }}
-      </p>
-      <button
-        class="button button--primary"
-        type="submit"
-        [disabled]="busy() || deleting() || form.invalid || form.pristine || !network.online()"
-      >
-        <app-icon name="check" [size]="22" />{{ 'Enregistrer' | t }}
-      </button>
-    </form>
   }
   <div class="profile-actions">
     <button
@@ -84,7 +43,7 @@
       {{ 'Supprimer mon compte' | t }}
     </button>
   </div>
-} @else if (!loading() && !message()) {
+} @else if (!auth.restoring() && !message()) {
   <p>{{ 'Connectez-vous au moment de publier pour retrouver votre profil.' | t }}</p>
 }
 <app-bottom-sheet #deleteSheet panelId="delete-account" [title]="'Supprimer votre compte ?' | t">

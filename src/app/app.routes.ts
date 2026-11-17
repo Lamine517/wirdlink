@@ -98,6 +98,14 @@ export const routes: Routes = [
     title: 'Mon profil · WirdLink',
   },
   {
+    path: 'profil/modifier',
+    loadComponent: () =>
+      import('./features/profile/pages/profile-edit-page/profile-edit-page').then(
+        (m) => m.ProfileEditPage,
+      ),
+    title: 'Modifier mon profil · WirdLink',
+  },
+  {
     path: 'connexion',
     loadComponent: () =>
       import('./features/auth/pages/sign-in-page/sign-in-page').then((m) => m.SignInPage),

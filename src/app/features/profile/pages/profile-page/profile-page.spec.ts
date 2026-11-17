@@ -1,6 +1,7 @@
 import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { Router } from '@angular/router';
 import { appConfig } from '../../../../app.config';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
@@ -46,6 +47,13 @@ describe('Profile and account actions', () => {
     await harness.navigateByUrl('/profil');
     await harness.fixture.whenStable();
     harness.detectChanges();
+    expect(harness.routeNativeElement!.querySelector('form')).toBeNull();
+    expect(harness.routeNativeElement!.querySelector('.profile-edit')?.getAttribute('href')).toBe(
+      '/profil/modifier',
+    );
+    await harness.navigateByUrl('/profil/modifier');
+    await harness.fixture.whenStable();
+    harness.detectChanges();
     gateway.saveProfile.and.resolveTo();
     const input =
       harness.routeNativeElement!.querySelector<HTMLInputElement>('#profile-organization')!;
@@ -61,6 +69,7 @@ describe('Profile and account actions', () => {
       lastName: 'Ndiaye',
       organization: 'Dahira du quartier',
     });
+    expect(TestBed.inject(Router).url).toBe('/profil');
     expect(harness.routeNativeElement!.textContent).toContain('Profil enregistré');
   });
 

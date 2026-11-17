@@ -1,0 +1,59 @@
+<app-back-button />
+<h1>{{ 'Modifier mon profil' | t }}</h1>
+<app-request-state
+  [skeleton]="true"
+  [loading]="loading()"
+  [loadingLabel]="'Chargement du profil…' | t"
+  [error]="error()"
+  [retryLabel]="!loaded() && auth.session() ? 'Réessayer' : ''"
+  (retry)="load()"
+/>
+@if (auth.session()) {
+  @if (loaded()) {
+    <form class="profile-form" [formGroup]="form" (ngSubmit)="save()">
+      <div>
+        <label for="profile-first-name">{{ 'Prénom' | t }}</label>
+        <input
+          id="profile-first-name"
+          formControlName="firstName"
+          autocomplete="given-name"
+          maxlength="60"
+          [placeholder]="'Votre prénom' | t"
+        />
+      </div>
+      <div>
+        <label for="profile-last-name">{{ 'Nom' | t }}</label>
+        <input
+          id="profile-last-name"
+          formControlName="lastName"
+          autocomplete="family-name"
+          maxlength="60"
+          [placeholder]="'Votre nom' | t"
+        />
+      </div>
+      <div>
+        <label for="profile-organization"
+          >{{ 'Organisation ou dahira' | t }}<span>{{ '(facultatif)' | t }}</span></label
+        >
+        <input
+          id="profile-organization"
+          formControlName="organization"
+          maxlength="120"
+          [placeholder]="'Ex. : Dahira de votre quartier' | t"
+        />
+      </div>
+      <p class="profile-hint">
+        {{ 'Votre nom et votre organisation apparaîtront comme auteur de vos wirds.' | t }}
+      </p>
+      <button
+        class="button button--primary"
+        type="submit"
+        [disabled]="busy() || form.invalid || form.pristine || !network.online()"
+      >
+        <app-icon name="check" [size]="22" />{{ 'Enregistrer' | t }}
+      </button>
+    </form>
+  }
+} @else if (!loading()) {
+  <p>{{ 'Connectez-vous au moment de publier pour retrouver votre profil.' | t }}</p>
+}

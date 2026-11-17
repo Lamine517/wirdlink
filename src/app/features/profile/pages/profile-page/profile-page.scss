@@ -2,7 +2,6 @@
 :host {
   display: block;
 }
-.profile-form,
 .profile-actions {
   @include mixins.stack(var(--space-16));
 }
@@ -13,20 +12,11 @@
   @include mixins.flex-row(var(--space-12));
   margin-bottom: var(--space-24);
   overflow-wrap: anywhere;
-}
-.profile-form label {
-  display: block;
-  margin-bottom: var(--space-8);
-}
-.profile-form input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-}
-.profile-hint,
-.profile-form label span {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-small);
+
+  strong {
+    flex: 1;
+    min-width: 0;
+  }
 }
 .profile-status {
   color: var(--color-primary);
