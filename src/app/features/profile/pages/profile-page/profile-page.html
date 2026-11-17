@@ -16,6 +16,11 @@
     <app-user-avatar [name]="session.displayName ?? ''" />
     <strong>{{ session.displayName || ('Votre compte' | t) }}</strong>
   </div>
+  @if (stats(); as stats) {
+    @if (stats.wirds.length > 0) {
+      <app-creator-stats [stats]="stats" [wirds]="ownedWirds()" />
+    }
+  }
   @if (loaded()) {
     <form class="profile-form" [formGroup]="form" (ngSubmit)="save()">
       <div>

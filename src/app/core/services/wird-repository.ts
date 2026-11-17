@@ -16,8 +16,13 @@ export interface WirdStats {
   participants: number;
   days: { day: string; finished: number; reserved: number }[];
 }
+export interface CreatorStats {
+  participants: number;
+  wirds: { id: string; days: { day: string; finished: number }[] }[];
+}
 export interface WirdRepository {
   stats?(id: string): Promise<WirdStats | null>;
+  creatorStats?(): Promise<CreatorStats | null>;
   watchIdentity?(listener: (id: string | null) => void): () => void;
   update(id: string, changes: WirdChanges): Promise<Wird>;
   delete(id: string): Promise<void>;

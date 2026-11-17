@@ -1,0 +1,45 @@
+<section class="surface-card creator-stats" aria-labelledby="creator-stats-title">
+  <h2 id="creator-stats-title">{{ 'Mes wirds en chiffres' | t }}</h2>
+  <div class="creator-stats__totals">
+    <p>
+      <strong>{{ rows().length | number }}</strong>
+      {{ (rows().length > 1 ? 'wirds publiés' : 'wird publié') | t }}
+    </p>
+    <p>
+      <strong>{{ stats().participants | number }}</strong>
+      {{ (stats().participants > 1 ? 'participants' : 'participant') | t }}
+    </p>
+    <p>
+      <strong>{{ finished() | number }}</strong>
+      {{ 'lectures terminées' | t }}
+    </p>
+    <p>
+      <strong>{{ reached() | number }}</strong>
+      {{ (reached() > 1 ? 'objectifs atteints' : 'objectif atteint') | t }}
+    </p>
+  </div>
+  @if (total() > 0) {
+    <p class="creator-stats__summary">
+      {{ 'Objectif atteint {count} fois sur {total}' | t: { count: reached(), total: total() } }}
+    </p>
+  }
+  <ul class="creator-stats__list">
+    @for (row of rows(); track row.id) {
+      <li>
+        <a [routerLink]="['/wird', row.id, 'participants']">
+          <span class="creator-stats__name">
+            <strong>{{ row.title }}</strong>
+            <span>{{ row.finished | number }} {{ 'lectures terminées' | t }}</span>
+          </span>
+          <span class="creator-stats__ratio">
+            @if (row.total > 0 && row.reached === row.total) {
+              <app-icon name="check" [size]="16" />
+            }
+            {{ '{count} sur {total}' | t: { count: row.reached, total: row.total } }}
+          </span>
+          <app-icon class="creator-stats__arrow" name="next" [size]="18" />
+        </a>
+      </li>
+    }
+  </ul>
+</section>

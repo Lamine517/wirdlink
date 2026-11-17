@@ -10,6 +10,7 @@ import {
 import { publicationContentType, publicationExtension } from '../media-file';
 import type { PublicationReceipt, PublicationRequest } from '../services/frontend-gateway';
 import type {
+  CreatorStats,
   PartMutation,
   WirdRepository,
   WirdChanges,
@@ -305,6 +306,28 @@ export class SupabaseWirdRepository implements WirdRepository {
             day: date,
             finished: day['finished'] === null ? 0 : integer(day['finished'], 0),
             reserved: day['reserved'] === null ? 0 : integer(day['reserved'], 0),
+          };
+        }),
+      };
+    });
+  }
+  creatorStats(): Promise<CreatorStats | null> {
+    return this.run(async (client) => {
+      const data = await this.rpc(client, 'creator_stats');
+      if (data === null) return null;
+      const row = record(data);
+      return {
+        participants: integer(row['participants'], 0),
+        wirds: array(row['wirds']).map((value) => {
+          const wird = record(value);
+          return {
+            id: string(wird['id']),
+            days: array(wird['days']).map((entry) => {
+              const day = record(entry);
+              const date = string(day['day']);
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new ServiceUnavailableError();
+              return { day: date, finished: integer(day['finished'], 0) };
+            }),
           };
         }),
       };

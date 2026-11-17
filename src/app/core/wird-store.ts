@@ -1,4 +1,5 @@
 import {
+  CreatorStats,
   WIRD_REPOSITORY,
   WirdRepository,
   WirdChanges,
@@ -276,6 +277,16 @@ export class WirdStore {
     const generation = this.generation;
     const identity = await this.repository.identity();
     const stats = await this.repository.stats(id);
+    return generation === this.generation && identity === (await this.repository.identity())
+      ? stats
+      : null;
+  }
+
+  async creatorStats(): Promise<CreatorStats | null> {
+    if (!this.remote || !this.repository?.creatorStats) return null;
+    const generation = this.generation;
+    const identity = await this.repository.identity();
+    const stats = await this.repository.creatorStats();
     return generation === this.generation && identity === (await this.repository.identity())
       ? stats
       : null;

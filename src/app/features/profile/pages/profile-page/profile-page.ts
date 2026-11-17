@@ -17,6 +17,9 @@ import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-s
 import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { UserAvatar } from '../../../../shared/components/user-avatar/user-avatar';
 import { Icon } from '../../../../shared/components/icon/icon';
+import { WirdStore } from '../../../../core/wird-store';
+import type { CreatorStats as CreatorStatsData } from '../../../../core/services/wird-repository';
+import { CreatorStats } from '../../components/creator-stats/creator-stats';
 
 @Component({
   selector: 'app-profile-page',
@@ -28,6 +31,7 @@ import { Icon } from '../../../../shared/components/icon/icon';
     RequestState,
     UserAvatar,
     Icon,
+    CreatorStats,
   ],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
@@ -45,6 +49,11 @@ export class ProfilePage {
   protected readonly message = signal('');
   protected readonly deleting = signal(false);
   protected readonly deletionError = signal('');
+  private readonly store = inject(WirdStore);
+  protected readonly stats = signal<CreatorStatsData | null>(null);
+  protected readonly ownedWirds = computed(() =>
+    this.store.wirds().filter((wird) => wird.isOwner === true),
+  );
   private loadVersion = 0;
   private readonly userId = computed(() => this.auth.session()?.id ?? null);
   protected readonly form = new FormGroup({
@@ -65,6 +74,21 @@ export class ProfilePage {
       this.form.reset();
       this.loaded.set(false);
       void this.load();
+    });
+    effect((onCleanup) => {
+      const id = this.userId();
+      let active = true;
+      onCleanup(() => {
+        active = false;
+      });
+      this.stats.set(null);
+      if (!id) return;
+      this.store
+        .creatorStats()
+        .then((stats) => {
+          if (active) this.stats.set(stats);
+        })
+        .catch(() => undefined);
     });
   }
 
