@@ -7,9 +7,11 @@
     <app-audio-player [source]="source" [title]="wird().title" />
   }
   <app-bead-progress [completed]="completed()" [target]="wird().target" />
-  <p class="text-strong">
-    {{ 'Il reste {available} sur {target}' | t: { available: available(), target: wird().target } }}
-  </p>
+  @if (phase().kind !== 'closed' && phase().kind !== 'reached') {
+    <p class="text-strong">
+      {{ 'Il reste {available} sur {target}' | t: { available: available(), target: wird().target } }}
+    </p>
+  }
   @if (reserved() > 0) {
     <p class="text-secondary">{{ '{count} lectures en cours' | t: { count: reserved() } }}</p>
   }
