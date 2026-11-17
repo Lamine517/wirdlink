@@ -1,22 +1,7 @@
 <div class="filter-bar">
-  <div class="segmented-control" [attr.aria-label]="'État des wirds' | t">
-    <button
-      class="segmented-control__option"
-      [class.segmented-control__option--active]="status() === 'active'"
-      [attr.aria-pressed]="status() === 'active'"
-      (click)="status.set('active')"
-    >
-      {{ 'En cours' | t }}
-    </button>
-    <button
-      class="segmented-control__option"
-      [class.segmented-control__option--active]="status() === 'finished'"
-      [attr.aria-pressed]="status() === 'finished'"
-      (click)="status.set('finished')"
-    >
-      {{ 'Terminés' | t }}
-    </button>
-  </div>
+  <p class="filter-bar__count" aria-live="polite">
+    {{ resultCount() }} {{ (resultCount() > 1 ? ('wirds en cours' | t) : ('wird en cours' | t)) | t }}
+  </p>
   <button
     class="button button--outline button--compact"
     [attr.aria-expanded]="filterSheet.isOpen()"
@@ -28,22 +13,6 @@
 </div>
 <app-bottom-sheet #filterSheet panelId="filters" [title]="'Filtrer' | t">
   <div class="filter-sheet">
-    <fieldset>
-      <legend>{{ 'Voir' | t }}</legend>
-      <div class="filter-sheet__choices segmented-choice segmented-choice--three">
-        @for (option of statusOptions; track option.value) {
-          <button
-            type="button"
-            class="button button--outline button--compact"
-            [class.button--selected]="status() === option.value"
-            [attr.aria-pressed]="status() === option.value"
-            (click)="status.set(option.value)"
-          >
-            {{ option.label | t }}
-          </button>
-        }
-      </div>
-    </fieldset>
     <fieldset>
       <legend>{{ 'Quand' | t }}</legend>
       <div class="filter-sheet__choices filter-sheet__choices--recurrence">

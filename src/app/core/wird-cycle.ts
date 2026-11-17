@@ -82,6 +82,59 @@ export function countsInCurrentCycle(
   );
 }
 
+/** First day after today that opens a new cycle, or null when no cycle follows. */
+export function nextCycleStart(
+  recurrence: CycleRecurrence,
+  start: string,
+  end: string | null,
+  today: string,
+): string | null {
+  if (today < start) return start;
+  for (let offset = 1; offset <= 7; offset++) {
+    const day = addDays(today, offset);
+    if (end !== null && day > end) return null;
+    if (
+      !cycleContains(recurrence, start, end, day, today) &&
+      cycleContains(recurrence, start, end, day, day)
+    )
+      return day;
+  }
+  return null;
+}
+
+export type WirdPhase =
+  | { kind: 'upcoming'; day: string }
+  | { kind: 'open' }
+  | { kind: 'reached'; day: string }
+  | { kind: 'closed' };
+
+export function wirdPhase(
+  wird: Pick<Wird, 'recurrence' | 'startDate' | 'endDate' | 'target'>,
+  completed: number,
+  today: string,
+): WirdPhase {
+  const start = wird.startDate;
+  const end = wird.endDate ?? null;
+  if (start && today < start) return { kind: 'upcoming', day: start };
+  if (end !== null && today > end) return { kind: 'closed' };
+  if (completed < wird.target) return { kind: 'open' };
+  const next = start ? nextCycleStart(wird.recurrence, start, end, today) : null;
+  return next ? { kind: 'reached', day: next } : { kind: 'closed' };
+}
+
+export function nextDay(iso: string): string {
+  return addDays(iso, 1);
+}
+
+export function displayDay(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(utcDay(iso));
+}
+
 export function isReminderDay(
   recurrence: CycleRecurrence,
   start: string,

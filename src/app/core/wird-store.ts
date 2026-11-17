@@ -133,6 +133,7 @@ export class WirdStore {
       quantity,
       name: name.trim().slice(0, 60),
       finished: false,
+      createdAt: new Date().toISOString(),
     };
     this.parts.update((parts) => [...parts, part]);
     this.savedName.set(part.name);

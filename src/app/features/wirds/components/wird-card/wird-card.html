@@ -13,18 +13,30 @@
   @if (reserved() > 0) {
     <p class="text-secondary">{{ '{count} lectures en cours' | t: { count: reserved() } }}</p>
   }
-  @if (available() > 0) {
-    <a class="button button--accent" [routerLink]="['/wird', wird().id]"
-      ><app-icon name="hand" [size]="28" />{{ 'Je participe' | t }}</a
-    >
-  } @else {
-    <p>
-      {{
-        (completed() >= wird().target
-          ? ('Ce wird est terminé. Merci !' | t)
-          : ('Toutes les parts sont prises.' | t)
-        ) | t
-      }}
-    </p>
+  @switch (phase().kind) {
+    @case ('upcoming') {
+      <p>{{ 'Ce wird commence {day}.' | t: { day: phaseDay() } }}</p>
+    }
+    @case ('reached') {
+      <p class="wird-card__reached">
+        @if (isTomorrow()) {
+          {{ 'Objectif atteint. Il recommence demain.' | t }}
+        } @else {
+          {{ 'Objectif atteint. Il recommence {day}.' | t: { day: phaseDay() } }}
+        }
+      </p>
+    }
+    @case ('closed') {
+      <p>{{ 'Ce wird est terminé. Merci !' | t }}</p>
+    }
+    @default {
+      @if (available() > 0) {
+        <a class="button button--accent" [routerLink]="['/wird', wird().id]"
+          ><app-icon name="hand" [size]="28" />{{ 'Je participe' | t }}</a
+        >
+      } @else {
+        <p>{{ 'Toutes les parts sont prises.' | t }}</p>
+      }
+    }
   }
 </article>

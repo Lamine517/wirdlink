@@ -25,6 +25,9 @@
           <p class="text-secondary">
             {{ group.count }}
             {{ (group.count > 1 ? ('participations' | t) : ('participation' | t)) | t }}
+            @if (group.lastAt) {
+              · <time [attr.datetime]="group.lastAt">{{ since(group.lastAt) }}</time>
+            }
           </p>
         </div>
       </div>

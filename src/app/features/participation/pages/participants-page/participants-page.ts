@@ -5,11 +5,14 @@ import { BackButton } from '../../../../shared/components/back-button/back-butto
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
+import { I18nService } from '../../../../core/services/i18n';
+import { relativeTime } from '../../../../core/relative-time';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -59,6 +62,8 @@ export class ParticipantsPage {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   constructor() {
+    const clock = setInterval(() => this.now.set(Date.now()), 60_000);
+    inject(DestroyRef).onDestroy(() => clearInterval(clock));
     effect((onCleanup) => {
       const id = this.selected()?.id;
       if (!id || !this.store.remote) return;
@@ -82,4 +87,13 @@ export class ParticipantsPage {
     });
   }
   protected readonly groups = computed(() => groupParticipants(this.parts()));
+  private readonly i18n = inject(I18nService);
+  private readonly now = signal(Date.now());
+
+  protected since(iso: string | undefined): string {
+    if (!iso) return '';
+    return (
+      relativeTime(iso, this.now(), this.i18n.locale()) ?? this.i18n.translate('à l’instant')
+    );
+  }
 }

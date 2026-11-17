@@ -31,7 +31,6 @@
 <app-wird-filters
   [(visibility)]="visibility"
   [resultCount]="visibleWirds().length"
-  [(status)]="status"
   [(recurrence)]="recurrence"
 />
 <app-request-state
@@ -41,29 +40,67 @@
   [retryLabel]="'Réessayer' | t"
   (retry)="store.refresh()"
 />
-<p class="result-count" aria-live="polite">
-  {{ visibleWirds().length }} {{ (visibleWirds().length > 1 ? ('wirds' | t) : ('wird' | t)) | t }}
-</p>
-@for (wird of visibleWirds(); track wird.id) {
-  <app-wird-card
-    [wird]="wird"
-    [available]="store.available(wird.id)"
-    [completed]="store.completed(wird.id)"
-  />
-} @empty {
-  @if (!store.loading() && !store.error() && store.wirds().length === 0) {
-    <app-empty-state
-      [title]="'Aucun wird pour le moment' | t"
-      [description]="'Créez votre premier wird pour commencer.' | t"
-      [actionLabel]="'Créer un wird' | t"
-      actionLink="/creer"
+<div class="wird-list">
+  @for (wird of visibleWirds(); track wird.id) {
+    <app-wird-card
+      [wird]="wird"
+      [available]="store.available(wird.id)"
+      [completed]="store.completed(wird.id)"
+      [today]="today"
     />
-  } @else if (!store.loading() && !store.error()) {
-    <app-empty-state
-      [title]="'Aucun wird ici' | t"
-      [description]="'Essayez d’autres filtres pour retrouver un wird.' | t"
-      [actionLabel]="'Voir les wirds en cours' | t"
-      (actionRequested)="resetFilters()"
-    />
+  } @empty {
+    @if (!store.loading() && !store.error() && store.wirds().length === 0) {
+      <app-empty-state
+        [title]="'Aucun wird pour le moment' | t"
+        [description]="'Créez votre premier wird pour commencer.' | t"
+        [actionLabel]="'Créer un wird' | t"
+        actionLink="/creer"
+      />
+    } @else if (!store.loading() && !store.error() && filtered()) {
+      <app-empty-state
+        [title]="'Aucun wird ici' | t"
+        [description]="'Essayez d’autres filtres pour retrouver un wird.' | t"
+        [actionLabel]="'Effacer les filtres' | t"
+        (actionRequested)="resetFilters()"
+      />
+    } @else if (!store.loading() && !store.error()) {
+      <app-empty-state
+        [title]="'Aucun wird en cours' | t"
+        [description]="'Lancez un nouveau wird quand vous êtes prêt.' | t"
+        [actionLabel]="'Créer un wird' | t"
+        actionLink="/creer"
+      />
+    }
   }
+</div>
+@if (finishedWirds().length > 0) {
+  <section class="finished" [attr.aria-label]="'Wirds terminés' | t">
+    <button
+      type="button"
+      class="finished__toggle"
+      [attr.aria-expanded]="showFinished()"
+      aria-controls="finished-wirds"
+      (click)="showFinished.set(!showFinished())"
+    >
+      {{ 'Wirds terminés ({count})' | t: { count: finishedWirds().length } }}
+      <app-icon
+        class="finished__caret"
+        [class.finished__caret--open]="showFinished()"
+        name="next"
+        [size]="20"
+      />
+    </button>
+    @if (showFinished()) {
+      <div id="finished-wirds" class="wird-list">
+        @for (wird of finishedWirds(); track wird.id) {
+          <app-wird-card
+            [wird]="wird"
+            [available]="store.available(wird.id)"
+            [completed]="store.completed(wird.id)"
+            [today]="today"
+          />
+        }
+      </div>
+    }
+  </section>
 }

@@ -1,4 +1,4 @@
-import { countsInCurrentCycle, dueReminderTitles, isReminderDay } from './wird-cycle';
+import { countsInCurrentCycle, dueReminderTitles, isReminderDay, wirdPhase } from './wird-cycle';
 
 const monday = '2026-11-16';
 const thursday = '2026-11-19';
@@ -46,6 +46,24 @@ describe('Wird cycles', () => {
     expect(dueReminderTitles([weekly], [], '2026-11-22')).toEqual([]);
     expect(dueReminderTitles([{ ...weekly, isOwner: true }], [], '2026-11-22')).toEqual(['Famille']);
     expect(dueReminderTitles([weekly], ['weekly'], '2026-11-22')).toEqual(['Famille']);
+  });
+
+  it('keeps a reached recurring wird open until its next cycle', () => {
+    const daily = { ...wird('Tous les jours', monday), target: 10 };
+    expect(wirdPhase(daily, 4, thursday)).toEqual({ kind: 'open' });
+    expect(wirdPhase(daily, 10, thursday)).toEqual({ kind: 'reached', day: friday });
+    expect(wirdPhase({ ...daily, endDate: thursday }, 10, thursday)).toEqual({ kind: 'closed' });
+    const fridays = { ...wird('Chaque vendredi', monday), target: 10 };
+    expect(wirdPhase(fridays, 10, monday)).toEqual({ kind: 'reached', day: friday });
+    const weekly = { ...wird('Chaque semaine', monday), target: 10 };
+    expect(wirdPhase(weekly, 10, thursday)).toEqual({ kind: 'reached', day: nextMonday });
+  });
+
+  it('closes a single wird once reached or past its end date', () => {
+    const once = { ...wird('Une fois', monday, friday), target: 10 };
+    expect(wirdPhase(once, 10, thursday)).toEqual({ kind: 'closed' });
+    expect(wirdPhase(once, 2, nextMonday)).toEqual({ kind: 'closed' });
+    expect(wirdPhase(once, 0, '2026-11-15')).toEqual({ kind: 'upcoming', day: monday });
   });
 });
 

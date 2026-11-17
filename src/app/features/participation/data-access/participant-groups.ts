@@ -6,6 +6,7 @@ export interface ParticipantGroup {
   count: number;
   completed: number;
   pending: number;
+  lastAt?: string;
 }
 
 /** Groups display names, never claims that equal names represent the same person. */
@@ -18,6 +19,8 @@ export function groupParticipants(parts: readonly Part[]): ParticipantGroup[] {
     group.count++;
     if (part.finished) group.completed += part.quantity;
     else group.pending += part.quantity;
+    if (part.createdAt && (!group.lastAt || part.createdAt > group.lastAt))
+      group.lastAt = part.createdAt;
     groups.set(key, group);
   }
   return [...groups.values()].sort((a, b) => {

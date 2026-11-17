@@ -182,6 +182,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'في اليوم السابق لدورة جديدة، يذكّر إشعار بأن الهدف سيبدأ من جديد.',
   ],
   'Ouvrir ce compte': ['Open this account', 'فتح هذا الحساب'],
+  'à l’instant': ['just now', 'الآن'],
   'Connexion en cours…': ['Signing in…', 'جارٍ تسجيل الدخول…'],
   'Consultez votre boîte mail et ouvrez le lien pour vous connecter. Pensez aussi aux courriers indésirables.':
     [
@@ -833,7 +834,25 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
     'Try other filters to find a wird.',
     'جرّب مرشحات أخرى للعثور على ورد.',
   ],
-  'Voir les wirds en cours': ['View active wirds', 'عرض الأوراد الجارية'],
+  'Effacer les filtres': ['Clear filters', 'مسح المرشحات'],
+  'Aucun wird en cours': ['No active wirds', 'لا توجد أوراد جارية'],
+  'Lancez un nouveau wird quand vous êtes prêt.': [
+    'Start a new wird whenever you are ready.',
+    'ابدأ وردًا جديدًا متى كنت مستعدًا.',
+  ],
+  'wirds en cours': ['active wirds', 'أوراد جارية'],
+  'wird en cours': ['active wird', 'ورد جارٍ'],
+  'Wirds terminés ({count})': ['Completed wirds ({count})', 'الأوراد المكتملة ({count})'],
+  'Wirds terminés': ['Completed wirds', 'الأوراد المكتملة'],
+  'Ce wird commence {day}.': ['This wird starts on {day}.', 'يبدأ هذا الورد يوم {day}.'],
+  'Objectif atteint. Il recommence demain.': [
+    'Goal reached. It starts again tomorrow.',
+    'تحقق الهدف. يبدأ من جديد غدًا.',
+  ],
+  'Objectif atteint. Il recommence {day}.': [
+    'Goal reached. It starts again on {day}.',
+    'تحقق الهدف. يبدأ من جديد يوم {day}.',
+  ],
   Apparence: ['Appearance', 'المظهر'],
   'Choisir le thème': ['Choose a theme', 'اختر المظهر'],
   Automatique: ['Automatic', 'تلقائي'],

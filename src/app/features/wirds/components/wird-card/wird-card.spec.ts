@@ -25,3 +25,39 @@ describe('Wird audio availability', () => {
     expect(fixture.nativeElement.querySelector('app-audio-player')).not.toBeNull();
   });
 });
+
+describe('Wird card phase', () => {
+  function render(wird: Partial<Wird>, completed: number, available: number) {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(WirdCard);
+    fixture.componentRef.setInput('wird', {
+      id: 'one',
+      title: 'Wird',
+      target: 10,
+      completed,
+      recurrence: 'Tous les jours',
+      visibility: 'public',
+      startDate: '2026-11-16',
+      ...wird,
+    });
+    fixture.componentRef.setInput('completed', completed);
+    fixture.componentRef.setInput('available', available);
+    fixture.componentRef.setInput('today', '2026-11-19');
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('tells when a reached daily wird starts again', () => {
+    const card = render({}, 10, 0);
+    expect(card.textContent).toContain('Objectif atteint. Il recommence demain.');
+    expect(card.querySelector('.button--accent')).toBeNull();
+  });
+
+  it('hides participation once the end date has passed or before the start', () => {
+    expect(render({ endDate: '2026-11-18' }, 0, 10).querySelector('.button--accent')).toBeNull();
+    TestBed.resetTestingModule();
+    const upcoming = render({ startDate: '2026-11-21' }, 0, 10);
+    expect(upcoming.querySelector('.button--accent')).toBeNull();
+    expect(upcoming.textContent).toContain('Ce wird commence');
+  });
+});

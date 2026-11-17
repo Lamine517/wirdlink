@@ -54,14 +54,10 @@ describe('WirdLink navigation', () => {
     expect(harness.routeNativeElement!.textContent).toContain('390');
   });
 
-  it('shows an empty result for completed wirds and handles unknown links', async () => {
+  it('lists open wirds without a completed section and handles unknown links', async () => {
     const harness = await RouterTestingHarness.create('/');
-    const buttons = harness.routeNativeElement!.querySelectorAll<HTMLButtonElement>(
-      '.segmented-control button',
-    );
-    buttons[1].click();
-    harness.detectChanges();
-    expect(harness.routeNativeElement!.textContent).toContain('Aucun wird ici');
+    expect(harness.routeNativeElement!.querySelectorAll('app-wird-card').length).toBeGreaterThan(0);
+    expect(harness.routeNativeElement!.querySelector('.finished')).toBeNull();
     await harness.navigateByUrl('/wird/inconnu');
     expect(harness.routeNativeElement!.textContent).toContain('Wird introuvable');
   });

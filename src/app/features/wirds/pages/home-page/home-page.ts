@@ -7,14 +7,14 @@ import { InstallApp } from '../../../../shared/components/install-app/install-ap
 import { RouterLink } from '@angular/router';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { WirdStore } from '../../../../core/wird-store';
+import { Wird, WirdStore } from '../../../../core/wird-store';
+import { dakarToday, wirdPhase } from '../../../../core/wird-cycle';
 import { Icon } from '../../../../shared/components/icon/icon';
 import { WirdCard } from '../../components/wird-card/wird-card';
 import {
   VisibilityFilter,
   RecurrenceFilter,
   WirdFilters,
-  WirdStatus,
 } from '../../components/wird-filters/wird-filters';
 
 @Component({
@@ -39,20 +39,27 @@ export class HomePage {
   protected readonly store = inject(WirdStore);
   private readonly access = inject(WirdAccess);
   protected readonly visibility = signal<VisibilityFilter>('all');
-  protected readonly status = signal<WirdStatus>('active');
   protected readonly recurrence = signal<RecurrenceFilter>('all');
+  protected readonly showFinished = signal(false);
+  protected readonly today = dakarToday();
+  protected readonly filtered = computed(() => this.recurrence() !== 'all' || this.visibility() !== 'all');
+  private readonly matchingWirds = computed(() =>
+    this.store
+      .wirds()
+      .filter(
+        (wird) =>
+          this.access.canRead(wird.id) &&
+          (this.recurrence() === 'all' || wird.recurrence === this.recurrence()) &&
+          (this.visibility() === 'all' || wird.visibility === this.visibility()),
+      ),
+  );
+  private readonly closed = (wird: Wird) =>
+    wirdPhase(wird, this.store.completed(wird.id), this.today).kind === 'closed';
   protected readonly visibleWirds = computed(() =>
-    this.store.wirds().filter((wird) => {
-      const finished = this.store.completed(wird.id) >= wird.target;
-      const matchesStatus =
-        this.status() === 'all' || (this.status() === 'finished' ? finished : !finished);
-      return (
-        this.access.canRead(wird.id) &&
-        matchesStatus &&
-        (this.recurrence() === 'all' || wird.recurrence === this.recurrence()) &&
-        (this.visibility() === 'all' || wird.visibility === this.visibility())
-      );
-    }),
+    this.matchingWirds().filter((wird) => !this.closed(wird)),
+  );
+  protected readonly finishedWirds = computed(() =>
+    this.matchingWirds().filter((wird) => this.closed(wird)),
   );
 
   constructor() {
@@ -61,7 +68,6 @@ export class HomePage {
 
   protected resetFilters(): void {
     this.visibility.set('all');
-    this.status.set('active');
     this.recurrence.set('all');
   }
 }
