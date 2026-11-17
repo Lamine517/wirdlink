@@ -1,0 +1,102 @@
+<app-back-button />
+<h1>{{ 'Soutenir WirdLink' | t }}</h1>
+
+@if (outcome === 'merci') {
+  <p class="feedback support-thanks" role="status">
+    <app-icon name="heart" [size]="22" />{{ 'Merci pour votre soutien !' | t }}
+  </p>
+} @else if (outcome === 'echec') {
+  <p class="feedback feedback--error" role="alert">
+    {{ 'Le paiement n’a pas abouti. Aucun montant n’a été prélevé si vous n’avez pas confirmé.' | t }}
+  </p>
+}
+
+<p class="support-intro">
+  {{ 'WirdLink est gratuit. Un don, même petit, aide à couvrir les frais du service.' | t }}
+</p>
+
+<section class="surface-card support-card" aria-labelledby="support-amount">
+  <h2 id="support-amount">{{ 'Montant' | t }}</h2>
+  <div class="support-amounts">
+    @for (value of amounts; track value) {
+      <button
+        type="button"
+        class="button button--outline"
+        [class.button--selected]="!custom.value && selected() === value"
+        [attr.aria-pressed]="!custom.value && selected() === value"
+        (click)="choose(value)"
+      >
+        {{ value | number }} F
+      </button>
+    }
+  </div>
+  <label class="support-custom" for="support-custom">{{ 'Autre montant' | t }}</label>
+  <div class="support-custom__field">
+    <input
+      id="support-custom"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="7"
+      [placeholder]="'Ex. 3 000' | t"
+      [formControl]="custom"
+    /><span aria-hidden="true">F CFA</span>
+  </div>
+  @if (custom.value && !valid()) {
+    <p class="support-hint" role="alert">
+      {{ 'Entre {min} et {max} F CFA.' | t: { min: format(limits.min), max: format(limits.max) } }}
+    </p>
+  }
+</section>
+
+<section class="support-methods" aria-labelledby="support-methods">
+  <h2 id="support-methods">{{ 'Payer avec' | t }}</h2>
+  <button
+    type="button"
+    class="support-method support-method--wave"
+    [disabled]="!valid() || busy() || !network.online()"
+    (click)="payWithWave()"
+  >
+    <span class="support-method__mark" aria-hidden="true">W</span>
+    <span>{{ busy() ? ('Ouverture de Wave…' | t) : 'Wave' }}</span>
+    @if (valid()) {
+      <strong>{{ amount() | number }} F</strong>
+    }
+  </button>
+  <button
+    type="button"
+    class="support-method support-method--orange"
+    [disabled]="!valid()"
+    (click)="copied.set(false); orangeSheet.open()"
+  >
+    <span class="support-method__mark" aria-hidden="true">OM</span>
+    <span>Orange Money</span>
+    @if (valid()) {
+      <strong>{{ amount() | number }} F</strong>
+    }
+  </button>
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() | t }}</p>
+  }
+</section>
+
+<app-bottom-sheet #orangeSheet panelId="orange-money" [title]="'Orange Money' | t">
+  <div class="form-stack">
+    <p class="support-step">
+      {{ 'Envoyez {amount} F CFA à ce numéro :' | t: { amount: format(amount()) } }}
+    </p>
+    <p class="support-number">{{ orangeNumber }}</p>
+    <button type="button" class="button button--primary" (click)="copyNumber()">
+      <app-icon [name]="copied() ? 'check' : 'copy'" [size]="22" />{{
+        (copied() ? 'Numéro copié' : 'Copier le numéro') | t
+      }}
+    </button>
+    @if (android) {
+      <a class="button button--outline" href="tel:%23144%23"
+        ><app-icon name="phone" [size]="22" />{{ 'Composer #144#' | t }}</a
+      >
+    }
+    <p class="support-hint">
+      {{ 'Ouvrez Max it ou composez #144#, choisissez Transfert d’argent, puis collez le numéro.' | t }}
+    </p>
+  </div>
+</app-bottom-sheet>

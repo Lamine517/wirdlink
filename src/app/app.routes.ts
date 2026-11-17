@@ -80,6 +80,12 @@ export const routes: Routes = [
     title: 'Réglages · WirdLink',
   },
   {
+    path: 'soutenir',
+    loadComponent: () =>
+      import('./features/support/pages/support-page/support-page').then((m) => m.SupportPage),
+    title: 'Soutenir WirdLink',
+  },
+  {
     path: 'acces/:id',
     loadComponent: () =>
       import('./features/access/pages/access-page/access-page').then((m) => m.AccessPage),
@@ -184,7 +190,7 @@ export const routes: Routes = [
     data: {
       title: 'Règles d’utilisation',
       paragraphs: [
-        'WirdLink est un projet bénévole et gratuit.',
+        'WirdLink est un projet bénévole et gratuit. Les dons sont facultatifs et ne donnent aucun avantage dans l’application.',
         'Les parts sont réservées au moment de leur confirmation. Confirmez vos lectures terminées pour actualiser la progression collective.',
         'Publiez seulement les textes, images et audios que vous avez le droit de partager. Ne publiez pas les informations personnelles d’une autre personne sans son accord.',
       ],

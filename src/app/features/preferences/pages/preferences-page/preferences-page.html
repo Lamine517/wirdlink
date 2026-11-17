@@ -110,6 +110,14 @@
 </section>
 
 <section class="surface-card preferences-card">
+  <h2><app-icon name="heart" />{{ 'Soutenir WirdLink' | t }}</h2>
+  <p>{{ 'WirdLink est gratuit. Vous pouvez aider à couvrir ses frais.' | t }}</p>
+  <a class="button button--outline" routerLink="/soutenir"
+    ><app-icon name="heart" [size]="22" />{{ 'Faire un don' | t }}</a
+  >
+</section>
+
+<section class="surface-card preferences-card">
   <h2><app-icon name="book" />{{ 'À propos de WirdLink' | t }}</h2>
   <a class="preferences-link" routerLink="/aide">{{ 'Aide' | t }}</a>
   <a class="preferences-link" routerLink="/confidentialite">{{ 'Vos informations' | t }}</a>
