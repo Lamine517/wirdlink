@@ -33,11 +33,15 @@ Offre organisateur :
 - rappels SMS ou WhatsApp en recharge séparée, à prix coûtant plus une petite marge,
   fixé après le choix du fournisseur.
 
-Prix et durée :
+Prix et durée, sous le nom « Pass dahira » (révisé le 17 novembre 2026) :
 
-- 2 000 F CFA par mois ou 20 000 F CFA par an ;
+- pas d’abonnement ni de renouvellement automatique : le public cible n’a pas l’habitude
+  des paiements récurrents, et chaque paiement est de toute façon un transfert manuel ;
+- Pass année : 15 000 F CFA, offre principale ;
+- Pass mois : 2 000 F CFA ;
 - un mois d’essai gratuit, sans paiement préalable ;
-- membres fondateurs (20 premières dahiras) : 10 000 F CFA par an, conservé à vie.
+- membres fondateurs (20 premières dahiras) : Pass année à 10 000 F CFA, conservé à vie ;
+- rappel discret dans l’application 7 jours avant la fin du pass.
 
 Règles de transition :
 
