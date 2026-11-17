@@ -34,10 +34,23 @@ import { NetworkStatus } from '../../../../core/services/network-status';
 import { Router } from '@angular/router';
 import { Part, WirdStore } from '../../../../core/wird-store';
 import { PartCard } from '../../components/part-card/part-card';
+import {
+  FilterChip,
+  FilterChips,
+} from '../../../../shared/components/filter-chips/filter-chips';
 
 @Component({
   selector: 'app-my-parts-page',
-  imports: [Translate, RequestState, EmptyState, PartCard, ReactiveFormsModule, Icon, BottomSheet],
+  imports: [
+    Translate,
+    RequestState,
+    EmptyState,
+    PartCard,
+    ReactiveFormsModule,
+    Icon,
+    BottomSheet,
+    FilterChips,
+  ],
   templateUrl: './my-parts-page.html',
   styleUrl: './my-parts-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +79,19 @@ export class MyPartsPage {
   ];
   private readonly today = dakarToday();
   protected readonly filtered = computed(() => this.state() !== 'all' || this.period() !== 'all');
+  protected readonly chips = computed<FilterChip[]>(() => [
+    ...this.stateOptions
+      .filter((option) => option.value !== 'all' && option.value === this.state())
+      .map((option) => ({ id: 'state', label: option.label })),
+    ...this.periodOptions
+      .filter((option) => option.value !== 'all' && option.value === this.period())
+      .map((option) => ({ id: 'period', label: option.label })),
+  ]);
+
+  protected removeFilter(id: string): void {
+    if (id === 'state') this.state.set('all');
+    else this.period.set('all');
+  }
   protected readonly groups = computed(() => groupParts(this.store.wirds(), this.store.parts()));
   protected readonly visibleGroups = computed(() => {
     const progress = this.counter.progress();

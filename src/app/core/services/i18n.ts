@@ -881,6 +881,8 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   Toutes: ['All', 'الكل'],
   'Suivi du wird': ['Wird overview', 'متابعة الورد'],
   'Mes wirds en chiffres': ['My wirds in numbers', 'أورادي بالأرقام'],
+  'Filtres actifs': ['Active filters', 'عوامل التصفية النشطة'],
+  'Retirer le filtre {label}': ['Remove the {label} filter', 'إزالة عامل التصفية {label}'],
   'wird publié': ['wird published', 'ورد منشور'],
   'wirds publiés': ['wirds published', 'أوراد منشورة'],
   'objectif atteint': ['goal reached', 'هدف محقق'],

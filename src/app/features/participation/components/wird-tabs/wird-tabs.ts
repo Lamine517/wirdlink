@@ -8,11 +8,13 @@ import { RouterLink } from '@angular/router';
   template: `<nav class="wird-tabs" [attr.aria-label]="'Vues du wird' | t">
     <a
       [routerLink]="['/wird', wirdId()]"
+      [replaceUrl]="true"
       [class.wird-tabs__active]="active() === 'wird'"
       [attr.aria-current]="active() === 'wird' ? 'page' : null"
       >{{ 'Le wird' | t }}</a
     ><a
       [routerLink]="['/wird', wirdId(), 'participants']"
+      [replaceUrl]="true"
       [class.wird-tabs__active]="active() === 'participants'"
       [attr.aria-current]="active() === 'participants' ? 'page' : null"
       >{{ 'Les participants' | t }}</a

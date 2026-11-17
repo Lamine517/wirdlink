@@ -9,8 +9,12 @@
     (click)="filterSheet.open()"
   >
     <app-icon name="filter" [size]="24" />{{ 'Filtrer' | t }}
+    @if (chips().length) {
+      <span class="filter-badge">{{ chips().length }}</span>
+    }
   </button>
 </div>
+<app-filter-chips [chips]="chips()" (removed)="remove($event)" (cleared)="clearFilters()" />
 <app-bottom-sheet #filterSheet panelId="filters" [title]="'Filtrer' | t">
   <div class="filter-sheet">
     <fieldset>

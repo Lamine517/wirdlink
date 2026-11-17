@@ -32,8 +32,16 @@
       (click)="filterSheet.open()"
     >
       <app-icon name="filter" [size]="24" />
+      @if (chips().length) {
+        <span class="filter-badge">{{ chips().length }}</span>
+      }
     </button>
   </div>
+  <app-filter-chips
+    [chips]="chips()"
+    (removed)="removeFilter($event)"
+    (cleared)="state.set('all'); period.set('all')"
+  />
 }
 @for (section of sections(); track section.period) {
   <section class="parts-section" [attr.aria-labelledby]="'parts-' + section.period">
