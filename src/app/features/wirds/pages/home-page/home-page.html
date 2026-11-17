@@ -66,7 +66,12 @@
     } @else if (!store.loading() && !store.error()) {
       <app-empty-state
         [title]="'Aucun wird en cours' | t"
-        [description]="'Lancez un nouveau wird quand vous êtes prêt.' | t"
+        [description]="
+          (finishedWirds().length
+            ? 'Les wirds terminés sont juste en dessous.'
+            : 'Lancez un nouveau wird quand vous êtes prêt.'
+          ) | t
+        "
         [actionLabel]="'Créer un wird' | t"
         actionLink="/creer"
       />
@@ -80,9 +85,12 @@
       class="finished__toggle"
       [attr.aria-expanded]="showFinished()"
       aria-controls="finished-wirds"
-      (click)="showFinished.set(!showFinished())"
+      (click)="toggleFinished()"
     >
-      {{ 'Wirds terminés ({count})' | t: { count: finishedWirds().length } }}
+      <span class="finished__label"
+        ><app-icon name="check" [size]="20" />{{ 'Wirds terminés' | t }}</span
+      >
+      <span class="finished__count">{{ finishedWirds().length }}</span>
       <app-icon
         class="finished__caret"
         [class.finished__caret--open]="showFinished()"

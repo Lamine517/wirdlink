@@ -63,6 +63,21 @@
   cursor: pointer;
 }
 
+.finished__label {
+  @include mixins.flex-row(var(--space-8));
+}
+
+.finished__count {
+  margin-inline-start: auto;
+  min-width: 28px;
+  padding: 2px var(--space-8);
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-small);
+  text-align: center;
+}
+
 .finished__caret {
   transform: rotate(90deg);
   transition: transform 0.2s ease;

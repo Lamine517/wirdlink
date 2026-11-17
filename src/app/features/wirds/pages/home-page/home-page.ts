@@ -40,7 +40,10 @@ export class HomePage {
   private readonly access = inject(WirdAccess);
   protected readonly visibility = signal<VisibilityFilter>('all');
   protected readonly recurrence = signal<RecurrenceFilter>('all');
-  protected readonly showFinished = signal(false);
+  private readonly finishedToggled = signal<boolean | null>(null);
+  protected readonly showFinished = computed(
+    () => this.finishedToggled() ?? this.visibleWirds().length === 0,
+  );
   protected readonly today = dakarToday();
   protected readonly filtered = computed(
     () => this.recurrence() !== 'all' || this.visibility() !== 'all',
@@ -66,6 +69,10 @@ export class HomePage {
 
   constructor() {
     void this.store.refresh();
+  }
+
+  protected toggleFinished(): void {
+    this.finishedToggled.set(!this.showFinished());
   }
 
   protected resetFilters(): void {

@@ -867,7 +867,10 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   ],
   'wirds en cours': ['active wirds', 'أوراد جارية'],
   'wird en cours': ['active wird', 'ورد جارٍ'],
-  'Wirds terminés ({count})': ['Completed wirds ({count})', 'الأوراد المكتملة ({count})'],
+  'Les wirds terminés sont juste en dessous.': [
+    'Completed wirds are just below.',
+    'الأوراد المكتملة أدناه مباشرة.',
+  ],
   'Wirds terminés': ['Completed wirds', 'الأوراد المكتملة'],
   'Ce wird commence {day}.': ['This wird starts on {day}.', 'يبدأ هذا الورد يوم {day}.'],
   'Objectif atteint. Il recommence demain.': [
