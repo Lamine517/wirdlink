@@ -1,10 +1,24 @@
 import { Translate } from '../../../../shared/pipes/translate';
 import { BottomSheet } from '../../../../shared/components/bottom-sheet/bottom-sheet';
 import { Icon } from '../../../../shared/components/icon/icon';
-import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { CreationDraftStore, WIRD_TEMPLATES } from '../../data-access/creation-draft';
+import {
+  CUSTOM_TEMPLATE,
+  CreationDraftStore,
+  DraftTemplate,
+} from '../../data-access/creation-draft';
+import { AppConfig, TemplateIcon } from '../../../../core/config/app-config';
+
+type TemplateChoice = DraftTemplate & { icon: TemplateIcon | 'plus' };
 
 @Component({
   selector: 'app-create-page',
@@ -15,20 +29,15 @@ import { CreationDraftStore, WIRD_TEMPLATES } from '../../data-access/creation-d
 })
 export class CreatePage {
   protected readonly store = inject(CreationDraftStore);
-  protected readonly templateIcons = {
-    salat: 'prayer',
-    fatiha: 'book',
-    istighfar: 'heart',
-    tahlil: 'tap',
-    custom: 'plus',
-  } as const;
-  protected readonly templates = [...WIRD_TEMPLATES].sort(
-    (a, b) => Number(b.id === 'custom') - Number(a.id === 'custom'),
-  );
+  private readonly config = inject(AppConfig);
+  protected readonly templates = computed<TemplateChoice[]>(() => [
+    { ...CUSTOM_TEMPLATE, icon: 'plus' },
+    ...this.config.templates(),
+  ]);
   private readonly replacementSheet = viewChild.required<BottomSheet>('replacementSheet');
-  private readonly pendingTemplate = signal<(typeof WIRD_TEMPLATES)[number] | null>(null);
+  private readonly pendingTemplate = signal<DraftTemplate | null>(null);
   private readonly router = inject(Router);
-  protected choose(template: (typeof WIRD_TEMPLATES)[number]): void {
+  protected choose(template: DraftTemplate): void {
     if (this.store.hasDraft()) {
       this.pendingTemplate.set(template);
       this.replacementSheet().open();
@@ -45,7 +54,7 @@ export class CreatePage {
     this.start(template);
   }
 
-  private start(template: (typeof WIRD_TEMPLATES)[number]): void {
+  private start(template: DraftTemplate): void {
     this.store.chooseTemplate(template);
     void this.router.navigate(['/creer/contenu']);
   }

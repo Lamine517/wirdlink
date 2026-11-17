@@ -14,14 +14,14 @@
 }
 <p class="text-secondary">{{ 'Choisissez un modèle, puis adaptez-le.' | t }}</p>
 <div class="template-list">
-  @for (template of templates; track template.id) {
+  @for (template of templates(); track template.id) {
     <button type="button" class="template-card" (click)="choose(template)">
       <span
         class="template-card__icon"
         [class.template-card__icon--custom]="template.id === 'custom'"
         aria-hidden="true"
       >
-        <app-icon [name]="templateIcons[template.id]" [size]="24" />
+        <app-icon [name]="template.icon" [size]="24" />
       </span>
       <span class="template-card__content"
         ><strong>{{ template.id === 'custom' ? ('Mon propre wird' | t) : template.title }}</strong>

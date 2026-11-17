@@ -1,44 +1,51 @@
 <app-back-button />
 <h1>{{ 'Soutenir WirdLink' | t }}</h1>
 
-<p class="support-intro">
-  {{ 'WirdLink est gratuit. Un don, même petit, aide à couvrir les frais du service.' | t }}
-</p>
+@if (!settings().enabled) {
+  <p class="support-intro">{{ 'Les dons ne sont pas ouverts pour le moment.' | t }}</p>
+} @else {
+  <p class="support-intro">
+    {{ 'WirdLink est gratuit. Un don, même petit, aide à couvrir les frais du service.' | t }}
+  </p>
 
-<section class="surface-card support-card" aria-labelledby="support-amount">
-  <h2 id="support-amount">{{ 'Montant' | t }}</h2>
-  <div class="support-amounts">
-    @for (value of amounts; track value) {
-      <button
-        type="button"
-        class="button button--outline"
-        [class.button--selected]="!custom.value && selected() === value"
-        [attr.aria-pressed]="!custom.value && selected() === value"
-        (click)="choose(value)"
-      >
-        {{ value | number }} F
-      </button>
+  <section class="surface-card support-card" aria-labelledby="support-amount">
+    <h2 id="support-amount">{{ 'Montant' | t }}</h2>
+    <div class="support-amounts">
+      @for (value of amounts(); track value) {
+        <button
+          type="button"
+          class="button button--outline"
+          [class.button--selected]="!custom.value && selected() === value"
+          [attr.aria-pressed]="!custom.value && selected() === value"
+          (click)="choose(value)"
+        >
+          {{ value | number }} F
+        </button>
+      }
+    </div>
+    <label class="support-custom" for="support-custom">{{ 'Autre montant' | t }}</label>
+    <div class="support-custom__field">
+      <input
+        id="support-custom"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="8"
+        [placeholder]="'Ex. 3 000' | t"
+        [formControl]="custom"
+      /><span aria-hidden="true">F CFA</span>
+    </div>
+    @if (custom.value && !valid()) {
+      <p class="support-hint" role="alert">
+        {{
+          'Entre {min} et {max} F CFA.'
+            | t: { min: format(settings().min), max: format(settings().max) }
+        }}
+      </p>
     }
-  </div>
-  <label class="support-custom" for="support-custom">{{ 'Autre montant' | t }}</label>
-  <div class="support-custom__field">
-    <input
-      id="support-custom"
-      inputmode="numeric"
-      autocomplete="off"
-      maxlength="7"
-      [placeholder]="'Ex. 3 000' | t"
-      [formControl]="custom"
-    /><span aria-hidden="true">F CFA</span>
-  </div>
-  @if (custom.value && !valid()) {
-    <p class="support-hint" role="alert">
-      {{ 'Entre {min} et {max} F CFA.' | t: { min: format(limits.min), max: format(limits.max) } }}
-    </p>
-  }
-</section>
+  </section>
 
-<section class="support-methods" aria-labelledby="support-methods">
-  <h2 id="support-methods">{{ 'Payer avec' | t }}</h2>
-  <app-payment-methods panelId="support-payment" [amount]="amount()" [disabled]="!valid()" />
-</section>
+  <section class="support-methods" aria-labelledby="support-methods">
+    <h2 id="support-methods">{{ 'Payer avec' | t }}</h2>
+    <app-payment-methods panelId="support-payment" [amount]="amount()" [disabled]="!valid()" />
+  </section>
+}

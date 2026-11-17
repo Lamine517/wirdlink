@@ -18,6 +18,8 @@ import {
 
 export interface Wird {
   isOwner?: boolean;
+  /** Hidden by the WirdLink team; only its owner still sees it. */
+  hidden?: boolean;
   imageUrl?: string;
   reserved?: number;
   startDate?: string;

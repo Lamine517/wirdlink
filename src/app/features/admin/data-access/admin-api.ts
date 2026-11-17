@@ -42,6 +42,19 @@ export interface AdminOverview {
   passes: AdminPass[];
 }
 
+/** Private wirds come without title nor description: the team only sees public content. */
+export interface AdminWird {
+  id: string;
+  title: string;
+  description: string;
+  visibility: 'public' | 'private';
+  author: string;
+  createdAt: string;
+  participants: number;
+  hidden: boolean;
+  reason: string;
+}
+
 export interface AdminMember {
   id: string;
   name: string;
@@ -150,6 +163,34 @@ export class AdminApi {
   }
   async savePassSettings(settings: PassSettings): Promise<void> {
     await this.call('admin_set_setting', { p_key: 'pass', p_value: settings });
+  }
+  async saveSetting(
+    key: 'donations' | 'templates' | 'features' | 'texts',
+    value: unknown,
+  ): Promise<void> {
+    await this.call('admin_set_setting', { p_key: key, p_value: value });
+  }
+  async wirds(): Promise<AdminWird[]> {
+    return list(await this.call('admin_wirds')).map((item) => {
+      const wird = row(item);
+      return {
+        id: text(wird['id']),
+        title: text(wird['title']),
+        description: text(wird['description']),
+        visibility: wird['visibility'] === 'private' ? 'private' : 'public',
+        author: text(wird['author']),
+        createdAt: text(wird['createdAt']),
+        participants: count(wird['participants']),
+        hidden: wird['hidden'] === true,
+        reason: text(wird['reason']),
+      };
+    });
+  }
+  async hideWird(id: string, reason: string): Promise<void> {
+    await this.call('admin_hide_wird', { p_wird: id, p_reason: reason });
+  }
+  async unhideWird(id: string): Promise<void> {
+    await this.call('admin_unhide_wird', { p_wird: id });
   }
   async team(): Promise<AdminMember[]> {
     return list(await this.call('admin_team')).map((item) => {

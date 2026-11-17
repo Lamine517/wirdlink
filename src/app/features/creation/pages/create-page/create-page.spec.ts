@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
 import { CreationDraftStore } from '../../data-access/creation-draft';
+import { AppConfig } from '../../../../core/config/app-config';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
@@ -52,6 +53,20 @@ describe('Creation flow', () => {
       harness.routeNativeElement!.querySelector<HTMLButtonElement>('button[type="submit"]')!
         .disabled,
     ).toBeTrue();
+  });
+
+  it('offers the templates set in the back office', async () => {
+    TestBed.inject(AppConfig).templates.set([
+      { id: 'dalail', title: 'Dalail al Khayrat', target: 41, icon: 'book' },
+    ]);
+    const harness = await RouterTestingHarness.create('/creer');
+    const titles = [...harness.routeNativeElement!.querySelectorAll('.template-card strong')].map(
+      (item) => item.textContent?.trim(),
+    );
+    expect(titles).toEqual(['Mon propre wird', 'Dalail al Khayrat']);
+    templateButton(harness, 'Dalail al Khayrat').click();
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(CreationDraftStore).draft().target).toBe(41);
   });
 
   it('takes a template through content, dates and private preview without publishing', async () => {

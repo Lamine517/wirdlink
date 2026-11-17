@@ -1,3 +1,4 @@
+import { DEFAULT_TEMPLATES } from '../../../../core/config/app-config';
 import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -6,7 +7,7 @@ import { WIRD_REPOSITORY } from '../../../../core/services/wird-repository';
 import { WIRD_SEED, WirdStore } from '../../../../core/wird-store';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
-import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-access/creation-draft';
+import { CreationDraftStore } from '../../../creation/data-access/creation-draft';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
 
 describe('Publication and mobile sharing screens', () => {
@@ -28,7 +29,7 @@ describe('Publication and mobile sharing screens', () => {
       providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gateway }],
     });
     const draft = TestBed.inject(CreationDraftStore);
-    draft.chooseTemplate(WIRD_TEMPLATES[0]);
+    draft.chooseTemplate(DEFAULT_TEMPLATES[0]);
     draft.updateSchedule({ ...draft.draft(), visibility: 'private' });
     const auth = TestBed.inject(AuthFlow);
     await auth.requestCode('771234567');

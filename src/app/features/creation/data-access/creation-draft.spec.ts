@@ -1,7 +1,8 @@
+import { DEFAULT_TEMPLATES } from '../../../core/config/app-config';
 import { TestBed } from '@angular/core/testing';
 import {
   CreationDraftStore,
-  WIRD_TEMPLATES,
+  CUSTOM_TEMPLATE,
   isContentValid,
   isScheduleValid,
   todayDate,
@@ -13,7 +14,7 @@ describe('Creation draft', () => {
 
   it('restores edited text and schedule without persisting media', () => {
     const store = TestBed.inject(CreationDraftStore);
-    store.chooseTemplate(WIRD_TEMPLATES[0]);
+    store.chooseTemplate(DEFAULT_TEMPLATES[0]);
     store.updateContent({
       title: 'Pour ma famille',
       description: 'Vendredi ensemble',
@@ -40,7 +41,7 @@ describe('Creation draft', () => {
     expect(store.hasDraft()).toBeFalse();
     expect(store.warning()).not.toBe('');
     spyOn(localStorage, 'setItem').and.throwError('Storage unavailable');
-    store.chooseTemplate(WIRD_TEMPLATES[4]);
+    store.chooseTemplate(CUSTOM_TEMPLATE);
     expect(store.warning()).toContain('indisponible');
   });
 
@@ -89,13 +90,13 @@ describe('Creation draft', () => {
     expect(
       store.setMedia('audio', new File(['aac'], 'voice.aac', { type: 'audio/aac' })),
     ).toBeFalse();
-    store.chooseTemplate(WIRD_TEMPLATES[1]);
+    store.chooseTemplate(DEFAULT_TEMPLATES[1]);
     expect(store.image()).toBeNull();
     expect(store.audio()).toBeNull();
   });
   it('discards the draft and releases its attachments', () => {
     const store = TestBed.inject(CreationDraftStore);
-    store.chooseTemplate(WIRD_TEMPLATES[0]);
+    store.chooseTemplate(DEFAULT_TEMPLATES[0]);
     store.setMedia('audio', new File(['audio'], 'voice.webm', { type: 'audio/webm' }));
     const url = store.audio()!.url;
     const revoke = spyOn(URL, 'revokeObjectURL').and.callThrough();

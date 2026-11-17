@@ -1,7 +1,8 @@
+import { DEFAULT_TEMPLATES } from '../../../core/config/app-config';
 import { TestBed } from '@angular/core/testing';
 import { FRONTEND_GATEWAY, PublicationReceipt } from '../../../core/services/frontend-gateway';
 import { gatewayStub } from '../../../testing/frontend-gateway.spec';
-import { CreationDraftStore, WIRD_TEMPLATES } from '../../creation/data-access/creation-draft';
+import { CreationDraftStore } from '../../creation/data-access/creation-draft';
 import { AuthFlow } from '../../auth/data-access/auth-flow';
 import { WirdStore } from '../../../core/wird-store';
 import { PublicationFlow } from './publication-flow';
@@ -29,7 +30,7 @@ describe('Publication confirmation boundary', () => {
     TestBed.configureTestingModule({
       providers: [{ provide: FRONTEND_GATEWAY, useValue: gateway }],
     });
-    TestBed.inject(CreationDraftStore).chooseTemplate(WIRD_TEMPLATES[0]);
+    TestBed.inject(CreationDraftStore).chooseTemplate(DEFAULT_TEMPLATES[0]);
     const auth = TestBed.inject(AuthFlow);
     await auth.requestCode('771234567');
     await auth.verifyCode('123456');

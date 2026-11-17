@@ -28,6 +28,9 @@
 </header>
 <app-install-app />
 <h1>{{ 'Mes wirds' | t }}</h1>
+@if (announcement(); as message) {
+  <p class="feedback home-announcement" role="status">{{ message }}</p>
+}
 <app-wird-filters
   [(visibility)]="visibility"
   [resultCount]="visibleWirds().length"

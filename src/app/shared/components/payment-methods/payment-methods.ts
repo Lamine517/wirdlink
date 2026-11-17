@@ -4,12 +4,11 @@ import { Translate } from '../../pipes/translate';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { Icon } from '../icon/icon';
 import { I18nService } from '../../../core/services/i18n';
+import { AppConfig } from '../../../core/config/app-config';
 import {
   PAYMENT_METHODS,
-  PAYMENT_METHOD_LIST,
-  PAYMENT_NUMBER,
-  PAYMENT_NUMBER_LABEL,
   PaymentMethod,
+  formatPaymentNumber,
 } from '../../../core/payments/manual-payment';
 
 /** Wave and Orange Money buttons that open the copy-the-number instructions. */
@@ -27,10 +26,15 @@ export class PaymentMethods {
   /** Extra instruction shown after the payment steps, already translated by the caller. */
   readonly note = input('');
   private readonly i18n = inject(I18nService);
-  protected readonly methods = PAYMENT_METHOD_LIST;
+  private readonly settings = inject(AppConfig).donations;
+  protected readonly methods = computed(() =>
+    (Object.keys(PAYMENT_METHODS) as PaymentMethod[])
+      .filter((id) => this.settings()[id])
+      .map((id) => ({ id, ...PAYMENT_METHODS[id] })),
+  );
   protected readonly method = signal<PaymentMethod>('wave');
   protected readonly current = computed(() => PAYMENT_METHODS[this.method()]);
-  protected readonly number = PAYMENT_NUMBER_LABEL;
+  protected readonly number = computed(() => formatPaymentNumber(this.settings().number));
   protected readonly android = /android/i.test(navigator.userAgent);
   protected readonly copied = signal(false);
 
@@ -46,7 +50,7 @@ export class PaymentMethods {
 
   protected async copyNumber(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(PAYMENT_NUMBER);
+      await navigator.clipboard.writeText(this.settings().number);
       this.copied.set(true);
     } catch {
       this.copied.set(false);

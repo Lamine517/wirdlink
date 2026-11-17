@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SupportPage } from './support-page';
+import { AppConfig, DEFAULT_DONATIONS } from '../../../../core/config/app-config';
 
 describe('Support page', () => {
   beforeEach(() =>
@@ -31,6 +32,26 @@ describe('Support page', () => {
     fixture.detectChanges();
     expect(wave().disabled).toBeFalse();
     expect(wave().textContent).toContain('3');
+  });
+
+  it('follows the back office settings', () => {
+    TestBed.inject(AppConfig).donations.set({
+      ...DEFAULT_DONATIONS,
+      amounts: [250, 750],
+      number: '771234567',
+      orange: false,
+    });
+    const { fixture, element } = setup();
+    expect(element.querySelectorAll('.support-amounts button').length).toBe(2);
+    expect(element.querySelector('.payment-method--orange')).toBeNull();
+    element.querySelector<HTMLButtonElement>('.payment-method--wave')!.click();
+    fixture.detectChanges();
+    expect(element.querySelector('.payment-number')?.textContent).toContain('77 123 45 67');
+
+    TestBed.inject(AppConfig).donations.set({ ...DEFAULT_DONATIONS, enabled: false });
+    fixture.detectChanges();
+    expect(element.querySelector('.support-amounts')).toBeNull();
+    expect(element.textContent).toContain('pas ouverts');
   });
 
   for (const method of ['wave', 'orange']) {

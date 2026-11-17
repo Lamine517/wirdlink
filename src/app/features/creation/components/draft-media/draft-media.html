@@ -1,4 +1,5 @@
 <div class="draft-media">
+  @if (features().audio) {
   <section class="draft-media__block" aria-labelledby="draft-voice-title">
     <h2 id="draft-voice-title" class="draft-media__title">
       <app-icon name="microphone" [size]="20" />{{ 'Ma voix' | t }}
@@ -41,7 +42,9 @@
       <p class="field-error" role="alert">{{ recordError() | t }}</p>
     }
   </section>
+  }
 
+  @if (features().photo) {
   <section class="draft-media__block" aria-labelledby="draft-photo-title">
     <h2 id="draft-photo-title" class="draft-media__title">
       <app-icon name="image" [size]="20" />{{ 'Photo' | t }}
@@ -70,6 +73,7 @@
       (change)="select($event, 'image')"
     />
   </section>
+  }
   @if (error()) {
     <p class="field-error" role="alert">{{ error() | t }}</p>
   }

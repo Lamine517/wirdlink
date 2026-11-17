@@ -1,0 +1,54 @@
+<form class="form-stack" [formGroup]="form" (ngSubmit)="save()">
+  <section class="surface-card">
+    <h2>Dons</h2>
+    <label class="switch-field"
+      ><span>Afficher la page Soutenir</span
+      ><input type="checkbox" role="switch" formControlName="enabled"
+    /></label>
+    <div>
+      <label for="donation-amounts">Montants proposés (F CFA, séparés par des virgules)</label>
+      <input id="donation-amounts" inputmode="numeric" formControlName="amounts" />
+    </div>
+    <div class="admin-grid">
+      <div>
+        <label for="donation-min">Minimum</label>
+        <input id="donation-min" type="number" inputmode="numeric" min="1" formControlName="min" />
+      </div>
+      <div>
+        <label for="donation-max">Maximum</label>
+        <input id="donation-max" type="number" inputmode="numeric" min="1" formControlName="max" />
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-card">
+    <h2>Paiement</h2>
+    <div>
+      <label for="donation-number">Numéro qui reçoit les dons et les pass</label>
+      <input
+        id="donation-number"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="12"
+        formControlName="number"
+      />
+    </div>
+    <label class="switch-field"
+      ><span>Wave</span><input type="checkbox" role="switch" formControlName="wave"
+    /></label>
+    <label class="switch-field"
+      ><span>Orange Money</span><input type="checkbox" role="switch" formControlName="orange"
+    /></label>
+    <p class="admin-hint">Vérifiez le numéro deux fois : il s’affiche tel quel aux donateurs.</p>
+  </section>
+
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback" role="status">{{ message() }}</p>
+  }
+  <button type="submit" class="button button--primary" [disabled]="busy()">
+    <app-icon name="check" [size]="22" />Enregistrer les dons
+  </button>
+</form>

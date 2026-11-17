@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.surface-card {
+  margin: 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+label:not(.switch-field) {
+  display: block;
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-small);
+  font-weight: 800;
+}
+
+input:not([type='checkbox']),
+select,
+textarea {
+  width: 100%;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-12);
+  align-items: end;
+}
+
+.admin-hint,
+.admin-muted {
+  display: block;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  overflow-wrap: anywhere;
+}
+
+.admin-list {
+  display: grid;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.admin-link {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &--danger {
+    color: var(--color-feedback-error);
+  }
+}
+
+.admin-badge {
+  justify-self: start;
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-small);
+  background: var(--color-feedback-error);
+  color: var(--color-text-on-danger);
+  font-size: var(--font-size-small);
+  font-weight: 800;
+}

@@ -2,7 +2,7 @@ import { Translate } from '../../../../shared/pipes/translate';
 import { signal } from '@angular/core';
 import { WIRD_REPOSITORY } from '../../../../core/services/wird-repository';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
-import { WIRD_TEMPLATES } from '../../data-access/creation-draft';
+import { AppConfig } from '../../../../core/config/app-config';
 import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -27,10 +27,6 @@ export interface TitleSuggestion {
   title: string;
   target: number | null;
 }
-
-const TEMPLATE_TARGETS = new Set<number>(
-  WIRD_TEMPLATES.flatMap((item) => (item.target === null ? [] : [item.target])),
-);
 
 export function normalizeTitle(value: string): string {
   return value
@@ -106,8 +102,12 @@ export class ContentPage {
   private readonly previousTitles = signal<string[]>([]);
   protected readonly suggestionsOpen = signal(false);
   protected readonly activeIndex = signal(-1);
+  private readonly templates = inject(AppConfig).templates;
+  private readonly templateTargets = computed(
+    () => new Set(this.templates().map((item) => item.target)),
+  );
   protected readonly catalog = computed<TitleSuggestion[]>(() => {
-    const templates = WIRD_TEMPLATES.filter((item) => item.id !== 'custom').map((item) => ({
+    const templates = this.templates().map((item) => ({
       title: item.title,
       target: item.target,
     }));
@@ -180,7 +180,7 @@ export class ContentPage {
   protected selectSuggestion(item: TitleSuggestion): void {
     this.form.controls.title.setValue(item.title);
     const current = this.form.controls.target.value;
-    if (item.target !== null && (current === null || TEMPLATE_TARGETS.has(current))) {
+    if (item.target !== null && (current === null || this.templateTargets().has(current))) {
       this.form.controls.target.setValue(item.target);
     }
     this.closeSuggestions();

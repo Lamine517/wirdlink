@@ -1,0 +1,95 @@
+<p class="admin-hint">
+  Un wird masqué n’est plus visible ni accessible, sauf pour son créateur, qui est prévenu. Rien
+  n’est supprimé. Les wirds avec code n’apparaissent ici que masqués, sans leur contenu.
+</p>
+
+<section class="surface-card admin-wirds__link">
+  <label for="admin-wird-link">Masquer un wird signalé (lien)</label>
+  <input
+    id="admin-wird-link"
+    autocomplete="off"
+    placeholder="https://wirdlink.vercel.app/wird/…"
+    [formControl]="link"
+  />
+  <button
+    type="button"
+    class="button button--outline button--compact"
+    [disabled]="!link.value.trim()"
+    (click)="openHideByLink(hideSheet)"
+  >
+    Masquer ce wird
+  </button>
+</section>
+
+@if (error()) {
+  <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+}
+
+<label for="admin-wird-search" class="visually-hidden">Rechercher un wird</label>
+<input
+  id="admin-wird-search"
+  type="search"
+  class="admin-wirds__search"
+  placeholder="Titre, auteur ou description"
+  [formControl]="search"
+/>
+
+<ul class="admin-list">
+  @for (wird of visible(); track wird.id) {
+    <li class="surface-card">
+      @if (wird.hidden) {
+        <span class="admin-badge">Masqué{{ wird.reason ? ' · ' + wird.reason : '' }}</span>
+      }
+      <strong>{{ label(wird) }}</strong>
+      @if (wird.description) {
+        <span class="admin-muted admin-wirds__description">{{ wird.description }}</span>
+      }
+      <span class="admin-muted"
+        >{{ wird.author || 'Auteur sans nom' }} · {{ date(wird.createdAt) }} ·
+        {{ wird.participants }} participants</span
+      >
+      @if (wird.hidden) {
+        <button type="button" class="admin-link" [disabled]="busy()" (click)="unhide(wird)">
+          Réafficher
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="admin-link admin-link--danger"
+          (click)="openHide(wird, hideSheet)"
+        >
+          Masquer
+        </button>
+      }
+    </li>
+  } @empty {
+    @if (loaded()) {
+      <li class="admin-muted">Aucun wird trouvé.</li>
+    }
+  }
+</ul>
+
+<app-bottom-sheet #hideSheet panelId="admin-hide-wird" title="Masquer ce wird ?">
+  <div class="form-stack">
+    <p>
+      <strong>{{ target()?.label }}</strong> ne sera plus visible par les participants. Vous pourrez
+      le réafficher.
+    </p>
+    <div>
+      <label for="admin-hide-reason">Raison (facultatif, visible par l’équipe)</label>
+      <input id="admin-hide-reason" maxlength="200" [formControl]="reason" />
+    </div>
+    @if (error()) {
+      <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+    }
+    <button type="button" class="button button--outline" (click)="hideSheet.close()">Garder</button>
+    <button
+      type="button"
+      class="button button--danger"
+      [disabled]="busy()"
+      (click)="hide(hideSheet)"
+    >
+      Masquer
+    </button>
+  </div>
+</app-bottom-sheet>

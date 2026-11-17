@@ -1,9 +1,10 @@
+import { DEFAULT_TEMPLATES } from '../../../../core/config/app-config';
 import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { appConfig } from '../../../../app.config';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
-import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-access/creation-draft';
+import { CreationDraftStore } from '../../../creation/data-access/creation-draft';
 import { AuthFlow, rememberAuthReturn } from '../../data-access/auth-flow';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
@@ -16,7 +17,7 @@ describe('Responsible sign-in screens', () => {
     TestBed.configureTestingModule({
       providers: [...appConfig.providers, { provide: FRONTEND_GATEWAY, useValue: gateway }],
     });
-    TestBed.inject(CreationDraftStore).chooseTemplate(WIRD_TEMPLATES[0]);
+    TestBed.inject(CreationDraftStore).chooseTemplate(DEFAULT_TEMPLATES[0]);
   });
   afterEach(() => {
     localStorage.removeItem('wirdlink.creation.v1');

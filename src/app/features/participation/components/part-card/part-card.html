@@ -43,19 +43,30 @@
           {{ '{count} sur {target} comptées' | t: { count: counted, target: part.quantity } }}
         </p>
       }
-      <a class="button button--accent" [routerLink]="['/mes-parts', part.id, 'compteur']"
-        ><app-icon name="play" [size]="24" />{{
-          counted === 0 ? ('Commencer' | t) : ('Reprendre' | t)
-        }}</a
-      >
-      <button
-        type="button"
-        class="part-row__finish"
-        [disabled]="disabled()"
-        (click)="finishRequested.emit(part)"
-      >
-        <app-icon name="check" [size]="18" />{{ 'J’ai déjà fini' | t }}
-      </button>
+      @if (tasbih()) {
+        <a class="button button--accent" [routerLink]="['/mes-parts', part.id, 'compteur']"
+          ><app-icon name="play" [size]="24" />{{
+            counted === 0 ? ('Commencer' | t) : ('Reprendre' | t)
+          }}</a
+        >
+        <button
+          type="button"
+          class="part-row__finish"
+          [disabled]="disabled()"
+          (click)="finishRequested.emit(part)"
+        >
+          <app-icon name="check" [size]="18" />{{ 'J’ai déjà fini' | t }}
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="button button--accent"
+          [disabled]="disabled()"
+          (click)="finishRequested.emit(part)"
+        >
+          <app-icon name="check" [size]="22" />{{ 'J’ai fini' | t }}
+        </button>
+      }
     </div>
   }
 

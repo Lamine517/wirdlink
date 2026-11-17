@@ -1,3 +1,5 @@
+import { AppConfig, localizedText } from '../../../../core/config/app-config';
+import { I18nService } from '../../../../core/services/i18n';
 import { Translate } from '../../../../shared/pipes/translate';
 import { RequestState } from '../../../../shared/components/request-state/request-state';
 import { WirdAccess } from '../../../access/data-access/wird-access';
@@ -37,6 +39,12 @@ import {
 export class HomePage {
   protected readonly auth = inject(AuthFlow);
   protected readonly store = inject(WirdStore);
+  private readonly config = inject(AppConfig);
+  private readonly i18n = inject(I18nService);
+  protected readonly announcement = computed(() => {
+    const announcement = this.config.texts().announcement;
+    return announcement.active ? localizedText(announcement, this.i18n.locale()) : '';
+  });
   private readonly access = inject(WirdAccess);
   protected readonly visibility = signal<VisibilityFilter>('all');
   protected readonly recurrence = signal<RecurrenceFilter>('all');

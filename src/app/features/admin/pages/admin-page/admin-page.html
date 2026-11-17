@@ -60,8 +60,23 @@
     @case ('creators') {
       <app-admin-creators [overview]="data" (changed)="load()" />
     }
-    @case ('settings') {
+    @case ('wirds') {
+      <app-admin-wirds />
+    }
+    @case ('pass') {
       <app-admin-settings />
+    }
+    @case ('donations') {
+      <app-admin-donations />
+    }
+    @case ('templates') {
+      <app-admin-templates />
+    }
+    @case ('texts') {
+      <app-admin-texts />
+    }
+    @case ('features') {
+      <app-admin-features />
     }
     @case ('team') {
       <app-admin-team />

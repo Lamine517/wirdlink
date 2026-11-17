@@ -2,7 +2,8 @@ import { AuthFlow } from './features/auth/data-access/auth-flow';
 import { inject } from '@angular/core';
 import { WirdStore } from './core/wird-store';
 import { contentReady, scheduleReady } from './features/creation/guards/draft-guards';
-import { Routes } from '@angular/router';
+import { Router, Routes } from '@angular/router';
+import { AppConfig } from './core/config/app-config';
 import { readableWird } from './features/access/data-access/wird-access';
 import { ADMIN_PATH, adminGuard } from './features/admin/data-access/admin-guard';
 
@@ -27,7 +28,10 @@ export const routes: Routes = [
       async (route) => {
         const store = inject(WirdStore);
         const auth = inject(AuthFlow);
-        await auth.ready;
+        const config = inject(AppConfig);
+        const router = inject(Router);
+        await Promise.all([auth.ready, config.load()]);
+        if (!config.features().tasbih) return router.parseUrl('/mes-parts');
         const id = route.paramMap.get('id') ?? '';
         if (store.parts().some((part) => part.id === id)) void store.refresh();
         else await store.refresh();
@@ -176,6 +180,7 @@ export const routes: Routes = [
       import('./features/information/pages/information-page').then((m) => m.InformationPage),
     title: 'Aide · WirdLink',
     data: {
+      editable: 'help',
       title: 'Comment participer ?',
       paragraphs: [
         'Choisissez un wird, puis Je participe. Choisissez votre quantité et confirmez avec Je commence.',
@@ -210,6 +215,7 @@ export const routes: Routes = [
       import('./features/information/pages/information-page').then((m) => m.InformationPage),
     title: 'Règles d’utilisation · WirdLink',
     data: {
+      editable: 'conditions',
       title: 'Règles d’utilisation',
       paragraphs: [
         'WirdLink est un projet bénévole et gratuit. Les dons sont facultatifs et ne donnent aucun avantage dans l’application.',

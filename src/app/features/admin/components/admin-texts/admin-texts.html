@@ -1,0 +1,60 @@
+<form class="form-stack" [formGroup]="form" (ngSubmit)="save()">
+  <section class="surface-card" formGroupName="announcement">
+    <h2>Annonce sur l’accueil</h2>
+    <label class="switch-field"
+      ><span>Afficher l’annonce</span><input type="checkbox" role="switch" formControlName="active"
+    /></label>
+    @for (language of languages; track language.id) {
+      <div>
+        <label [for]="'announcement-' + language.id">{{ language.label }}</label>
+        <textarea
+          [id]="'announcement-' + language.id"
+          maxlength="500"
+          [attr.dir]="language.id === 'ar' ? 'rtl' : null"
+          [formControlName]="language.id"
+        ></textarea>
+      </div>
+    }
+  </section>
+
+  @for (
+    section of [
+      { id: 'help', title: 'Page Aide' },
+      { id: 'conditions', title: 'Règles d’utilisation' },
+    ];
+    track section.id
+  ) {
+    <section class="surface-card" [formGroupName]="section.id">
+      <h2>{{ section.title }}</h2>
+      <p class="admin-hint">
+        Laissez vide pour garder le texte d’origine. Séparez les paragraphes par une ligne vide.
+      </p>
+      @for (language of languages; track language.id) {
+        <div>
+          <label [for]="section.id + '-' + language.id">{{ language.label }}</label>
+          <textarea
+            [id]="section.id + '-' + language.id"
+            maxlength="6000"
+            rows="6"
+            [attr.dir]="language.id === 'ar' ? 'rtl' : null"
+            [formControlName]="language.id"
+          ></textarea>
+        </div>
+      }
+    </section>
+  }
+
+  <p class="admin-hint">
+    Une langue laissée vide affiche le texte français, pour qu’aucun lecteur ne voie une ancienne
+    version.
+  </p>
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback" role="status">{{ message() }}</p>
+  }
+  <button type="submit" class="button button--primary" [disabled]="busy()">
+    <app-icon name="check" [size]="22" />Enregistrer les textes
+  </button>
+</form>

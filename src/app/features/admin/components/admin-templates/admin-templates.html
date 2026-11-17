@@ -1,0 +1,70 @@
+<p class="admin-hint">
+  Les modèles apparaissent dans Créer, après « Mon propre wird », et comme suggestions de titre. Les
+  wirds déjà créés ne changent pas.
+</p>
+
+<ol class="admin-list admin-templates">
+  @for (item of items.controls; track item; let index = $index, first = $first, last = $last) {
+    <li class="surface-card" [formGroup]="item">
+      <div class="admin-templates__head">
+        <app-icon [name]="item.controls.icon.value" [size]="24" />
+        <strong>{{ item.controls.title.value || 'Nouveau modèle' }}</strong>
+      </div>
+      <div>
+        <label [for]="'template-title-' + index">Nom</label>
+        <input [id]="'template-title-' + index" maxlength="100" formControlName="title" />
+      </div>
+      <div class="admin-grid">
+        <div>
+          <label [for]="'template-target-' + index">Objectif (lectures)</label>
+          <input
+            [id]="'template-target-' + index"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            formControlName="target"
+          />
+        </div>
+        <div>
+          <label [for]="'template-icon-' + index">Icône</label>
+          <select [id]="'template-icon-' + index" formControlName="icon">
+            @for (icon of icons; track icon) {
+              <option [value]="icon">{{ iconLabels[icon] }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="admin-templates__actions">
+        <button type="button" class="admin-link" [disabled]="first" (click)="move(index, -1)">
+          Monter
+        </button>
+        <button type="button" class="admin-link" [disabled]="last" (click)="move(index, 1)">
+          Descendre
+        </button>
+        <button type="button" class="admin-link admin-link--danger" (click)="remove(index)">
+          Retirer
+        </button>
+      </div>
+    </li>
+  }
+</ol>
+
+<div class="form-stack admin-templates__footer">
+  <button
+    type="button"
+    class="button button--outline"
+    [disabled]="items.length >= max"
+    (click)="add()"
+  >
+    <app-icon name="plus" [size]="22" />Ajouter un modèle
+  </button>
+  @if (error()) {
+    <p class="feedback feedback--error" role="alert">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback" role="status">{{ message() }}</p>
+  }
+  <button type="button" class="button button--primary" [disabled]="busy()" (click)="save()">
+    <app-icon name="check" [size]="22" />Enregistrer les modèles
+  </button>
+</div>

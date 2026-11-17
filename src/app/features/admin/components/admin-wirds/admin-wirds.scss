@@ -1,0 +1,18 @@
+.admin-wirds__link {
+  margin: var(--space-16) 0;
+
+  .button {
+    justify-self: start;
+  }
+}
+
+.admin-wirds__search {
+  margin-bottom: var(--space-16);
+}
+
+.admin-wirds__description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}

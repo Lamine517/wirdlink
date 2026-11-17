@@ -9,6 +9,7 @@ export interface DraftContent {
   instructions?: string;
   target: number | null;
 }
+export const CUSTOM_TEMPLATE: DraftTemplate = { id: 'custom', title: 'Mon propre wird', target: null };
 export interface DraftSchedule {
   recurrence: Recurrence;
   startDate: string;
@@ -20,13 +21,12 @@ export interface LocalMedia {
   file: File;
   url: string;
 }
-export const WIRD_TEMPLATES = [
-  { id: 'salat', title: 'Salat ala Nabi', target: 1000 },
-  { id: 'fatiha', title: 'Al Fatiha', target: 100 },
-  { id: 'istighfar', title: 'Istighfar', target: 1000 },
-  { id: 'tahlil', title: 'Tahlil', target: 1000 },
-  { id: 'custom', title: 'Mon propre wird', target: null },
-] as const;
+/** A starting point for a new wird; `null` target means the creator writes their own. */
+export interface DraftTemplate {
+  id: string;
+  title: string;
+  target: number | null;
+}
 export const MAX_WIRD_TARGET = 2147483647;
 const STORAGE_KEY = 'wirdlink.creation.v1';
 const RECURRENCES: readonly string[] = [
@@ -136,7 +136,7 @@ export class CreationDraftStore {
     }
   }
 
-  chooseTemplate(template: (typeof WIRD_TEMPLATES)[number]): void {
+  chooseTemplate(template: DraftTemplate): void {
     this.releaseMedia();
     this.state.set({
       ...emptyDraft(),

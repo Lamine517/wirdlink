@@ -6,9 +6,7 @@ import { Translate } from '../../../../shared/pipes/translate';
 import { BackButton } from '../../../../shared/components/back-button/back-button';
 import { PaymentMethods } from '../../../../shared/components/payment-methods/payment-methods';
 import { I18nService } from '../../../../core/services/i18n';
-
-const MIN = 100;
-const MAX = 500_000;
+import { AppConfig } from '../../../../core/config/app-config';
 
 @Component({
   selector: 'app-support-page',
@@ -18,8 +16,18 @@ const MAX = 500_000;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportPage {
-  protected readonly amounts = [500, 1000, 2000, 5000];
-  protected readonly selected = signal<number | null>(1000);
+  protected readonly settings = inject(AppConfig).donations;
+  protected readonly amounts = computed(() => this.settings().amounts);
+  private readonly picked = signal<number | null>(null);
+  /** The suggested amount closest to 1 000 F is chosen until the visitor picks one. */
+  protected readonly selected = computed(() => {
+    const picked = this.picked();
+    const amounts = this.amounts();
+    if (picked !== null && amounts.includes(picked)) return picked;
+    return amounts.reduce((best, value) =>
+      Math.abs(value - 1000) < Math.abs(best - 1000) ? value : best,
+    );
+  });
   protected readonly custom = new FormControl('', { nonNullable: true });
   private readonly customValue = toSignal(this.custom.valueChanges, { initialValue: '' });
 
@@ -29,9 +37,9 @@ export class SupportPage {
   });
   protected readonly valid = computed(() => {
     const amount = this.amount();
-    return amount !== null && Number.isSafeInteger(amount) && amount >= MIN && amount <= MAX;
+    const { min, max } = this.settings();
+    return amount !== null && Number.isSafeInteger(amount) && amount >= min && amount <= max;
   });
-  protected readonly limits = { min: MIN, max: MAX };
   private readonly i18n = inject(I18nService);
 
   protected format(value: number | null): string {
@@ -39,7 +47,7 @@ export class SupportPage {
   }
 
   protected choose(amount: number): void {
-    this.selected.set(amount);
+    this.picked.set(amount);
     this.custom.setValue('');
   }
 }

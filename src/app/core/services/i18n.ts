@@ -882,6 +882,14 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Suivi du wird': ['Wird overview', 'متابعة الورد'],
   'Mes wirds en chiffres': ['My wirds in numbers', 'أورادي بالأرقام'],
   'Pass dahira': ['Dahira Pass', 'باقة الدائرة'],
+  'Les dons ne sont pas ouverts pour le moment.': [
+    'Donations are not open at the moment.',
+    'التبرعات غير متاحة حاليًا.',
+  ],
+  'L’équipe WirdLink a masqué ce wird. Vous seul pouvez encore le voir.': [
+    'The WirdLink team hid this wird. Only you can still see it.',
+    'أخفى فريق WirdLink هذا الورد. أنت وحدك ما زلت تراه.',
+  ],
   Administration: ['Administration', 'الإدارة'],
   'Se connecter': ['Sign in', 'تسجيل الدخول'],
   Renouveler: ['Renew', 'تجديد'],

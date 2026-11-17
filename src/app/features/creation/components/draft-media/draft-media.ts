@@ -11,6 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { LocalMedia } from '../../data-access/creation-draft';
+import { AppConfig } from '../../../../core/config/app-config';
 
 const MAX_RECORDING_SECONDS = 600;
 const RECORDING_TYPES = [
@@ -33,6 +34,7 @@ export class DraftMedia {
   readonly error = input('');
   readonly fileSelected = output<{ kind: 'image' | 'audio'; file: File }>();
   readonly removeRequested = output<'image' | 'audio'>();
+  protected readonly features = inject(AppConfig).features;
 
   protected readonly canRecord =
     typeof MediaRecorder !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;

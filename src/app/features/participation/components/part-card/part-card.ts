@@ -1,5 +1,6 @@
 import { Translate } from '../../../../shared/pipes/translate';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { AppConfig } from '../../../../core/config/app-config';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { Part } from '../../../../core/wird-store';
@@ -24,6 +25,8 @@ export class PartCard {
   readonly disabled = input(false);
   readonly progress = input<ReadonlyMap<string, number>>(new Map());
   readonly finishRequested = output<Part>();
+  protected readonly tasbih = computed(() => this.config.features().tasbih);
+  private readonly config = inject(AppConfig);
   protected readonly state = computed(() => groupState(this.group(), this.progress()));
   protected readonly stateLabel = computed(() => PART_STATE_LABELS[this.state()]);
 }

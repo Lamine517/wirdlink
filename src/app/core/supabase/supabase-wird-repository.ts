@@ -133,6 +133,7 @@ export class SupabaseWirdRepository implements WirdRepository {
       if (completed + reserved > target) throw new ServiceUnavailableError();
       return {
         isOwner: row['is_owner'] === true,
+        hidden: row['hidden'] === true,
         id: string(row['id']),
         title: string(row['title']),
         description: string(row['description']),

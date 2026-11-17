@@ -7,6 +7,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeviceInstall } from '../../../../core/services/device-install';
 import { AuthFlow, rememberAuthReturn } from '../../../auth/data-access/auth-flow';
+import { AppConfig } from '../../../../core/config/app-config';
 import { CycleReminders } from '../../../../core/services/cycle-reminders';
 
 @Component({
@@ -57,6 +58,7 @@ import { CycleReminders } from '../../../../core/services/cycle-reminders';
 })
 export class PreferencesPage {
   protected readonly i18n = inject(I18nService);
+  protected readonly config = inject(AppConfig);
   protected readonly auth = inject(AuthFlow);
   protected readonly reminders = inject(CycleReminders);
   protected readonly appearance = inject(Appearance);

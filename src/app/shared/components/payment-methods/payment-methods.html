@@ -1,4 +1,4 @@
-@for (item of methods; track item.id) {
+@for (item of methods(); track item.id) {
   <button
     type="button"
     class="payment-method payment-method--{{ item.id }}"
@@ -18,7 +18,7 @@
     <p class="payment-step">
       {{ 'Envoyez {amount} F CFA à ce numéro :' | t: { amount: format(amount()) } }}
     </p>
-    <p class="payment-number">{{ number }}</p>
+    <p class="payment-number">{{ number() }}</p>
     <button type="button" class="button button--primary" (click)="copyNumber()">
       <app-icon [name]="copied() ? 'check' : 'copy'" [size]="22" />{{
         (copied() ? 'Numéro copié' : 'Copier le numéro') | t

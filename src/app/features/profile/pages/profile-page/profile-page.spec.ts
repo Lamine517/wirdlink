@@ -1,3 +1,4 @@
+import { DEFAULT_TEMPLATES } from '../../../../core/config/app-config';
 import { WIRD_TEST_PROVIDER } from '../../../../testing/wird-fixtures.spec';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -5,7 +6,7 @@ import { Router } from '@angular/router';
 import { appConfig } from '../../../../app.config';
 import { FRONTEND_GATEWAY } from '../../../../core/services/frontend-gateway';
 import { AuthFlow } from '../../../auth/data-access/auth-flow';
-import { CreationDraftStore, WIRD_TEMPLATES } from '../../../creation/data-access/creation-draft';
+import { CreationDraftStore } from '../../../creation/data-access/creation-draft';
 import { gatewayStub } from '../../../../testing/frontend-gateway.spec';
 
 describe('Profile and account actions', () => {
@@ -75,7 +76,7 @@ describe('Profile and account actions', () => {
 
   it('requires confirmation and preserves the identity/draft on deletion failure', async () => {
     const draft = TestBed.inject(CreationDraftStore);
-    draft.chooseTemplate(WIRD_TEMPLATES[0]);
+    draft.chooseTemplate(DEFAULT_TEMPLATES[0]);
     const harness = await profile();
     harness.routeNativeElement!.querySelector<HTMLButtonElement>('.profile-delete')!.click();
     harness.detectChanges();
@@ -101,7 +102,7 @@ describe('Profile and account actions', () => {
 
   it('signs out from the profile while retaining an unpublished draft', async () => {
     const draft = TestBed.inject(CreationDraftStore);
-    draft.chooseTemplate(WIRD_TEMPLATES[0]);
+    draft.chooseTemplate(DEFAULT_TEMPLATES[0]);
     gateway.signOut.and.resolveTo();
     const harness = await profile();
     const button = [
