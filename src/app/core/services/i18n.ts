@@ -844,6 +844,7 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Tout afficher': ['Show all', 'عرض الكل'],
   Toutes: ['All', 'الكل'],
   'Suivi du wird': ['Wird overview', 'متابعة الورد'],
+  'Autres wirds': ['Other wirds', 'أوراد أخرى'],
   participant: ['participant', 'مشارك'],
   participants: ['participants', 'مشاركين'],
   'lectures terminées': ['readings completed', 'قراءات مكتملة'],

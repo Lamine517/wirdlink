@@ -63,6 +63,15 @@ export class HomePage {
   protected readonly visibleWirds = computed(() =>
     this.matchingWirds().filter((wird) => !this.closed(wird)),
   );
+  private readonly followedIds = computed(
+    () => new Set(this.store.parts().map((part) => part.wirdId)),
+  );
+  private readonly follows = (wird: Wird) =>
+    wird.isOwner === true || wird.visibility === 'private' || this.followedIds().has(wird.id);
+  protected readonly followedWirds = computed(() => this.visibleWirds().filter(this.follows));
+  protected readonly otherWirds = computed(() =>
+    this.visibleWirds().filter((wird) => !this.follows(wird)),
+  );
   protected readonly finishedWirds = computed(() =>
     this.matchingWirds().filter((wird) => this.closed(wird)),
   );

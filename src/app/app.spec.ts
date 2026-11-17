@@ -63,6 +63,22 @@ describe('WirdLink navigation', () => {
     await harness.navigateByUrl('/wird/inconnu');
     expect(harness.routeNativeElement!.textContent).toContain('Wird introuvable');
   });
+  it('lists the wirds I take part in before the others', async () => {
+    localStorage.setItem(
+      'wirdlink.parts.v1',
+      JSON.stringify({
+        parts: [{ id: 'p', wirdId: 'salat-fatihi', quantity: 1, name: '', finished: false }],
+        name: '',
+      }),
+    );
+    const harness = await RouterTestingHarness.create('/');
+    const element = harness.routeNativeElement!;
+    const titles = [...element.querySelectorAll('app-wird-card h2')].map((h) =>
+      h.textContent?.trim(),
+    );
+    expect(titles[0]).toBe('1 000 Salatoul Fatihi');
+    expect(element.querySelector('.wird-list__title')?.textContent).toContain('Autres wirds');
+  });
   it('explains invalid input without creating a part', async () => {
     const harness = await RouterTestingHarness.create('/wird/salat-nabi');
     const input = harness.routeNativeElement!.querySelector<HTMLInputElement>('#quantity')!;

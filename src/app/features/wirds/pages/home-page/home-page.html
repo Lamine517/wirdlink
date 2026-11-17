@@ -41,14 +41,26 @@
   (retry)="store.refresh()"
 />
 <div class="wird-list">
-  @for (wird of visibleWirds(); track wird.id) {
+  @for (wird of followedWirds(); track wird.id) {
     <app-wird-card
       [wird]="wird"
       [available]="store.available(wird.id)"
       [completed]="store.completed(wird.id)"
       [today]="today"
     />
-  } @empty {
+  }
+  @if (followedWirds().length && otherWirds().length) {
+    <h2 class="wird-list__title">{{ 'Autres wirds' | t }}</h2>
+  }
+  @for (wird of otherWirds(); track wird.id) {
+    <app-wird-card
+      [wird]="wird"
+      [available]="store.available(wird.id)"
+      [completed]="store.completed(wird.id)"
+      [today]="today"
+    />
+  }
+  @if (!visibleWirds().length) {
     @if (!store.loading() && !store.error() && store.wirds().length === 0) {
       <app-empty-state
         [title]="'Aucun wird pour le moment' | t"
