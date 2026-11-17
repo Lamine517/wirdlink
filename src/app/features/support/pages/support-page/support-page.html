@@ -1,16 +1,6 @@
 <app-back-button />
 <h1>{{ 'Soutenir WirdLink' | t }}</h1>
 
-@if (outcome === 'merci') {
-  <p class="feedback support-thanks" role="status">
-    <app-icon name="heart" [size]="22" />{{ 'Merci pour votre soutien !' | t }}
-  </p>
-} @else if (outcome === 'echec') {
-  <p class="feedback feedback--error" role="alert">
-    {{ 'Le paiement n’a pas abouti. Aucun montant n’a été prélevé si vous n’avez pas confirmé.' | t }}
-  </p>
-}
-
 <p class="support-intro">
   {{ 'WirdLink est gratuit. Un don, même petit, aide à couvrir les frais du service.' | t }}
 </p>
@@ -50,53 +40,38 @@
 
 <section class="support-methods" aria-labelledby="support-methods">
   <h2 id="support-methods">{{ 'Payer avec' | t }}</h2>
-  <button
-    type="button"
-    class="support-method support-method--wave"
-    [disabled]="!valid() || busy() || !network.online()"
-    (click)="payWithWave()"
-  >
-    <span class="support-method__mark" aria-hidden="true">W</span>
-    <span>{{ busy() ? ('Ouverture de Wave…' | t) : 'Wave' }}</span>
-    @if (valid()) {
-      <strong>{{ amount() | number }} F</strong>
-    }
-  </button>
-  <button
-    type="button"
-    class="support-method support-method--orange"
-    [disabled]="!valid()"
-    (click)="copied.set(false); orangeSheet.open()"
-  >
-    <span class="support-method__mark" aria-hidden="true">OM</span>
-    <span>Orange Money</span>
-    @if (valid()) {
-      <strong>{{ amount() | number }} F</strong>
-    }
-  </button>
-  @if (error()) {
-    <p class="feedback feedback--error" role="alert">{{ error() | t }}</p>
+  @for (item of methods; track item.id) {
+    <button
+      type="button"
+      class="support-method support-method--{{ item.id }}"
+      [disabled]="!valid()"
+      (click)="select(item.id); paySheet.open()"
+    >
+      <img class="support-method__logo" [src]="item.logo" alt="" width="40" height="40" />
+      <span>{{ item.name }}</span>
+      @if (valid()) {
+        <strong>{{ amount() | number }} F</strong>
+      }
+    </button>
   }
 </section>
 
-<app-bottom-sheet #orangeSheet panelId="orange-money" [title]="'Orange Money' | t">
+<app-bottom-sheet #paySheet panelId="support-payment" [title]="current().name">
   <div class="form-stack">
     <p class="support-step">
       {{ 'Envoyez {amount} F CFA à ce numéro :' | t: { amount: format(amount()) } }}
     </p>
-    <p class="support-number">{{ orangeNumber }}</p>
+    <p class="support-number">{{ number }}</p>
     <button type="button" class="button button--primary" (click)="copyNumber()">
       <app-icon [name]="copied() ? 'check' : 'copy'" [size]="22" />{{
         (copied() ? 'Numéro copié' : 'Copier le numéro') | t
       }}
     </button>
-    @if (android) {
+    @if (android && method() === 'orange') {
       <a class="button button--outline" href="tel:%23144%23"
         ><app-icon name="phone" [size]="22" />{{ 'Composer #144#' | t }}</a
       >
     }
-    <p class="support-hint">
-      {{ 'Ouvrez Max it ou composez #144#, choisissez Transfert d’argent, puis collez le numéro.' | t }}
-    </p>
+    <p class="support-hint">{{ current().hint | t }}</p>
   </div>
 </app-bottom-sheet>

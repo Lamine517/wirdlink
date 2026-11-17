@@ -33,12 +33,17 @@ describe('Support page', () => {
     expect(wave().textContent).toContain('3');
   });
 
-  it('gives the Orange Money number with the chosen amount', () => {
-    const { fixture, element } = setup();
-    element.querySelectorAll<HTMLButtonElement>('.support-amounts button')[3].click();
-    element.querySelector<HTMLButtonElement>('.support-method--orange')!.click();
-    fixture.detectChanges();
-    expect(element.querySelector('.support-number')?.textContent).toContain('76 557 83 79');
-    expect(element.querySelector('.support-step')?.textContent).toContain('5');
-  });
+  for (const method of ['wave', 'orange']) {
+    it(`gives the ${method} number with the chosen amount`, () => {
+      const { fixture, element } = setup();
+      element.querySelectorAll<HTMLButtonElement>('.support-amounts button')[3].click();
+      element.querySelector<HTMLButtonElement>('.support-method--' + method)!.click();
+      fixture.detectChanges();
+      expect(element.querySelector('.support-number')?.textContent).toContain('76 557 83 79');
+      expect(element.querySelector('.support-step')?.textContent).toContain('5');
+      expect(element.querySelector('.support-hint')?.textContent).toContain(
+        method === 'wave' ? 'Wave' : 'Max it',
+      );
+    });
+  }
 });

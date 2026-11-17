@@ -478,11 +478,6 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
       'WirdLink مشروع تطوعي مجاني. التبرعات اختيارية ولا تمنح أي ميزة في التطبيق.',
     ],
   'Soutenir WirdLink': ['Support WirdLink', 'ادعم WirdLink'],
-  'Merci pour votre soutien !': ['Thank you for your support!', 'شكرًا على دعمكم!'],
-  'Le paiement n’a pas abouti. Aucun montant n’a été prélevé si vous n’avez pas confirmé.': [
-    'The payment did not go through. Nothing was charged unless you confirmed it.',
-    'لم تتم عملية الدفع. لم يُقتطع أي مبلغ ما لم تؤكدوا الدفع.',
-  ],
   'WirdLink est gratuit. Un don, même petit, aide à couvrir les frais du service.': [
     'WirdLink is free. Even a small donation helps cover its costs.',
     'WirdLink مجاني. أي تبرع، ولو صغير، يساعد على تغطية تكاليفه.',
@@ -496,10 +491,9 @@ const TRANSLATIONS: Readonly<Record<string, readonly [string, string]>> = {
   'Ex. 3 000': ['e.g. 3,000', 'مثال: 3000'],
   'Entre {min} et {max} F CFA.': ['Between {min} and {max} CFA francs.', 'بين {min} و{max} فرنك.'],
   'Payer avec': ['Pay with', 'الدفع عبر'],
-  'Ouverture de Wave…': ['Opening Wave…', 'جارٍ فتح Wave…'],
-  'Wave est indisponible pour le moment. Réessayez ou choisissez Orange Money.': [
-    'Wave is unavailable right now. Try again or choose Orange Money.',
-    'Wave غير متاح حاليًا. أعيدوا المحاولة أو اختاروا Orange Money.',
+  'Ouvrez Wave, touchez Envoyer, puis collez le numéro.': [
+    'Open Wave, tap Send, then paste the number.',
+    'افتحوا Wave، اضغطوا على إرسال، ثم الصقوا الرقم.',
   ],
   'Envoyez {amount} F CFA à ce numéro :': [
     'Send {amount} CFA francs to this number:',

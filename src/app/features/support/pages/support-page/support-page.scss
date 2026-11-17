@@ -7,15 +7,6 @@ h2 {
   font-size: 1.125rem;
 }
 
-.support-thanks {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  border-inline-start: 4px solid var(--color-primary);
-  color: var(--color-primary);
-  font-weight: 800;
-}
-
 .support-intro {
   margin-bottom: var(--space-16);
 }
@@ -98,15 +89,12 @@ h2 {
   }
 }
 
-.support-method__mark {
-  display: inline-grid;
-  place-items: center;
+.support-method__logo {
+  flex: none;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--method-color);
-  color: #fff;
-  font-size: 0.875rem;
+  object-fit: cover;
 }
 
 .support-step {
