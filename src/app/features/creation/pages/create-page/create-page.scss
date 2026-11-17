@@ -49,12 +49,11 @@
 }
 
 .template-card__arabic {
-  flex-shrink: 0;
-  max-width: 46%;
+  display: block;
   color: var(--color-primary);
   font-size: 1.25rem;
   font-weight: 700;
-  line-height: 1.6;
+  line-height: 1.8;
   text-align: end;
 }
 

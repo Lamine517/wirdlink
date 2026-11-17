@@ -80,6 +80,14 @@ describe('App config', () => {
       'أَسْتَغْفِرُ اللهَ\n\nAstaghfirullāh\n\nDemande de pardon.',
     );
     expect(templateDescription({ ar: '', latin: '', fr: '', en: '' }, 'fr')).toBe('');
+    const arabic = 'أ'.repeat(800);
+    const pronunciation = 'a'.repeat(700);
+    const long = { ar: arabic, latin: pronunciation, fr: 'Explication courte.', en: '' };
+    expect(
+      parseTemplates([{ id: 'jaw', title: 'Jaw', target: 12, icon: 'book', text: long }])[0].text
+        .latin,
+    ).toHaveSize(700);
+    expect(templateDescription(long, 'fr')).toBe(`${arabic}\n\nExplication courte.`);
   });
 
   it('keeps every feature on unless it is explicitly turned off', () => {

@@ -49,7 +49,7 @@ function templateGroup(template: WirdTemplate) {
       }),
       latin: new FormControl(template.text.latin, {
         nonNullable: true,
-        validators: [Validators.maxLength(300)],
+        validators: [Validators.maxLength(1000)],
       }),
       fr: new FormControl(template.text.fr, {
         nonNullable: true,

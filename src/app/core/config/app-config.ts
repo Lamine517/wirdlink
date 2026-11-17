@@ -144,7 +144,7 @@ export function parseTemplates(value: unknown): WirdTemplate[] {
         icon,
         text: {
           ar: written.ar.trim(),
-          latin: text(row(data['text'])['latin'], 300).trim(),
+          latin: text(row(data['text'])['latin'], 1000).trim(),
           fr: written.fr.trim(),
           en: written.en.trim(),
         },
@@ -189,12 +189,21 @@ export function templateExplanation(text: TemplateText, locale: Locale): string 
 
 /**
  * Formula, pronunciation, then explanation. Fits the wird description, which the creator can edit.
+ * A long prayer keeps its formula and explanation whole; the pronunciation stays on the card.
  */
 export function templateDescription(text: TemplateText, locale: Locale): string {
-  return [text.ar.trim(), text.latin.trim(), templateExplanation(text, locale)]
-    .filter((part, index, parts) => part && parts.indexOf(part) === index)
-    .join('\n\n')
-    .slice(0, 1000);
+  const arabic = text.ar.trim();
+  const pronunciation = text.latin.trim();
+  const explanation = templateExplanation(text, locale);
+  const parts = [arabic, pronunciation, explanation].filter(
+    (part, index, list) => part && list.indexOf(part) === index,
+  );
+  const joined = parts.join('\n\n');
+  if (joined.length <= 1000) return joined;
+  const withoutPronunciation = [arabic, explanation]
+    .filter((part, index, list) => part && list.indexOf(part) === index)
+    .join('\n\n');
+  return withoutPronunciation.length <= 1000 ? withoutPronunciation : arabic.slice(0, 1000);
 }
 
 export function paragraphs(value: string): string[] {
