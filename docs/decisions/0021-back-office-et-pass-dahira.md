@@ -45,9 +45,10 @@ confiance qu’il ajoute lui-même.
 - Dons : page Soutenir activable, 1 à 6 montants, minimum et maximum, numéro à 9 chiffres
   (aussi utilisé pour le Pass), Wave et Orange Money activables séparément.
 - Modèles : 0 à 12 modèles (nom, objectif, icône parmi une liste fixe), ordre modifiable.
-  Chaque modèle peut porter l’invocation en arabe et une explication en français et en anglais.
-  L’explication s’affiche sous le nom ; les deux textes remplissent la description, que le créateur
-  peut modifier. « Mon propre wird » reste toujours proposé en premier. Les wirds existants ne changent pas.
+  Chaque modèle peut porter la formule en arabe, sa prononciation et une explication en français.
+  Les trois s’affichent sur la carte et remplissent la description, que le créateur peut modifier.
+  L’explication française est aussi montrée aux lecteurs en anglais. « Mon propre wird » reste
+  toujours proposé en premier. Les wirds existants ne changent pas.
 - Fonctionnalités : tasbih, photo et note vocale. Désactiver masque l’entrée dans l’interface ;
   la route du tasbih renvoie vers Mes parts. Les médias déjà publiés restent visibles et la
   base ne refuse pas un envoi de média : c’est un réglage d’interface, pas une sécurité.

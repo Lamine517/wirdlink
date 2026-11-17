@@ -1,7 +1,8 @@
 <p class="admin-hint">
   Les modèles apparaissent dans Créer, après « Mon propre wird », et comme suggestions de titre.
-  L’invocation et son explication s’affichent sous le nom, puis remplissent la description du wird.
-  Le créateur peut encore la modifier. Les wirds déjà créés ne changent pas.
+  L’arabe, la prononciation et l’explication s’affichent sur la carte, puis remplissent la
+  description du wird. Le créateur peut encore la modifier. Une explication en français suffit :
+  elle est aussi montrée aux lecteurs en anglais. Les wirds déjà créés ne changent pas.
 </p>
 
 <ol class="admin-list admin-templates">
@@ -43,24 +44,24 @@
           lang="ar"
           maxlength="1000"
           rows="3"
-          placeholder="Exemple : اللهم صل على محمد"
+          placeholder="Exemple : أَسْتَغْفِرُ اللهَ"
           formControlName="ar"
         ></textarea>
-        <label [for]="'template-fr-' + index">Explication en français (facultatif)</label>
+        <label [for]="'template-latin-' + index">Prononciation (facultatif)</label>
+        <textarea
+          [id]="'template-latin-' + index"
+          maxlength="300"
+          rows="2"
+          placeholder="Exemple : Astaghfirullāh"
+          formControlName="latin"
+        ></textarea>
+        <label [for]="'template-fr-' + index">Explication (facultatif)</label>
         <textarea
           [id]="'template-fr-' + index"
           maxlength="1000"
-          rows="2"
-          placeholder="Exemple : Prière sur le Prophète"
+          rows="3"
+          placeholder="Exemple : Le Prophète demandait pardon plus de soixante-dix fois par jour."
           formControlName="fr"
-        ></textarea>
-        <label [for]="'template-en-' + index">Explication en anglais (facultatif)</label>
-        <textarea
-          [id]="'template-en-' + index"
-          maxlength="1000"
-          rows="2"
-          placeholder="Example: Prayer upon the Prophet"
-          formControlName="en"
         ></textarea>
       </div>
       <div class="admin-templates__actions">

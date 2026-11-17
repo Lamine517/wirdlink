@@ -47,6 +47,10 @@ function templateGroup(template: WirdTemplate) {
         nonNullable: true,
         validators: [Validators.maxLength(1000)],
       }),
+      latin: new FormControl(template.text.latin, {
+        nonNullable: true,
+        validators: [Validators.maxLength(300)],
+      }),
       fr: new FormControl(template.text.fr, {
         nonNullable: true,
         validators: [Validators.maxLength(1000)],
@@ -94,7 +98,13 @@ export class AdminTemplates {
     if (this.items.length >= MAX_TEMPLATES) return;
     const id = 'modele-' + crypto.randomUUID().slice(0, 8);
     this.items.push(
-      templateGroup({ id, title: '', target: 100, icon: 'book', text: { fr: '', en: '', ar: '' } }),
+      templateGroup({
+        id,
+        title: '',
+        target: 100,
+        icon: 'book',
+        text: { ar: '', latin: '', fr: '', en: '' },
+      }),
     );
   }
 
@@ -127,6 +137,7 @@ export class AdminTemplates {
       target: Math.trunc(item.target),
       text: {
         ar: item.text.ar.trim(),
+        latin: item.text.latin.trim(),
         fr: item.text.fr.trim(),
         en: item.text.en.trim(),
       },

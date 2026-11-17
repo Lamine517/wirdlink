@@ -27,13 +27,20 @@ export const TEMPLATE_ICONS = [
 ] as const;
 export type TemplateIcon = (typeof TEMPLATE_ICONS)[number];
 
+/** The recited formula, how to pronounce it, and a short explanation. */
+export interface TemplateText {
+  ar: string;
+  latin: string;
+  fr: string;
+  en: string;
+}
+
 export interface WirdTemplate {
   id: string;
   title: string;
   target: number;
   icon: TemplateIcon;
-  /** Invocation and its explanation. Empty texts stay hidden. */
-  text: LocalizedText;
+  text: TemplateText;
 }
 
 export interface FeatureSettings {
@@ -60,7 +67,7 @@ export const DEFAULT_DONATIONS: DonationSettings = {
   orange: true,
 };
 
-const EMPTY_TEMPLATE_TEXT: LocalizedText = { fr: '', en: '', ar: '' };
+const EMPTY_TEMPLATE_TEXT: TemplateText = { ar: '', latin: '', fr: '', en: '' };
 
 export const DEFAULT_TEMPLATES: WirdTemplate[] = [
   { id: 'salat', title: 'Salat ala Nabi', target: 1000, icon: 'prayer', text: EMPTY_TEMPLATE_TEXT },
@@ -135,7 +142,12 @@ export function parseTemplates(value: unknown): WirdTemplate[] {
         title,
         target,
         icon,
-        text: { fr: written.fr.trim(), en: written.en.trim(), ar: written.ar.trim() },
+        text: {
+          ar: written.ar.trim(),
+          latin: text(row(data['text'])['latin'], 300).trim(),
+          fr: written.fr.trim(),
+          en: written.en.trim(),
+        },
       },
     ];
   });
@@ -170,21 +182,16 @@ export function localizedText(value: LocalizedText, locale: Locale): string {
   return (value[locale] || value.fr).trim();
 }
 
-/** The explanation shown under a template name, in the reader's language. */
-export function templateMeaning(text: LocalizedText, locale: Locale): string {
-  return (text[locale] || text.fr || text.ar || text.en).trim();
+/** The explanation in the reader's language. The Arabic formula is shown separately. */
+export function templateExplanation(text: TemplateText, locale: Locale): string {
+  return (locale === 'ar' ? text.fr || text.en : text[locale] || text.fr || text.en).trim();
 }
 
 /**
- * Arabic invocation first, then the translation in the reader's language.
- * Fits the wird description, which the creator can still edit.
+ * Formula, pronunciation, then explanation. Fits the wird description, which the creator can edit.
  */
-export function templateDescription(text: LocalizedText, locale: Locale): string {
-  const arabic = text.ar.trim();
-  const translation = (
-    locale === 'ar' ? text.fr || text.en : text[locale] || text.fr || text.en
-  ).trim();
-  return [arabic, translation]
+export function templateDescription(text: TemplateText, locale: Locale): string {
+  return [text.ar.trim(), text.latin.trim(), templateExplanation(text, locale)]
     .filter((part, index, parts) => part && parts.indexOf(part) === index)
     .join('\n\n')
     .slice(0, 1000);

@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
-import { LocalizedText } from '../../../core/config/app-config';
+import { TemplateText } from '../../../core/config/app-config';
 import { publicationContentType } from '../../../core/media-file';
 
 export type Recurrence = 'Une fois' | 'Tous les jours' | 'Chaque semaine' | 'Chaque vendredi';
@@ -31,9 +31,9 @@ export interface DraftTemplate {
   id: string;
   title: string;
   target: number | null;
-  /** Invocation and translation copied into the wird description. */
+  /** Formula, pronunciation and explanation copied into the wird description. */
   description?: string;
-  text?: LocalizedText;
+  text?: TemplateText;
 }
 export const MAX_WIRD_TARGET = 2147483647;
 const STORAGE_KEY = 'wirdlink.creation.v1';

@@ -20,7 +20,7 @@ import {
   AppConfig,
   TemplateIcon,
   templateDescription,
-  templateMeaning,
+  templateExplanation,
 } from '../../../../core/config/app-config';
 import { I18nService } from '../../../../core/services/i18n';
 
@@ -61,8 +61,13 @@ export class CreatePage {
     this.start(template);
   }
 
-  protected meaning(template: DraftTemplate): string {
-    return template.text ? templateMeaning(template.text, this.locale()) : '';
+  protected rich(template: DraftTemplate): boolean {
+    const text = template.text;
+    return Boolean(text && (text.ar || text.latin || text.fr || text.en));
+  }
+
+  protected explanation(template: DraftTemplate): string {
+    return template.text ? templateExplanation(template.text, this.locale()) : '';
   }
 
   private start(template: DraftTemplate): void {

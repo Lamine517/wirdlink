@@ -62,7 +62,12 @@ describe('Creation flow', () => {
         title: 'Dalail al Khayrat',
         target: 41,
         icon: 'book',
-        text: { fr: 'Recueil de prières sur le Prophète', en: '', ar: 'دلائل الخيرات' },
+        text: {
+          ar: 'دلائل الخيرات',
+          latin: 'Dalāʾil al-Khayrāt',
+          fr: 'Recueil de prières sur le Prophète',
+          en: '',
+        },
       },
     ]);
     const harness = await RouterTestingHarness.create('/creer');
@@ -71,12 +76,15 @@ describe('Creation flow', () => {
     );
     expect(titles).toEqual(['Mon propre wird', 'Dalail al Khayrat']);
     const card = templateButton(harness, 'Dalail al Khayrat');
+    expect(card.textContent).toContain('Dalāʾil al-Khayrāt');
     expect(card.textContent).toContain('Recueil de prières sur le Prophète');
     card.click();
     await harness.fixture.whenStable();
     const draft = TestBed.inject(CreationDraftStore).draft();
     expect(draft.target).toBe(41);
-    expect(draft.description).toBe('دلائل الخيرات\n\nRecueil de prières sur le Prophète');
+    expect(draft.description).toBe(
+      'دلائل الخيرات\n\nDalāʾil al-Khayrāt\n\nRecueil de prières sur le Prophète',
+    );
   });
 
   it('takes a template through content, dates and private preview without publishing', async () => {

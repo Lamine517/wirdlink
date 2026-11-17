@@ -5,7 +5,7 @@ import {
   localizedText,
   paragraphs,
   templateDescription,
-  templateMeaning,
+  templateExplanation,
   parseDonations,
   parseFeatures,
   parseTemplates,
@@ -43,25 +43,43 @@ describe('App config', () => {
         { id: 'c', title: '', target: 1, icon: 'book' },
       ]),
     ).toEqual([
-      { id: 'a', title: 'Dalail', target: 41, icon: 'book', text: { fr: '', en: '', ar: '' } },
+      {
+        id: 'a',
+        title: 'Dalail',
+        target: 41,
+        icon: 'book',
+        text: { ar: '', latin: '', fr: '', en: '' },
+      },
     ]);
-    const text = { fr: ' Prière sur le Prophète ', en: '', ar: ' اللهم صل على محمد ' };
+    const text = {
+      fr: ' Prière sur le Prophète ',
+      en: '',
+      ar: ' اللهم صل على محمد ',
+      latin: ' Allahumma salli ',
+    };
     expect(
       parseTemplates([{ id: 'salat', title: 'Salat', target: 1000, icon: 'prayer', text }])[0].text,
     ).toEqual({
+      ar: 'اللهم صل على محمد',
+      latin: 'Allahumma salli',
       fr: 'Prière sur le Prophète',
       en: '',
-      ar: 'اللهم صل على محمد',
     });
   });
 
-  it('shows the invocation in the reader’s language and keeps the Arabic text with its translation', () => {
-    const text = { fr: 'Prière sur le Prophète', en: 'Prayer upon the Prophet', ar: 'اللهم صل' };
-    expect(templateMeaning(text, 'fr')).toBe('Prière sur le Prophète');
-    expect(templateMeaning({ fr: '', en: '', ar: 'اللهم صل' }, 'fr')).toBe('اللهم صل');
-    expect(templateDescription(text, 'fr')).toBe('اللهم صل\n\nPrière sur le Prophète');
-    expect(templateDescription(text, 'ar')).toBe('اللهم صل\n\nPrière sur le Prophète');
-    expect(templateDescription({ fr: '', en: '', ar: '' }, 'fr')).toBe('');
+  it('keeps the formula, its pronunciation and the explanation together', () => {
+    const text = {
+      ar: 'أَسْتَغْفِرُ اللهَ',
+      latin: 'Astaghfirullāh',
+      fr: 'Demande de pardon.',
+      en: 'Asking forgiveness.',
+    };
+    expect(templateExplanation(text, 'en')).toBe('Asking forgiveness.');
+    expect(templateExplanation(text, 'ar')).toBe('Demande de pardon.');
+    expect(templateDescription(text, 'fr')).toBe(
+      'أَسْتَغْفِرُ اللهَ\n\nAstaghfirullāh\n\nDemande de pardon.',
+    );
+    expect(templateDescription({ ar: '', latin: '', fr: '', en: '' }, 'fr')).toBe('');
   });
 
   it('keeps every feature on unless it is explicitly turned off', () => {

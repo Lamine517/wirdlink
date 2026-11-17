@@ -15,18 +15,33 @@
 <p class="text-secondary">{{ 'Choisissez un modèle, puis adaptez-le.' | t }}</p>
 <div class="template-list">
   @for (template of templates(); track template.id) {
-    <button type="button" class="template-card" (click)="choose(template)">
-      <span
-        class="template-card__icon"
-        [class.template-card__icon--custom]="template.id === 'custom'"
-        aria-hidden="true"
-      >
-        <app-icon [name]="template.icon" [size]="24" />
-      </span>
-      <span class="template-card__content"
-        ><strong>{{ template.id === 'custom' ? ('Mon propre wird' | t) : template.title }}</strong>
-        @if (meaning(template); as meaning) {
-          <span class="template-card__meaning" dir="auto">{{ meaning }}</span>
+    <button
+      type="button"
+      class="template-card"
+      [class.template-card--rich]="rich(template)"
+      (click)="choose(template)"
+    >
+      @if (!rich(template)) {
+        <span
+          class="template-card__icon"
+          [class.template-card__icon--custom]="template.id === 'custom'"
+          aria-hidden="true"
+        >
+          <app-icon [name]="template.icon" [size]="24" />
+        </span>
+      }
+      <span class="template-card__content">
+        <span class="template-card__top">
+          <strong>{{ template.id === 'custom' ? ('Mon propre wird' | t) : template.title }}</strong>
+          @if (template.text?.ar) {
+            <span class="template-card__arabic" dir="rtl" lang="ar">{{ template.text?.ar }}</span>
+          }
+        </span>
+        @if (template.text?.latin) {
+          <span class="template-card__latin" dir="auto">{{ template.text?.latin }}</span>
+        }
+        @if (explanation(template); as explanation) {
+          <span class="template-card__meaning">{{ explanation }}</span>
         }
         <span>
           @if (template.target) {
@@ -34,8 +49,8 @@
           } @else {
             {{ 'À votre façon' | t }}
           }
-        </span></span
-      >
+        </span>
+      </span>
       <app-icon class="template-card__arrow" name="next" [size]="20" />
     </button>
   }
