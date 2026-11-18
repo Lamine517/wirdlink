@@ -165,3 +165,29 @@
     background: var(--color-bg-muted);
   }
 }
+
+/* Keep the phone frame, and therefore the menu, inside the area that is
+   actually visible when the browser bar or the keyboard changes height. */
+@media (max-width: 699px) {
+  :host {
+    display: block;
+    height: var(--app-visible-height, 100svh);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .desktop-layout {
+    height: 100%;
+  }
+
+  .app-shell {
+    position: fixed;
+    top: var(--app-viewport-offset, 0px);
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: var(--app-visible-height, 100svh);
+    max-height: none;
+    margin: 0;
+  }
+}

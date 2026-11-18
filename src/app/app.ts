@@ -17,6 +17,7 @@ import {
   Component,
   ElementRef,
   DestroyRef,
+  afterNextRender,
   computed,
   inject,
   signal,
@@ -79,6 +80,37 @@ export class App {
   private pageAnimation?: Animation;
   private readonly pageView = viewChild<ElementRef<HTMLElement>>('pageView');
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
+  private readonly phoneFrame = window.matchMedia('(max-width: 699px)');
+
+  constructor() {
+    afterNextRender(() => this.followVisibleScreen());
+  }
+
+  /** The menu stays at the bottom of what the person actually sees. */
+  private followVisibleScreen(): void {
+    const viewport = window.visualViewport;
+    const apply = () => {
+      const root = document.documentElement;
+      if (!this.phoneFrame.matches || !viewport) {
+        root.style.removeProperty('--app-visible-height');
+        root.style.removeProperty('--app-viewport-offset');
+        return;
+      }
+      root.style.setProperty('--app-visible-height', `${viewport.height}px`);
+      root.style.setProperty('--app-viewport-offset', `${viewport.offsetTop}px`);
+    };
+    apply();
+    viewport?.addEventListener('resize', apply);
+    viewport?.addEventListener('scroll', apply);
+    this.phoneFrame.addEventListener('change', apply);
+    this.destroyRef.onDestroy(() => {
+      viewport?.removeEventListener('resize', apply);
+      viewport?.removeEventListener('scroll', apply);
+      this.phoneFrame.removeEventListener('change', apply);
+      document.documentElement.style.removeProperty('--app-visible-height');
+      document.documentElement.style.removeProperty('--app-viewport-offset');
+    });
+  }
 
   protected resetScroll(): void {
     const animate = this.routeActivated;

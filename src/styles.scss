@@ -18,6 +18,17 @@ app-root {
   place-items: center;
   min-height: 100dvh;
 }
+
+/* On a phone the window itself must not scroll, otherwise the bottom menu
+   leaves the screen on the pages that are taller than the visible area. */
+@media (max-width: 699px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
 @media (min-width: 700px) {
   :root {
     --app-frame-height: min(844px, calc(100dvh - 96px));

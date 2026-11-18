@@ -63,9 +63,11 @@
 // On phones the application uses the viewport, rather than the desktop frame.
 @media (max-width: 699px) {
   .bottom-sheet {
+    top: var(--app-viewport-offset, 0px);
+    bottom: auto;
     width: 100vw;
     max-width: none;
-    height: 100dvh;
+    height: var(--app-visible-height, 100svh);
     max-height: none;
     margin: 0;
     border-radius: 0;
